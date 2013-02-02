@@ -6,12 +6,53 @@
 
         <script src="{{ STATIC_URL }}foundation/javascripts/jquery.js"></script>
         <script src="{{ STATIC_URL }}foundation/javascripts/foundation.js"></script>
+
+        <style type="text/css">
+            .row {
+                width: 100%;
+            }
+
+            .summary {
+                border: 1px solid #eee;
+                padding: 10px 20px 20px;
+                margin: 10px 20px 0px 0px;
+            }
+
+            .menu {
+                border: 1px solid #eee;
+                padding: 0px 20px 0px ;
+                margin: 10px 0px 0px 20px;
+            }
+        </style>
     </head>
 
     <body>
         <div class="row">
-            <div class="twelve columns">
-                <h3>Матпраздник: регистрация участников и ввод результатов</h3>
+            <div class="four columns centered">
+                    <h1>Матпраздник 2013</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="menu two columns">
+                <ul class="side-nav">
+                    <li class="active"><a href="#">все участники</a></li>
+                    <li><a href="#">все школы</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">ручная регистрация</a></li>
+                    <li><a href="#">ввод результатов</a></li>
+                    <li><a href="#">дипломы</a></li>
+                </ul>
+            </div>
+
+            <div class="seven columns">
+                <div class="nine columns"></div>
+
+            </div>
+
+            <div class="summary three columns">
+                <h5>Информация </h5>
+                {{ num_participants }} участников имеется в базе
             </div>
         </div>
     </body>
