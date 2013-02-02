@@ -57,7 +57,9 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+
+# TODO: change this directory
+STATIC_ROOT = '/home/vpavlenko/Dropbox/work/matprazdnik.2013/matprazdnik/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
