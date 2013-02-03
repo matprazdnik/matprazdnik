@@ -8,51 +8,99 @@
         <script src="{{ STATIC_URL }}foundation/javascripts/foundation.js"></script>
 
         <style type="text/css">
+            body {
+                padding: 30px 10px 0px 10px;
+            }
+
             .row {
                 width: 100%;
             }
 
-            .summary {
+            .summary, .menu, .upload-block, .download-block {
                 border: 1px solid #eee;
-                padding: 10px 20px 20px;
-                margin: 10px 20px 0px 0px;
+                -moz-border-radius: 8px;
+                border-radius: 8px;
             }
 
+            .summary, .upload-block, .download-block {
+                padding: 0em 1em 1em 1em;
+                margin: 10px 10px 0px 0px;
+            }
+
+{#            .upload-block, .download-block {#}
+{#                padding: 6px 1em 23px 1em;#}
+{#                margin: 10px 10px 0px 0px;#}
+{#            }#}
+
             .menu {
-                border: 1px solid #eee;
-                padding: 0px 20px 0px ;
-                margin: 10px 0px 0px 20px;
+                padding: 6px 1em 0em 1.5em;
+                margin: 10px 0px 0px 10px;
+            }
+
+            .upload-hint {
+                margin-top: 1em;
+                font-size: xx-small;
             }
         </style>
     </head>
 
     <body>
         <div class="row">
-            <div class="four columns centered">
+            <div class="ten columns offset-by-two">
                     <h1>Матпраздник 2013</h1>
             </div>
         </div>
 
         <div class="row">
-            <div class="menu two columns">
-                <ul class="side-nav">
-                    <li class="active"><a href="#">все участники</a></li>
-                    <li><a href="#">все школы</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">ручная регистрация</a></li>
-                    <li><a href="#">ввод результатов</a></li>
-                    <li><a href="#">дипломы</a></li>
-                </ul>
+            <div class="two columns">
+                <div class="menu">
+                    <ul class="side-nav">
+                        <li{% ifequal nav 'participants' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.participants' %}">все участники</a></li>
+                        <li{% ifequal nav 'schools' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.schools' %}">все школы</a></li>
+                        <li class="divider"></li>
+                        <li{% ifequal nav 'registration' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.registration' %}">ручная регистрация</a></li>
+                        <li{% ifequal nav 'points' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.points' %}">ввод результатов</a></li>
+                        <li{% ifequal nav 'diplomas' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.diplomas' %}">дипломы</a></li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="seven columns">
-                <div class="nine columns"></div>
-
+            <div class="six columns">
+                <h3>{% block content-title %}Заголовок содержания{% endblock %}</h3>
+                <div class="content">{% block content %}Содержание{% endblock %}</div>
             </div>
 
-            <div class="summary three columns">
-                <h5>Информация </h5>
-                {{ num_participants }} участников имеется в базе
+            <div class="four columns">
+                {% if nav == 'participants' %}
+                    <div class="upload-block">
+                        <h5>{% block upload-title %}Залить какой-то документ{% endblock %}</h5>
+                        <input type="file" id="uploaded-file">
+                        <button type="submit" class="radius button">Залить</button>
+                        {% block no-upload-hint %}
+                            <div class="upload-hint">
+                            {% block upload-hint %}Тут ещё подсказка к нему{% endblock %}
+                            </div>
+                        {% endblock %}
+                        {% comment %}
+                        Usage:
+                            -- on pages with upload-hint you should specify just "upload-hint" block
+                            -- on pages with no upload-hint you should say {% block no-upload-hint %}{% endblock %}
+
+                        By no means is it graceful.
+                        http://stackoverflow.com/questions/2035385/test-for-existence-of-template-block-in-a-template
+                        {% endcomment %}
+                    </div>
+                {% endif %}
+                {% if nav == 'diplomas' %}
+                    <div class="download-block">
+                        <h5>{% block download-link %}Скачать какой-то документ{% endblock %}</h5>
+                        <button class="radius button">Скачать csv</button>
+                    </div>
+                {% endif %}
+                <div class="summary">
+                    <h5>Информация </h5>
+                    {{ num_participants }} участников имеется в базе
+                </div>
             </div>
         </div>
     </body>

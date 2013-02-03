@@ -1,5 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
+from django.shortcuts import render_to_response
 
 from main_app.models import Participant, School
 
@@ -15,3 +16,27 @@ def participants(request):
     return render(request, 'participants.html', attach_info({
         'nav': 'participants',
     }))
+
+
+def schools(request):
+    return render(request, 'schools.html', attach_info({
+        'nav': 'schools',
+        }))
+
+
+def registration(request):
+    return render(request, 'registration.html', attach_info({
+        'nav': 'registration',
+        }))
+
+
+def points(request):
+    return render(request, 'points.html', attach_info({
+        'nav': 'points',
+        }))
+
+
+def diplomas(request):
+    return render(request, 'diplomas.html', attach_info({
+        'nav': 'diplomas',
+        }))
