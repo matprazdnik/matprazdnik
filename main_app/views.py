@@ -24,12 +24,6 @@ def schools(request):
         }))
 
 
-def registration(request):
-    return render(request, 'registration.html', attach_info({
-        'nav': 'registration',
-        }))
-
-
 def points(request):
     return render(request, 'points.html', attach_info({
         'nav': 'points',

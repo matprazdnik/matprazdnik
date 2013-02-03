@@ -57,8 +57,6 @@
                     <ul class="side-nav">
                         <li{% ifequal nav 'participants' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.participants' %}">все участники</a></li>
                         <li{% ifequal nav 'schools' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.schools' %}">все школы</a></li>
-                        <li class="divider"></li>
-                        <li{% ifequal nav 'registration' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.registration' %}">ручная регистрация</a></li>
                         <li{% ifequal nav 'points' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.points' %}">ввод результатов</a></li>
                         <li{% ifequal nav 'diplomas' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.diplomas' %}">дипломы</a></li>
                     </ul>

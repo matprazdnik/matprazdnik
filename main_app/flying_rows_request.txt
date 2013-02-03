@@ -1,0 +1,49 @@
+keep in mind:
+    http://elsdoerfer.name/docs/django-tables/index.html
+
+
+general issues:
+    filter
+    add_new_button with default settings
+    tab_index, onenterpress, onescapepress
+
+
+general features:
+    sort_by
+
+
+ideas:
+    stop polling server for new rows while editing a row
+    poll to load new rows (1 time per second)
+    poll to reload everything (1 time per minute)
+
+
+schools
+    School
+        name:
+        city: search_hint
+        genitiv: auto_generate(param: js_code)
+
+
+participants
+    Participant
+        reg_number: validate(param: js_code)
+        surname, name
+        grade: default value
+        school: foreign_key
+            how to represent? function which composes text
+            how to change? change current, add new
+
+
+points
+    Participant
+        points: editing entry point
+        comma separated integers columns
+        autosum: complicated validation based on all current-row information
+
+
+diplomas
+    Participant
+
+
+

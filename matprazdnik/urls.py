@@ -17,7 +17,6 @@ urlpatterns = patterns('',
 
     url(r'^participants/', 'main_app.views.participants'),
     url(r'^schools/', 'main_app.views.schools'),
-    url(r'^registration/', 'main_app.views.registration'),
     url(r'^points/', 'main_app.views.points'),
     url(r'^diplomas/', 'main_app.views.diplomas'),
 )
