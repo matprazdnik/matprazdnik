@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 
 from main_app.models import Participant, School
+from main_app.tables import RegistrationTable
 
 
 def attach_info(dict_):
@@ -11,10 +12,10 @@ def attach_info(dict_):
     }, **dict_)
 
 
-
 def participants(request):
     return render(request, 'participants.html', attach_info({
         'nav': 'participants',
+        'table': RegistrationTable,
     }))
 
 

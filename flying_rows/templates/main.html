@@ -1,0 +1,16 @@
+<script type="text/javascript" src="{{ context.STATIC_URL }}flying_rows.js"></script>
+<script type="text/javascript">
+    init_flying_rows();
+</script>
+Flying rows implementation: coming soon
+<div id="flying_rows">
+
+{% if table_config.meta.enable_search %}
+<div id="search"></div>
+{% endif %}
+
+{% if table_config.meta.enable_add_new %}
+<div id="add_new"></div>
+{% endif %}
+
+</div>

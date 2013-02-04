@@ -1,5 +1,5 @@
 keep in mind:
-    http://elsdoerfer.name/docs/django-tables/index.html
+    http://django-tables2.readthedocs.org/en/latest/index.html
 
 
 general issues:
@@ -15,7 +15,7 @@ general features:
 ideas:
     stop polling server for new rows while editing a row
     poll to load new rows (1 time per second)
-    poll to reload everything (1 time per minute)
+    # poll to reload everything (1 time per minute)
 
 
 schools
@@ -47,3 +47,7 @@ diplomas
 
 
 
+let flying_rows save history of changes by ip
+Participant
+    id                                     created     changed
+    57       127.0.0.17 (12th creature of this ip)       never

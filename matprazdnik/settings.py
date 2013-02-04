@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'main_app',
-    # 'flying_rows',
+    'flying_rows',
 )
 
 # A sample logging configuration. The only tangible logging

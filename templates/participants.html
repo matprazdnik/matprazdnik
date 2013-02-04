@@ -1,18 +1,16 @@
 {% extends 'base.html' %}
+{% load render_table from flying_rows %}
 
 {% block title %}Все участники{% endblock %}
 
 
-{% block content-title %}Заголовок контента{% endblock %}
+{% block content-title %}Все участники{% endblock %}
 
 {% block content %}
-    Содержание
+    {% render_table table %}
 {% endblock %}
 
+{% block upload-title %}Залить внешнюю базу регистрации школьников{% endblock %}
+{% block upload-hint %}Все школьники, номера регистрации которых уже есть в нашей базе, не будут затронуты{% endblock %}
 
-{% block upload-title %}Залить какой-то документ{% endblock %}
-{% block no-upload-hint %}{% endblock %}
-{% block upload-hint %}Подсказка{% endblock %}
-
-
-{% block download-title %}Скачать какой-то документ{% endblock %}
+{% block download-title %}Скачать нашу базу регистрации школьников{% endblock %}

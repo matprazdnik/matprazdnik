@@ -1,19 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/main_app/tables_bad_approach.py" line="20" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="79d97920-36c0-43a4-ace5-52277bf03047" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/flying_rows_request.txt" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/templates/registration.html" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/static" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/templates" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/templatetags" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/fixtures" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/vpavlenko.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/models.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/static/flying_rows.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/templates/main.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/templatetags/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/templatetags/flying_rows.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/tests.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flying_rows/views.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/admin.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/migrations/0002_auto__add_field_participant_sum.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/tables.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/tables_bad_approach.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_app/utils.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db" afterPath="$PROJECT_DIR$/db" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/locale/en/LC_MESSAGES/django.mo" afterPath="$PROJECT_DIR$/django_tables2/locale/en/LC_MESSAGES/django.mo" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/locale/fr/LC_MESSAGES/django.mo" afterPath="$PROJECT_DIR$/django_tables2/locale/fr/LC_MESSAGES/django.mo" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-active-down.png" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-active-down.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-active-up.png" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-active-up.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-inactive-down.png" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-inactive-down.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-inactive-up.png" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/arrow-inactive-up.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/false.gif" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/false.gif" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/header-bg.png" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/header-bg.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/missing.png" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/missing.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/pagination-bg.gif" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/pagination-bg.gif" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/true.gif" afterPath="$PROJECT_DIR$/django_tables2/static/django_tables2/themes/paleblue/img/true.gif" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_app/flying_rows_request.txt" afterPath="$PROJECT_DIR$/main_app/flying_rows_request.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_app/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/main_app/migrations/0001_initial.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_app/models.py" afterPath="$PROJECT_DIR$/main_app/models.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_app/views.py" afterPath="$PROJECT_DIR$/main_app/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/matprazdnik/settings.py" afterPath="$PROJECT_DIR$/matprazdnik/settings.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/matprazdnik/urls.py" afterPath="$PROJECT_DIR$/matprazdnik/urls.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/base.html" afterPath="$PROJECT_DIR$/templates/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/participants.html" afterPath="$PROJECT_DIR$/templates/participants.html" />
     </list>
     <ignored path="matprazdnik.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="static/admin/css/" />
+    <ignored path="static/foundation/" />
+    <ignored path="static/admin/img/gis/" />
+    <ignored path="static/admin/js/" />
+    <ignored path="static/admin/img/" />
+    <ignored path="static/admin/" />
+    <ignored path="static/" />
+    <ignored path="static/foundation/stylesheets/" />
+    <ignored path="static/foundation/javascripts/" />
+    <ignored path="static/admin/js/admin/" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,19 +75,88 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="tables.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main_app/tables.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="27" column="4" selection-start="783" selection-end="1099" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#47#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="settings.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/matprazdnik/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="120" column="10" selection-start="4310" selection-end="4315" vertical-scroll-proportion="0.0">
+            <state line="113" column="23" selection-start="4061" selection-end="4061" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="base.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/base.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="99" column="45" selection-start="4264" selection-end="4264" vertical-scroll-proportion="-61.875">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="flying_rows.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flying_rows/static/flying_rows.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="0" selection-start="366" selection-end="366" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="flying_rows.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/flying_rows/templatetags/flying_rows.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="29" selection-start="321" selection-end="325" vertical-scroll-proportion="0.1570248">
+              <folding>
+                <element signature="e#0#27#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flying_rows/templates/main.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main_app/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="17" column="35" selection-start="482" selection-end="482" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#26#61#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="participants.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/participants.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="66" selection-start="503" selection-end="503" vertical-scroll-proportion="-9.375">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main_app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="38" selection-start="606" selection-end="606" vertical-scroll-proportion="0.81395346">
+            <state line="38" column="0" selection-start="1441" selection-end="1441" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -58,25 +172,27 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/templates/schools.html" />
-        <option value="$PROJECT_DIR$/templates/participants.html" />
-        <option value="$PROJECT_DIR$/model_row/models.py" />
-        <option value="$PROJECT_DIR$/templates/base.html" />
         <option value="$PROJECT_DIR$/matprazdnik/urls.py" />
-        <option value="$PROJECT_DIR$/main_app/views.py" />
-        <option value="$PROJECT_DIR$/main_app/model_row_requests.txt" />
-        <option value="$PROJECT_DIR$/flying_rows/migrations/0001_initial.py" />
-        <option value="$PROJECT_DIR$/flying_rows/__init__.py" />
+        <option value="$PROJECT_DIR$/main_app/admin.py" />
         <option value="$PROJECT_DIR$/main_app/flying_rows_request.txt" />
-        <option value="$PROJECT_DIR$/flying_rows/templatetags/django_tables2.py" />
-        <option value="$PROJECT_DIR$/flying_rows/columns/base.py" />
-        <option value="$PROJECT_DIR$/matprazdnik/settings.py" />
         <option value="$PROJECT_DIR$/main_app/models.py" />
+        <option value="$PROJECT_DIR$/main_app/utils.py" />
+        <option value="$PROJECT_DIR$/main_app/tables_bad_approach.py" />
+        <option value="$PROJECT_DIR$/main_app/views.py" />
+        <option value="$PROJECT_DIR$/templates/participants.html" />
+        <option value="$PROJECT_DIR$/main_app/tables.py" />
+        <option value="$PROJECT_DIR$/matprazdnik/settings.py" />
+        <option value="$PROJECT_DIR$/flying_rows/templatetags/__init__.py" />
+        <option value="$PROJECT_DIR$/flying_rows/templatetags/tags.py" />
+        <option value="$PROJECT_DIR$/templates/base.html" />
+        <option value="$PROJECT_DIR$/flying_rows/static/flying_rows.js" />
+        <option value="$PROJECT_DIR$/flying_rows/templates/main.html" />
+        <option value="$PROJECT_DIR$/flying_rows/templatetags/flying_rows.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="24" />
+    <option name="y" value="792" />
     <option name="width" value="1366" />
     <option name="height" value="744" />
   </component>
@@ -134,7 +250,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemId" value="templates" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -152,6 +268,74 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="flying_rows" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="flying_rows" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templatetags" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="flying_rows" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matprazdnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="flying_rows" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -163,6 +347,7 @@
     <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="editor.preferences.appearance" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="DefaultHtmlFileTemplate" value="Html5" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
   </component>
@@ -173,6 +358,14 @@
     <option name="myDjangoConsoleState">
       <PyConsoleSettings />
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/main_app" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/main_app" />
+    </key>
   </component>
   <component name="RunManager" selected="Django server.matprazdnik">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -345,7 +538,11 @@
       <created>1359842394104</created>
       <updated>1359842394104</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="flying_rows started">
+      <created>1359915838103</created>
+      <updated>1359915838103</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -369,26 +566,26 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1366" height="744" extended-state="6" />
+    <frame x="0" y="792" width="1366" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32903227" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32903227" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.67096776" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.10410334" sideWeight="0.67096776" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25455928" sideWeight="0.67096776" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.67096776" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.65645164" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3435484" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32903227" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -427,7 +624,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="all pages created, base.html design is now nearly ready" />
+    <option name="LAST_COMMIT_MESSAGE" value="flying_rows somehow mocked" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -445,12 +642,14 @@
     <MESSAGE value="static files and foundation" />
     <MESSAGE value="sketch design" />
     <MESSAGE value="all pages created, base.html design is now nearly ready" />
+    <MESSAGE value="flying_rows started" />
+    <MESSAGE value="flying_rows somehow mocked" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/flying_rows/templatetags/django_tables2.py</url>
+          <url>file://$PROJECT_DIR$/django_tables2/templatetags/django_tables2.py</url>
           <line>1</line>
         </line-breakpoint>
       </breakpoints>
@@ -458,95 +657,121 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/main_app/views.py">
+    <entry file="file://$PROJECT_DIR$/main_app/tables_bad_approach.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="529" selection-end="529" vertical-scroll-proportion="0.5329949">
+        <state line="2" column="48" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
           <folding />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/migrations/0001_initial.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="63" selection-end="63" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/rows.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="16" selection-start="491" selection-end="491" vertical-scroll-proportion="0.4314721" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python3.3/site-packages/django/template/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="348" column="8" selection-start="12179" selection-end="12179" vertical-scroll-proportion="0.714044" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="250" column="6" selection-start="10480" selection-end="10480" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/columns/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main_app/flying_rows_request.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="49" selection-start="377" selection-end="377" vertical-scroll-proportion="0.11167513">
+        <state line="41" column="41" selection-start="902" selection-end="902" vertical-scroll-proportion="0.6084656">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flying_rows/templatetags/django_tables2.py">
+    <entry file="file://$PROJECT_DIR$/main_app/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="217" column="7" selection-start="7146" selection-end="7146" vertical-scroll-proportion="0.5431472">
+        <state line="34" column="25" selection-start="882" selection-end="882" vertical-scroll-proportion="0.8629442">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_app/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="35" selection-start="482" selection-end="482" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#17#44#0" expanded="true" />
+            <element signature="e#26#61#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/matprazdnik/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="10" selection-start="4310" selection-end="4315" vertical-scroll-proportion="0.0">
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main_app/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="38" selection-start="606" selection-end="606" vertical-scroll-proportion="0.81395346">
+        <state line="38" column="0" selection-start="1441" selection-end="1441" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/participants.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="66" selection-start="503" selection-end="503" vertical-scroll-proportion="-9.375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/templatetags/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/matprazdnik/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="113" column="23" selection-start="4061" selection-end="4061" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="99" column="45" selection-start="4264" selection-end="4264" vertical-scroll-proportion="-61.875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_app/tables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="4" selection-start="783" selection-end="1099" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/static/flying_rows.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="0" selection-start="366" selection-end="366" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/templates/main.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flying_rows/templatetags/flying_rows.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="29" selection-start="321" selection-end="325" vertical-scroll-proportion="0.1570248">
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
