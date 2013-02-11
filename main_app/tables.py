@@ -1,37 +1,46 @@
 from main_app.models import Participant, School
 from main_app.utils import get_school_genitive, normalize_city, get_diploma_text, get_degree
 
-
-RegistrationTable = {
+RegistrationTableConfig = {
     'columns': {
+        'id': {
+
+        },
         'number': {
             'backend_validation': lambda row: int(row.number) % 19 == 0,
                 # I want to implement frontend validation as well (via JavaScript function)
             'search_hint': False,
+            'editable': True,
         },
         'surname': {
             'search_hint': False,
+            'editable': True,
         },
         'name': {
             'search_hint': True,
+            'editable': True,
         },
         'gender': {
+            'editable': True,
         },
         'school': {
             'str': 'name_and_city',  # default representation is str(...)
             'search_hint': True,
+            'editable': False,
         },
         'grade': {
             'search_hint': False,
+            'editable': True,
         }
     },
     'meta': {
         'model': Participant,
-        'sort_by': ('-id',),
-        'sequence': ('id', 'number', 'surname', 'name', 'gender', 'school', 'grade'),
+        'sort_by': ('id',),
+        'column_ordering': ('id', 'number', 'surname', 'name', 'gender', 'school', 'grade'),
         'initial_focus': 'number',
         'after_save_focus': 'add_new',  # choices: add_new, search
         'search_by': ('number', 'surname', 'school'),
+        'update-url': 'participants/update/' # TODO: update with relative path
     }
 }
 

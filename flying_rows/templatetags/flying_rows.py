@@ -1,5 +1,6 @@
 from django import template
 from django.template import Node, TemplateSyntaxError, loader, Context
+from flying_rows.table import Table
 
 
 register = template.Library()
@@ -24,8 +25,9 @@ class RenderTableNode(Node):
 
     def render(self, context):
         table_config = _update_with_default_values(context[self.table_config_var_name])
+        table = Table(table_config)
         t = loader.get_template('main.html')
-        c = Context({'context': context, 'table_config': table_config})
+        c = Context({'context': context, 'table': table})
         return t.render(c)
 
 

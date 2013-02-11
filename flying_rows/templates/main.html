@@ -2,15 +2,71 @@
 <script type="text/javascript">
     init_flying_rows();
 </script>
-Flying rows implementation: coming soon
-<div id="flying_rows">
+Flying rows implementation: on the march!
 
-{% if table_config.meta.enable_search %}
-<div id="search"></div>
+{% if table.enable_search %}
+    <div id="search"></div>
 {% endif %}
 
-{% if table_config.meta.enable_add_new %}
-<div id="add_new"></div>
+{% if table.enable_add_new %}
+    <div id="add_new"></div>
 {% endif %}
 
-</div>
+    <script type="text/javascript">
+        function debug_append(s) {
+            $('#debug').html($('#debug').html() + '<br>' + s);
+        }
+    </script>
+
+<table width="100%" id="data_table">
+    {% block table-head %}
+    <thead>
+        {% for column in table.columns %}
+            <th> {{ column.name }} </th>
+        {% endfor %}
+    </thead>
+    {% endblock %}
+    {% block table-body %}
+    <tbody>
+        {% for row in table.data %}
+            <tr>
+                {% for field in row.fields %}
+                    <td><span id="{{field.id}}" {%if field.editable%}contenteditable="true"{%endif%} >
+                        {{ field.value }}
+                    </span></td>
+
+                    <script type="text/javascript">
+                        $('#{{ field.id }}').bind('keypress', function(eventObj) {
+                            if ($('#{{ field.id }}').html() == '<br>') {
+                                $('#{{ field.id }}').html('');
+                            }
+                            if (eventObj.keyCode == 13) {
+                                eventObj.preventDefault();
+                                eventObj.stopImmediatePropagation();
+                                eventObj.stopPropagation();
+                                var request_data = {};
+                                request_data["row_id"] = "{{ field.row_id }}";
+                                {% for fld in row.fields %}
+                                    request_data["{{ fld.name }}"] = $("#{{ fld.id }}").html();
+                                {% endfor %}
+                                $.post("{{ table.update_url }}", request_data, function(data,status){
+                                    alert("Data: " + data + "\nStatus: " + status);
+                                });
+                            }
+                            eventObj.stopImmediatePropagation();
+                            eventObj.stopPropagation();
+                            debug_append('keyCode ' + eventObj.keyCode);
+                            debug_append($("#cell1grade").html());
+                            debug_append($("#cell1grade").html().length);
+                    })
+                    </script>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+    {% endblock %}
+</table>
+
+
+    <footer id="debug">
+    </footer>

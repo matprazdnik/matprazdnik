@@ -59,7 +59,7 @@ MEDIA_URL = ''
 # Example: "/var/www/example.com/static/"
 
 # TODO: change this directory
-STATIC_ROOT = '/home/vpavlenko/Dropbox/work/matprazdnik.2013/matprazdnik/static/'
+STATIC_ROOT = '/home/altimin/work/matprazdnik/matprazdnik/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -105,7 +105,7 @@ ROOT_URLCONF = 'matprazdnik.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'matprazdnik.wsgi.application'
 
-TEMPLATE_DIRS = ('/home/vpavlenko/Dropbox/work/matprazdnik.2013/matprazdnik/templates',)
+TEMPLATE_DIRS = ('/home/altimin/work/matprazdnik/templates',)
 
 INSTALLED_APPS = (
     'django.contrib.auth',

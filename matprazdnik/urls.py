@@ -16,8 +16,9 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^$', 'main_app.views.participants'),
-    url(r'^participants/', 'main_app.views.participants'),
-    url(r'^schools/', 'main_app.views.schools'),
-    url(r'^points/', 'main_app.views.points'),
-    url(r'^diplomas/', 'main_app.views.diplomas'),
+    url(r'^participants/update/$', 'main_app.views.update_participants'),
+    url(r'^participants/$', 'main_app.views.participants'),
+    url(r'^schools/$', 'main_app.views.schools'),
+    url(r'^points/$', 'main_app.views.points'),
+    url(r'^diplomas/$', 'main_app.views.diplomas'),
 )

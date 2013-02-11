@@ -3,8 +3,26 @@
   <component name="ProjectResources">
     <default-html-doctype>$APPLICATION_HOME_DIR$/lib/pycharm.jar!/resources/html5-schema/html5.rnc</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.3.0 (/usr/local/bin/python3)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.3.0 (/usr/bin/python3.3)" project-jdk-type="Python SDK" />
   <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://matprazdnik.googlecode.com/svn/branches" />
+                  <option value="https://matprazdnik.googlecode.com/svn/tags" />
+                  <option value="https://matprazdnik.googlecode.com/svn/wiki" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://matprazdnik.googlecode.com/svn/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
 </project>
