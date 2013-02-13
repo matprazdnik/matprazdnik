@@ -3,18 +3,17 @@ from main_app.utils import get_school_genitive, normalize_city, get_diploma_text
 
 RegistrationTableConfig = {
     'columns': {
-        'id': {
-
-        },
         'number': {
             'backend_validation': lambda row: int(row.number) % 19 == 0,
                 # I want to implement frontend validation as well (via JavaScript function)
             'search_hint': False,
             'editable': True,
+            'weight': 0.7,
         },
         'surname': {
             'search_hint': False,
             'editable': True,
+            'weight': 1.5,
         },
         'name': {
             'search_hint': True,
@@ -22,25 +21,31 @@ RegistrationTableConfig = {
         },
         'gender': {
             'editable': True,
+            'weight': 0.1,
         },
         'school': {
             'str': 'name_and_city',  # default representation is str(...)
             'search_hint': True,
             'editable': False,
+            'weight': 2.5,
         },
         'grade': {
             'search_hint': False,
             'editable': True,
+            'weight': 0.1,
         }
     },
     'meta': {
+        'add-new': True,
         'model': Participant,
-        'sort_by': ('id',),
-        'column_ordering': ('id', 'number', 'surname', 'name', 'gender', 'school', 'grade'),
+        'sort_by': ('-id', 'number',),
+        'column_ordering': ( 'number', 'surname', 'name', 'gender', 'school', 'grade'),
         'initial_focus': 'number',
         'after_save_focus': 'add_new',  # choices: add_new, search
         'search_by': ('number', 'surname', 'school'),
-        'update-url': 'participants/update/' # TODO: update with relative path
+        'update-url': 'participants/update/', # TODO: update with relative path
+        'add-url': 'participants/add/',
+        'get-new-url': 'participants/getnew/'
     }
 }
 
