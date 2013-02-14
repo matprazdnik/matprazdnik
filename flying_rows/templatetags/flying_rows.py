@@ -6,7 +6,7 @@ from flying_rows.table import Table
 register = template.Library()
 
 
-def _update_with_default_values(table_config):
+def _update_table_config_with_default_values(table_config):
     default_meta = {
         'sort_by': ('-id',),
         'after_save_focus': 'search',  # choices: add_new, search
@@ -24,7 +24,7 @@ class RenderTableNode(Node):
         self.table_config_var_name = table_config_var_name
 
     def render(self, context):
-        table_config = _update_with_default_values(context[self.table_config_var_name])
+        table_config = _update_table_config_with_default_values(context[self.table_config_var_name])
         table = Table(table_config)
         t = loader.get_template('main.html')
         c = Context({'context': context, 'table': table})

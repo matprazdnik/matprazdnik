@@ -1,118 +1,126 @@
-{% load set_variable from utils %}
-<script type="text/javascript" src="{{ context.STATIC_URL }}flying_rows.js"></script>
-<script type="text/javascript">
-    init_flying_rows();
-</script>
-
-{% if table.enable_search %}
-    {% block add_form %}
-        <div id="search">
-        </div>
-    {% endblock %}
-{% endif %}
-
-    <script type="text/javascript">
-        function debug_append(s) {
-            $('#debug').html($('#debug').html() + '<br>' + s);
-        }
-        function error(s) {
-            $("#error_field").html(s);
-        }
-    </script>
-
-{% block error_field %}
-    <div id="error_field" style="color: red">
-    </div>
-{% endblock %}
+<script type="text/javascript" src="{{ context.STATIC_URL }}sprintf-0.7-beta1.js"></script>
 
 <script type="text/javascript">
-    var local_row_ids = {};
-    var last_update_time = Math.floor(new Date().getTime() / 1000);
-    {% for row in table.data %}
-        local_row_ids['{{ row.id }}'] = true;
-    {% endfor %}
-</script>
+    var highest_loaded_id = 0;
 
-<script type="text/javascript">
-    function get_new_rows() {
-        var request_data = {};
-        request_data['time'] = last_update_time;
-        debugger;
-        last_update_time = Math.floor(new Date().getTime() / 1000);
-        $.get('{{ table.get_new_url }}', request_data, function(data, status) {
-                debugger;
-                for (i in data.row_ids) {
-                        if (!(data.row_ids[i] in local_row_ids)) {}
-                            add_row(data[data.row_ids[i]]);
-                        }
-            })
-
+    function init_flying_rows() {
+        load_new_rows();
+        setInterval(load_new_rows, 2000);
+        setInterval(sort_rows, 2000);
     }
 
-    setInterval(get_new_rows, 2000);
+    function load_new_rows() {
+        var request_data = {highest_loaded_id: highest_loaded_id,
+                            module: '{{ table.module_name }}',
+                            model: '{{ table.model_name }}',
+                            columns_space_delimited: '{{ table.columns_space_delimited }}'
+                           };
+        $.get('{% url 'flying_rows.views.load_new_rows' %}', request_data, function(data, status) {
+            for (var i in data) {
+                highest_loaded_id = Math.max(highest_loaded_id, i);
+                prepend_row(data[i]);
+            }
+        })
+    }
 
-    function generate_handler(row_id, name, id, next_id) {
-        return function(eventObj) {
-            if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
-                eventObj.preventDefault();
-                eventObj.stopImmediatePropagation();
-                eventObj.stopPropagation();
-                var request_data = {};
-                request_data["row_id"] = row_id;
-                request_data["field_name"] = name;
-                request_data["new_field_value"] = $("#" + id).text();
-                var result = $.post("{{ table.update_url }}", request_data, function(data,status) {
-                    debugger;
-                    if (data.success == "true") {
-                        $("#" + id).html(data.value);
-                        if (next_id != '') {
-                            $("#" + next_id).focus();
-                        }
+    function sort_rows() {
+        // TODO: go to server, sort id by fields, rearrange rows
+    }
+
+    function prepend_row(row) { <!-- add new row from json data -->
+        var html_code = new Array(0);
+        {% for column in table.columns %}
+        html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %}>%({{ column.name }})s</span></td>', row));
+        {% endfor %}
+        html_code = '<tr>' + html_code.join('\n') + '<tr>';
+        $("#data").prepend(html_code);
+    }
+
+    function addnew_keydown_handler(eventObj) {
+        if (eventObj.keyCode == 13) {
+            var next_element = $(this).parent().next().children();
+            if (next_element.length == 1) {
+                next_element.focus();
+            } else {
+                var request_data = {module: '{{ table.module_name }}',
+                                    model: '{{ table.model_name }}',
+                                    columns_space_delimited: '{{ table.columns_space_delimited }}'
+                                   };
+            {% for column in table.columns %}
+                request_data["{{ column.name }}"] = $('#inputcell_{{ column.name }}').val();
+            {% endfor %}
+                $.post("{% url 'flying_rows.views.add_new_row' %}", request_data, function(data, status) {
+                    if (data.success) {
+                        info('Новая строка успешно сохранена');
+                        $("#inputcell_{{ table.initial_focus }}").focus();
                     } else {
-                        error("Incorrect value!");
-                        $("#" + id).html(data.value);
+                        error("Некорректное значение: " + data.error_message);
                     }
-                }).fail(function(data, status){
-                     alert("Error sending data to server!");
+                }).fail(function(data, status) {
+                    alert("Не удалось обратиться к серверу");
+                    alert(data.keys);
+                    alert(status);
                 });
             }
+        }
+    }
+
+    // TODO: эта функция пока не продумана Виталиком
+    function edit_keydown_handler(eventObj) {
+        if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
+            eventObj.preventDefault();
             eventObj.stopImmediatePropagation();
-            eventObj.stopPropagation();
-            debug_append('keyCode ' + eventObj.keyCode);
+            var request_data = {};
+            request_data["row_id"] = $(this).attr('data-row-id');
+            request_data["field_name"] = $(this).attr('data-field-name');
+            request_data["new_field_value"] = $(this).text();
+            var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
+                debugger;
+                if (data.success == "true") {
+                    $(this).text(data.value);
+                    var next_id = $(this).attr('data-next-id');
+                    if (next_id != '') {
+                        $("#" + next_id).focus();
+                    }
+                } else {
+                    error("Incorrect value!");
+                    $(this).text(data.value);
+                }
+            }).fail(function(data, status){
+                        alert("Error sending data to server!");
+                    });
         }
+        eventObj.stopImmediatePropagation();
+        debug_append('keyCode ' + eventObj.keyCode);
     }
 
-    function add_row(data) { <!-- add new row from json data -->
-        if (data.row_id in local_row_ids) {
-            return;
-        }
-        local_row_ids[data.row_id] = true;
-        var html_code = '';
-        {% for column in table.columns %}
-            html_code += '<td><span id="cell' + data.row_id + "{{ column.name }}" + '"{%if column.editable%}contenteditable="true"{%endif%} >';
-            html_code += data['{{ column.name }}'];
-            html_code += '</span></td>';
-        {% endfor %}
-        html_code = '<tr>' + html_code + '<tr>';
-        $("#table").html(html_code + $("#table").html());
-        {% for column in table.reversed_columns %}
-            $("#cell" + data.row_id + "{{ column.name }}").bind('keydown', generate_handler(
-                    data.row_id,
-                    '{{ column.name }}',
-                    'cell' + data.row_id + '{{ column.name }}',
-                    '{% if prev %}cell' + data.row_id + '{{ prev.name }}{% endif %}'
-            ));
-            {% set_variable prev = column %}
-        {% endfor %}
+    function debug_append(s) {
+        $('#debug').append('<br>' + s);
     }
 
+    function error(s) {
+        $("#error_field").text(s);
+    }
 
+    function info(s) {
+        $('#info_field').text(s);
+    }
 
+    $(document).ready(init_flying_rows);
 </script>
 
-{% block table %}
+{% if table.config.meta.enable_search %}
+    <div id="search">
+    </div>
+{% endif %}
+
+<div id="info_field" style="color: green">
+</div>
+
+<div id="error_field" style="color: red">
+</div>
+
 <table width="100%" id="data_table">
-    {% block table-head %}
     <colgroup>
         {% for column in table.columns %}
             <col width="{{ column.width }}">
@@ -123,72 +131,26 @@
             <th> {{ column.verbose_name }} </th>
         {% endfor %}
     </thead>
-    {% endblock %}
 
     {% block table-body %}
     <tbody>
-        {% if table.add_new_enabled %}
-        <div id="add_new_row">
-            {% block add_new %}
-                <tr>
-                    {% for column in table.columns %}
-                        <td>
-                            <input type="text" placeholder="{{ column.default_text }}" id="{{ column.input_id }}" autocomplete="off" style="margin-bottom: 0">
-                        </td>
-                        <script type="text/javascript">
-                            $("#{{ column.input_id }}").bind('keydown', function(eventObj) {
-                                if (eventObj.keyCode == 13) {
-                                    {% if column.next %}
-                                        $("#{{ column.next.input_id }}").focus();
-                                    {% else %}
-                                        var request_data = {};
-                                        {% for column in table.columns %}
-                                            request_data["{{ column.name }}"] = $("#{{ column.input_id }}").val();
-                                        {% endfor %}
-                                        $.post("{{ table.add_url }}", request_data, function(data, status) {
-                                            if (data.success == "true") {
-                                                {% for column in table.columns %}
-                                                    $("#{{ column.input_id }}").val('')
-                                                {% endfor %}
-                                                add_row(data);
-                                                $("#input_field_{{ table.initial_focus }}").focus();
-                                            } else {
-                                                error("Некорректное значение: "+ data.error_message);
-                                            }                                         
-                                        }).fail(function(data, status) {
-                                            alert("Failed to connect to server!");
-                                        })
-                                    {% endif %}
-                                }
-                            })
-                        </script>
-                    {% endfor %}
-                </tr>
-            {% endblock add_new %}
-        </div>
-        {% endif %}
-        <tbody id="table">
-        {% for row in table.data %}
-            <tr>
-                {% for field in row.fields %}
-                    <td><span id="{{field.id}}" {%if field.editable%}contenteditable="true"{%endif%} >
-                        {{ field.value }}
-                    </span></td>
-
-                    <script type="text/javascript">
-                        $('#{{ field.id }}').bind(
-                                'keydown',
-                                generate_handler('{{ field.row_id }}', '{{ field.name }}', '{{ field.id }}', '{% if field.next %}{{ field.next.id }}{% endif %}')
-                        );
-                    </script>
+        {% if table.config.meta.enable_add_new %}
+            <tr id="add_new_row">
+                {% for column in table.columns %}
+                    <td>
+                        <input type="text" id="inputcell_{{ column.name }}" class="editable" autocomplete="off" style="margin-bottom: 0" data-name="{{ column.name }}">
+                    </td>
                 {% endfor %}
             </tr>
-        {% endfor %}
-        </tbody>
+        <script type="text/javascript">
+            $("#add_new_row input:text").bind('keydown', addnew_keydown_handler);
+        </script>
+        {% endif %}
+    </tbody>
+    <tbody id="data">
     </tbody>
     {% endblock %}
 </table>
-{% endblock %}
 
 <footer id="debug">
 </footer>
