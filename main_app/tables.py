@@ -1,44 +1,42 @@
+# coding: utf-8
+
 from main_app.models import Participant, School
 from main_app.utils import get_school_genitive, normalize_city, get_diploma_text, get_degree
 
 RegistrationTableConfig = {
     'columns': {
         'number': {
-            'backend_validation': lambda row: int(row.number) % 19 == 0,
-                # I want to implement frontend validation as well (via JavaScript function)
-            'search_hint': False,
-            'editable': True,
+            'frontend_validation': '''function validate(num) {
+                                          return ((+num[0] + +num[1] + +num[2] + +num[3]) % 10 == +num[4]) && ((+num[0] + 3*num[1] + 5*num[2] + 7*num[3]) % 10 == +num[5]);
+                                      }''',
+            'search_hint': False,  # see http://jqueryui.com/autocomplete/
             'weight': 0.7,
         },
         'surname': {
             'search_hint': False,
-            'editable': True,
             'weight': 1.5,
         },
         'name': {
             'search_hint': True,
-            'editable': True,
         },
         'gender': {
-            'editable': True,
             'weight': 0.1,
         },
         'school': {
-            'str': 'name_and_city',  # default representation is str(...)
+#            'str': 'name_and_city',  # default representation is str(...)
+            # too hard to implement
             'search_hint': True,
-            'editable': False,
             'weight': 2.5,
         },
         'grade': {
             'search_hint': False,
-            'editable': True,
             'weight': 0.1,
         }
     },
     'meta': {
         'add-new': True,
         'model': Participant,
-        'sort_by': ('-id', 'number',),
+        'sort_by': ('-id',),
         'column_ordering': ( 'number', 'surname', 'name', 'gender', 'school', 'grade'),
         'initial_focus': 'number',
         'after_save_focus': 'add_new',  # choices: add_new, search

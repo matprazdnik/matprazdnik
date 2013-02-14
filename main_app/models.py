@@ -7,10 +7,10 @@ from django.db import models
 class School(models.Model):
     name = models.CharField('номер/название', max_length=64)
     city = models.CharField('город', max_length=64, default='Москва')
-    genitive = models.CharField('полное название в родительном падеже', max_length=256)
+    nominative = models.CharField('полное название в именительном падеже', max_length=256)
 
     def __str__(self):
-        return '{0}, {1}: {2}'.format(self.name, self.city, self.genitive)
+        return self.nominative
 
     @property
     def name_and_city(self):

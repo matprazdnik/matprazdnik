@@ -8,7 +8,7 @@ class ParticipantAdmin(admin.ModelAdmin):
 
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'genitive')
+    list_display = ('name', 'city', 'nominative')
 
 
 admin.site.register(models.Participant, ParticipantAdmin)

@@ -15,10 +15,12 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^flying_rows/', include('flying_rows.urls')),
+
     url(r'^$', 'main_app.views.participants'),
-    url(r'^participants/update/$', 'main_app.views.update_participants'),
-    url(r'^participants/add/$', 'main_app.views.add_participants'),
-    url(r'^participants/getnew/$', 'main_app.views.get_new'),
+#    url(r'^participants/update/$', 'main_app.views.update_participants'),
+#    url(r'^participants/add/$', 'main_app.views.add_participants'),
+#    url(r'^participants/getnew/$', 'main_app.views.get_new'),
     url(r'^participants/$', 'main_app.views.participants'),
     url(r'^schools/$', 'main_app.views.schools'),
     url(r'^points/$', 'main_app.views.points'),
