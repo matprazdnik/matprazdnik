@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load render_table from flying_rows %}
 
-{% block title %}Все участники{% endblock %}
+{% block title %}Все школы{% endblock %}
 
 
-{% block content-title %}Заголовок контента{% endblock %}
+{% block content-title %}Все школы{% endblock %}
 
 {% block content %}
-    Содержание
+    {% render_table table %}
 {% endblock %}
 
 

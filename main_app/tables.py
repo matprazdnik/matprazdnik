@@ -44,6 +44,29 @@ RegistrationTableConfig = {
     }
 }
 
+SchoolsTableConfig = {
+    'columns': {
+        'name': {
+            'weight': 0.5,
+        },
+        'city': {
+            'weight': 0.8,
+        },
+        'nominative': {
+            'weight': 3,
+        }
+    },
+    'meta': {
+        'add-new': True,
+        'model': School,
+        'sort_by': ('city', 'name'),
+        'column_ordering': ('name', 'city', 'nominative'),
+        'initial_focus': 'name',
+        'after_save_focus': 'search',
+        'search_by': ('name', 'city', 'nominative')
+    }
+}
+
 #class SchoolsTable(django_tables2.table):
 #    name': )
 #    city': backend_normalize=normalize_city)

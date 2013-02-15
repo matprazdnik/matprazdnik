@@ -1,15 +1,12 @@
 # Create your views here.
 from django.shortcuts import render
-from django.shortcuts import render_to_response
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed
-from django.views.decorators.csrf import csrf_exempt
 
-from main_app.models import Participant, School
-from main_app.tables import RegistrationTableConfig
+from main_app.models import Participant
+from main_app.tables import RegistrationTableConfig, SchoolsTableConfig
 from flying_rows.models import ParticipantUpdateTime
 
 import datetime
-import json
+
 
 def attach_info(dict_):
     return dict({
@@ -27,6 +24,7 @@ def participants(request):
 def schools(request):
     return render(request, 'schools.html', attach_info({
         'nav': 'schools',
+        'table': SchoolsTableConfig,
         }))
 
 
