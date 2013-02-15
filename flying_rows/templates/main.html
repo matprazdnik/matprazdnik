@@ -41,9 +41,6 @@
         {% for column in table.columns %}
             ids.push(sprintf('datacell_%(id)s_{{ column.name }}', row));
         {% endfor %}
-        for (i = 0; i + 1 < ids.length; i ++) {
-            $("#" + ids[i]).attr('data-next-id', ids[i + 1]);
-        }
     }
 
     function addnew_keydown_handler(eventObj) {
@@ -78,7 +75,6 @@
         }
     }
 
-    // TODO: эта функция пока не продумана Виталиком
     function edit_keydown_handler(eventObj) {
         if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
             eventObj.preventDefault();
@@ -93,9 +89,9 @@
                 if (data.success) {
                     $("#" + id).text(data.value);
                     info("Значение сохранено");
-                    var next_id = $("#" + id).attr('data-next-id');
-                    if (next_id != '') {
-                        $("#" + next_id).focus();
+                    var next_element = $('#' + id).parent().next().children();
+                    if (next_element.length == 1) {
+                        next_element.focus();
                     }
                 } else {
                     error("Некорректное значение: " + data.error_message);

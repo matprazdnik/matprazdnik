@@ -6,7 +6,7 @@ import importlib
 import json
 
 
-from .utils import is_foreign_key, get_field_by_name, convert_value_to_field_type
+from .utils import is_foreign_key, get_field_by_name, convert_value_to_field_type, get_foreign_key
 
 
 def get_model_class(request):
@@ -44,10 +44,11 @@ def update_field(request):
             model_class = get_model_class(request)
             obj = model_class.objects.get(id=request.POST['row_id'])
             column_name = request.POST['field_name']
-            value = request.POST['new_field_value']
+            value = request.POST['new_field_value'].strip()
             if is_foreign_key(column_name, model_class):
                 # TODO: resolve foreign_key problem
-                value = getattr(model_class, column_name).get_query_set()[0]
+                value = get_foreign_key(column_name, model_class, value)
+                #   value = getattr(model_class, column_name).get_query_set()[0]
             setattr(obj, column_name, value)
             obj.save();
             response_data = {'success' : True, 'value': str(value) }
@@ -73,10 +74,10 @@ def add_new_row(request):
             for column_name in column_ordering:
                 if is_foreign_key(column_name, model_class):
                     # TODO: resolve foreign_key problem
-                    value = getattr(model_class, column_name).get_query_set()[0]
+                    value = get_foreign_key(column_name, model_class, request.POST[column_name])
+                    # value = getattr(model_class, column_name).get_query_set()[0]
                 else:
-                    value = convert_value_to_field_type(request.POST[column_name],
-                        get_field_by_name(column_name, model_class))
+                    value = request.POST[column_name]
                 setattr(new_obj, column_name, value)
             new_obj.save()
             response_data = { 'success': True }
