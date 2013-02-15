@@ -30,10 +30,20 @@
     function prepend_row(row) { <!-- add new row from json data -->
         var html_code = new Array(0);
         {% for column in table.columns %}
-        html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %}>%({{ column.name }})s</span></td>', row));
+        html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %} data-row-id="%(id)s" data-field-name="{{ column.name }}">%({{ column.name }})s</span></td>', row));
         {% endfor %}
         html_code = '<tr>' + html_code.join('\n') + '<tr>';
         $("#data").prepend(html_code);
+        {% for column in table.columns %}
+            $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).bind('keydown', edit_keydown_handler);
+        {% endfor %}
+        var ids = new Array(0);
+        {% for column in table.columns %}
+            ids.push(sprintf('datacell_%(id)s_{{ column.name }}', row));
+        {% endfor %}
+        for (i = 0; i + 1 < ids.length; i ++) {
+            $("#" + ids[i]).attr('data-next-id', ids[i + 1]);
+        }
     }
 
     function addnew_keydown_handler(eventObj) {
@@ -52,6 +62,9 @@
                 $.post("{% url 'flying_rows.views.add_new_row' %}", request_data, function(data, status) {
                     if (data.success) {
                         info('Новая строка успешно сохранена');
+                        {% for column in table.columns  %}
+                            $('#inputcell_{{ column.name }}').val('');
+                        {% endfor %}
                         $("#inputcell_{{ table.initial_focus }}").focus();
                     } else {
                         error("Некорректное значение: " + data.error_message);
@@ -70,28 +83,29 @@
         if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
             eventObj.preventDefault();
             eventObj.stopImmediatePropagation();
-            var request_data = {};
+            var request_data = {module: '{{ table.module_name }}',
+                                model: '{{ table.model_name }}'};
             request_data["row_id"] = $(this).attr('data-row-id');
             request_data["field_name"] = $(this).attr('data-field-name');
             request_data["new_field_value"] = $(this).text();
+            id = $(this).attr('id');
             var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
-                debugger;
-                if (data.success == "true") {
-                    $(this).text(data.value);
-                    var next_id = $(this).attr('data-next-id');
+                if (data.success) {
+                    $("#" + id).text(data.value);
+                    info("Значение сохранено");
+                    var next_id = $("#" + id).attr('data-next-id');
                     if (next_id != '') {
                         $("#" + next_id).focus();
                     }
                 } else {
-                    error("Incorrect value!");
+                    error("Некорректное значение: " + data.error_message);
                     $(this).text(data.value);
                 }
             }).fail(function(data, status){
-                        alert("Error sending data to server!");
+                        alert("Не удалось обратиться к серверу!");
                     });
         }
         eventObj.stopImmediatePropagation();
-        debug_append('keyCode ' + eventObj.keyCode);
     }
 
     function debug_append(s) {
@@ -99,10 +113,12 @@
     }
 
     function error(s) {
+        $("#info_field").text('');
         $("#error_field").text(s);
     }
 
     function info(s) {
+        $('#error_field').text('');
         $('#info_field').text(s);
     }
 

@@ -31,35 +31,29 @@ def load_new_rows(request):
             response_data[obj.id] = {}
             for column in column_ordering:
                 response_data[obj.id][column] = str(getattr(obj, column))
-
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:
         return HttpResponseNotAllowed(["GET"])
 
-
+@csrf_exempt
 def update_field(request):
+    # ajax request
+    # params: [row_id, field_name, new_field_value, module, model]
     if request.method == "POST":
         try:
-            p = Participant.objects.get(id=request.POST['row_id']);
-        except Participant.DoesNotExist:
-            return Http404();
-        try:
-            field_name = request.POST['field_name'];
-        except KeyError:
-            return Http404();
-        old_field_value = p.__getattribute__(field_name);
-        try:
-            new_field_value = request.POST['new_field_value'];
-        except KeyError:
-            return Http404();
-        try:
-            setattr(p, field_name, new_field_value)
-            p.save();
-            update_participant_update_time(p);
-            response_data = {'success' : 'true', 'value': new_field_value }
+            model_class = get_model_class(request)
+            obj = model_class.objects.get(id=request.POST['row_id'])
+            column_name = request.POST['field_name']
+            value = request.POST['new_field_value']
+            if is_foreign_key(column_name, model_class):
+                # TODO: resolve foreign_key problem
+                value = getattr(model_class, column_name).get_query_set()[0]
+            setattr(obj, column_name, value)
+            obj.save();
+            response_data = {'success' : True, 'value': str(value) }
             return HttpResponse(json.dumps(response_data), content_type = 'application/json');
         except Exception as e:
-            response_data = {'success': 'false', 'value': old_field_value }
+            response_data = {'success': False, 'error_message': str(e)  }
             return HttpResponse(json.dumps(response_data), content_type = 'application/json');
     else:
         return HttpResponseNotAllowed(["POST"])
@@ -84,7 +78,6 @@ def add_new_row(request):
                     value = convert_value_to_field_type(request.POST[column_name],
                         get_field_by_name(column_name, model_class))
                 setattr(new_obj, column_name, value)
-
             new_obj.save()
             response_data = { 'success': True }
             return HttpResponse(json.dumps(response_data), content_type = 'application/json')

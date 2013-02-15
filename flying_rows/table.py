@@ -36,6 +36,7 @@ class Table(object):
         self.model = config['meta']['model']
         self.module_name = self.model.__module__
         self.model_name = self.model.__name__
+        self.initial_focus = config['meta']['initial_focus']
         self.columns = []
 
         if 'column_ordering' in config['meta']:

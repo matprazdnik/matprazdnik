@@ -41,9 +41,6 @@ RegistrationTableConfig = {
         'initial_focus': 'number',
         'after_save_focus': 'add_new',  # choices: add_new, search
         'search_by': ('number', 'surname', 'school'),
-        'update-url': 'participants/update/', # TODO: update with relative path
-        'add-url': 'participants/add/',
-        'get-new-url': 'participants/getnew/'
     }
 }
 
