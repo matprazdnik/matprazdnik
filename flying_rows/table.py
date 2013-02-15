@@ -14,7 +14,7 @@ class Column:
 
 def _update_column_config_with_default_values(column_config):
     default_column = {
-        'search_hint': True,
+        'autocomplete': True,
         'editable': True,
         'weight': 1,
         }

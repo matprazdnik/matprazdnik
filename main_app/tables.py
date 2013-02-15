@@ -9,15 +9,15 @@ RegistrationTableConfig = {
             'frontend_validation': '''function validate(num) {
                                           return ((+num[0] + +num[1] + +num[2] + +num[3]) % 10 == +num[4]) && ((+num[0] + 3*num[1] + 5*num[2] + 7*num[3]) % 10 == +num[5]);
                                       }''',
-            'search_hint': False,  # see http://jqueryui.com/autocomplete/
+            'autocomplete': False,  # see http://jqueryui.com/autocomplete/
             'weight': 0.7,
         },
         'surname': {
-            'search_hint': False,
+            'autocomplete': False,
             'weight': 1.5,
         },
         'name': {
-            'search_hint': True,
+            'autocomplete': True,
         },
         'gender': {
             'weight': 0.1,
@@ -25,11 +25,11 @@ RegistrationTableConfig = {
         'school': {
 #            'str': 'name_and_city',  # default representation is str(...)
             # too hard to implement
-            'search_hint': True,
+            'autocomplete': True,
             'weight': 2.5,
         },
         'grade': {
-            'search_hint': False,
+            'autocomplete': False,
             'weight': 0.1,
         }
     },
@@ -83,8 +83,8 @@ SchoolsTableConfig = {
 #
 #class PointsTable(django_tables2.table):
 #    number': backend_validation=(lambda row: int(row.number) % 19 == 0))
-#    surname': search_hint=False)
-#    name': search_hint=True)
+#    surname': autocomplete=False)
+#    name': autocomplete=True)
 #    points_1': default=0)
 #    points_2': default=0)
 #    points_3': default=0)

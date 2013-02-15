@@ -2,11 +2,22 @@
 
 <script type="text/javascript">
     var highest_loaded_id = 0;
+    var autocomplete_choices = {};
 
     function init_flying_rows() {
         load_new_rows();
         setInterval(load_new_rows, 2000);
         setInterval(sort_rows, 2000);
+
+        {% for column in table.columns %}
+            {% if column.config.autocomplete %}
+                autocomplete_choices['{{ column.name }}'] = [];
+                $(function() {$("#inputcell-{{ column.name }}").autocomplete({
+                    delay: 0,
+                    source: autocomplete_choices['{{ column.name }}']
+                })});
+            {% endif %}
+        {% endfor %}
     }
 
     function load_new_rows() {
@@ -41,11 +52,20 @@
         {% for column in table.columns %}
             ids.push(sprintf('datacell_%(id)s_{{ column.name }}', row));
         {% endfor %}
+        var val;
+        {% for column in table.columns %}
+            {% if column.config.autocomplete %}
+                val = row['{{ column.name }}'];
+                if (autocomplete_choices['{{ column.name }}'].indexOf(val) == -1) {
+                    autocomplete_choices['{{ column.name }}'].push(val);
+                }
+            {% endif %}
+        {% endfor %}
     }
 
     function addnew_keydown_handler(eventObj) {
         if (eventObj.keyCode == 13) {
-            var next_element = $(this).parent().next().children();
+            var next_element = $(this).parent().next().children('input:text');
             if (next_element.length == 1) {
                 next_element.focus();
             } else {
@@ -54,15 +74,15 @@
                                     columns_space_delimited: '{{ table.columns_space_delimited }}'
                                    };
             {% for column in table.columns %}
-                request_data["{{ column.name }}"] = $('#inputcell_{{ column.name }}').val();
+                request_data["{{ column.name }}"] = $('#inputcell-{{ column.name }}').val();
             {% endfor %}
                 $.post("{% url 'flying_rows.views.add_new_row' %}", request_data, function(data, status) {
                     if (data.success) {
                         info('Новая строка успешно сохранена');
                         {% for column in table.columns  %}
-                            $('#inputcell_{{ column.name }}').val('');
+                            $('#inputcell-{{ column.name }}').val('');
                         {% endfor %}
-                        $("#inputcell_{{ table.initial_focus }}").focus();
+                        $("#inputcell-{{ table.initial_focus }}").focus();
                     } else {
                         error("Некорректное значение: " + data.error_message);
                     }
@@ -150,7 +170,7 @@
             <tr id="add_new_row">
                 {% for column in table.columns %}
                     <td>
-                        <input type="text" id="inputcell_{{ column.name }}" class="editable" autocomplete="off" style="margin-bottom: 0" data-name="{{ column.name }}">
+                        <input type="text" id="inputcell-{{ column.name }}" class="editable" {% if not column.config.autocomplete %}autocomplete="off"{% endif %} style="margin-bottom: 0" data-name="{{ column.name }}">
                     </td>
                 {% endfor %}
             </tr>
