@@ -96,6 +96,10 @@ ResultsTableConfig = {
         'points_6b': {
         },
         'sum': {
+            'frontend_validation': ''' function(row) {
+                                            sum = +row.points_1 + +row.points_2 + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6a + +row.points_6b;
+                                            return row.sum == sum;
+                                        }'''
         }
     },
     'meta': {

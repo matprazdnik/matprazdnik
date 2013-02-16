@@ -22,6 +22,12 @@
         {% endfor %}
         load_autocomplete_choices();
         setInterval(load_autocomplete_choices, 60000);
+
+        {% for column in table.columns %}
+            {% if column.frontend_validation %}
+                validate_{{ column.name }} = {{ column.frontend_validation }};
+            {% endif %}
+        {% endfor %}
     }
 
     function push_autocomplete_value(column_name, value) {
@@ -81,6 +87,12 @@
         $("#data").prepend(html_code);
         {% for column in table.columns %}
             $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).bind('keydown', edit_keydown_handler);
+        {% endfor %}
+        {% for column in table.columns %}
+            {% if column.frontend_validation %}
+                $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).attr('frontend_validation', 'true');
+                $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).attr('row_id', sprintf('%(id)s', row));
+            {% endif %}
         {% endfor %}
         var ids = new Array(0);
         {% for column in table.columns %}
@@ -155,6 +167,23 @@
         if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
             eventObj.preventDefault();
             eventObj.stopImmediatePropagation();
+            <!-- start of local validation -->
+            $(this).parent().css('background-color', 'white');
+            if ($(this).attr('frontend_validation') == 'true') {
+                var validate_function_name = 'validate_' + $(this).attr('data-field-name');
+                var row = new Object;
+                var row_id = $(this).attr('row_id');
+                {% for column in table.columns %}
+                    row['{{ column.name }}'] = $('#datacell_' + row_id + '_{{ column.name }}').text();
+                {% endfor %}
+                debugger;
+                var ok = window[validate_function_name](row);
+                if (!ok) {
+                    $(this).parent().css('background-color', 'red');
+                    return;
+                }
+            }
+            <!-- end of local validation -->
             var request_data = {module: '{{ table.module_name }}',
                                 model: '{{ table.model_name }}'};
             request_data["row_id"] = $(this).attr('data-row-id');
