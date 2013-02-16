@@ -110,8 +110,17 @@
     }
 
     function addnew_keydown_handler(eventObj) {
-        if (eventObj.keyCode == 13) {
+        if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
+            eventObj.preventDefault();
+            eventObj.stopImmediatePropagation();
             var next_element = $(this).parent().next().children('input:text');
+            if (eventObj.shiftKey) {
+                var prev_element = $(this).parent().prev().children('input:text');
+                if (prev_element.length == 1) {
+                    prev_element.focus();
+                }
+                return;
+            }
             if (next_element.length == 1) {
                 next_element.focus();
             } else {
@@ -194,15 +203,23 @@
                 if (data.success) {
                     $("#" + id).text(data.value);
                     info("Значение сохранено");
-                    var next_element = $('#' + id).parent().next().children();
-                    if (next_element.length == 1) {
-                        next_element.focus();
+                    debugger;
+                    if (!eventObj.shiftKey) {
+                        var next_element = $('#' + id).parent().next().children();
+                        if (next_element.length == 1) {
+                            next_element.focus();
+                        } else {
+                            {% ifequal table.config.focus_after_change 'add_new' %}
+                                $("#inputcell-{{ table.config.initial_focus }}").focus();
+                            {% else %}
+                                $("#search-field").focus();
+                            {% endifequal %}
+                        }
                     } else {
-                        {% ifequal table.config.focus_after_change 'add_new' %}
-                            $("#inputcell-{{ table.config.initial_focus }}").focus();
-                        {% else %}
-                            $("#search-field").focus();
-                        {% endifequal %}
+                        var prev_element = $('#' + id).parent().prev().children();
+                        if (prev_element.length == 1) {
+                            prev_element.focus();
+                        }
                     }
                 } else {
                     error("Некорректное значение: " + data.error_message);
