@@ -36,8 +36,20 @@ class Table(object):
         self.model = config['meta']['model']
         self.module_name = self.model.__module__
         self.model_name = self.model.__name__
-        self.initial_focus = config['meta']['initial_focus']
         self.columns = []
+
+        class Config:
+            pass
+
+        self.config = Config();
+        self.config.enable_add_new = config['meta'].get('add_new', False)
+        self.config.enable_search = config['meta'].get('search', False)
+        self.config.initial_focus = config['meta']['initial_focus']
+        self.config.autoupdate = config['meta'].get('autoupdate', False)
+        try:
+            self.config.search_by = config['meta']['search_by']
+        except:
+            pass
 
         if 'column_ordering' in config['meta']:
             column_ordering = config['meta']['column_ordering']

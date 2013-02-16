@@ -22,11 +22,20 @@ def get_foreign_key(column_name, model_class, value):
     if len(equal_objects) == 1:
         return equal_objects[0]
     if len(like_objects) > 1:
-        raise KeyError("Неоднозначность");
+        raise KeyError("Неоднозначность: Есть более двух объектов типа " + mapped_model_class._meta.verbose_name + ', соответствующих значению"' + value + '"');
     elif len(like_objects) == 0:
-        raise KeyError("Нет таких")
+        raise KeyError("Нет объектов типа " + mapped_model_class._meta.verbose_name + ", соответствующих значению " + value)
     else:
         return like_objects[0]
+
+def get_field_value(column_name, model_class, value):
+    field = get_field_by_name(column_name, model_class)
+    if value == '':
+        try:
+            value = field._meta.default_value
+        except:
+            pass
+    return value
 
 def convert_value_to_field_type(s, django_field_type):
     if isinstance(django_field_type, IntegerField):

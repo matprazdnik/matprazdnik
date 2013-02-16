@@ -2,7 +2,7 @@
 from django.shortcuts import render
 
 from main_app.models import Participant
-from main_app.tables import RegistrationTableConfig, SchoolsTableConfig
+from main_app.tables import RegistrationTableConfig, SchoolsTableConfig, ResultsTableConfig
 from flying_rows.models import ParticipantUpdateTime
 
 import datetime
@@ -31,6 +31,7 @@ def schools(request):
 def points(request):
     return render(request, 'points.html', attach_info({
         'nav': 'points',
+        'table': ResultsTableConfig,
         }))
 
 

@@ -6,7 +6,9 @@
 
     function init_flying_rows() {
         load_new_rows();
-        setInterval(load_new_rows, 2000);
+        {% if table.config.autoupdate %}
+            setInterval(load_new_rows, 2000);
+        {% endif %}
         setInterval(sort_rows, 2000);
 
         {% for column in table.columns %}
@@ -18,7 +20,39 @@
                 })});
             {% endif %}
         {% endfor %}
+        load_autocomplete_choices();
+        setInterval(load_autocomplete_choices, 60000);
     }
+
+    function push_autocomplete_value(column_name, value) {
+        if (autocomplete_choices[column_name].indexOf(value) == -1) {
+            autocomplete_choices[column_name].push(value);
+        }
+    }
+
+    function load_autocomplete_choices() {
+        var columns_space_delimited = '';
+        {% for column in table.columns %}
+            {% if column.config.autocomplete %}
+                if (columns_space_delimited != '') {
+                    columns_space_delimited += ' ';
+                }
+                columns_space_delimited += '{{ column.name }}';
+            {% endif %}
+        {% endfor %}
+        var request_data = { module: '{{ table.module_name }}',
+                             model: '{{ table.model_name }}',
+                             columns_space_delimited : columns_space_delimited,
+                             }
+        $.get('{% url 'flying_rows.views.load_autocomplete_choices' %}', request_data, function(data, status) {
+            for (var i in data) {
+                for (var j in data[i]) {
+                    push_autocomplete_value(i, data[i][j]);
+                }
+            }
+        });
+    }
+
 
     function load_new_rows() {
         var request_data = {highest_loaded_id: highest_loaded_id,
@@ -82,7 +116,7 @@
                         {% for column in table.columns  %}
                             $('#inputcell-{{ column.name }}').val('');
                         {% endfor %}
-                        $("#inputcell-{{ table.initial_focus }}").focus();
+                        $("#inputcell-{{ table.config.initial_focus }}").focus();
                     } else {
                         error("Некорректное значение: " + data.error_message);
                     }
@@ -112,6 +146,12 @@
                     var next_element = $('#' + id).parent().next().children();
                     if (next_element.length == 1) {
                         next_element.focus();
+                    } else {
+                        {% ifequal table.config.focus_after_change 'add_new' %}
+                            $("#inputcell-{{ table.config.initial_focus }}").focus();
+                        {% else %}
+                            $("#search-field").focus();
+                        {% endifequal %}
                     }
                 } else {
                     error("Некорректное значение: " + data.error_message);
@@ -141,9 +181,70 @@
     $(document).ready(init_flying_rows);
 </script>
 
-{% if table.config.meta.enable_search %}
+{% if table.config.enable_search %}
     <div id="search">
+        <input type="text" id="search-field" autocomplete="true">
     </div>
+    <script type="text/javascript">
+        function search(value) {
+            <!-- ajax request to server -->
+            <!-- params: module model search_fields_space_delimited search_value -->
+            <!-- returns: row_id -->
+            var search_fields_space_delimited = '';
+            {% for column_name in table.config.search_by %}
+                if (search_fields_space_delimited != '') {
+                    search_fields_space_delimited += ' ';
+                }
+                search_fields_space_delimited += '{{ column_name }}';
+            {% endfor %}
+            var request_data = { module: '{{ table.module_name }}',
+                                 model: '{{ table.model_name }}',
+                                 search_fields_space_delimited: search_fields_space_delimited,
+                                 search_value: value,
+            };
+            $.get("{% url 'flying_rows.views.search' %}", request_data, function(data, status) {
+                if (data.success) {
+                    <!-- alert(data.row_id); -->
+                    $("#search-field").val('');
+                    $("#datacell_" + data.row_id + "_{{ table.config.initial_focus }}").focus();
+                } else {
+                    error(data.error_message)
+                }
+            });
+        }
+        $("#search-field").bind('keydown', function(eventObj) {
+            if (eventObj.keyCode == 13) {
+                search($("#search-field").val());
+            }
+        })
+        function load_search_hints(){
+            var search_fields_space_delimited = '';
+            {% for column_name in table.config.search_by %}
+                if (search_fields_space_delimited != '') {
+                    search_fields_space_delimited += ' ';
+                }
+                search_fields_space_delimited += '{{ column_name }}';
+            {% endfor %}
+            var request_data = { module: '{{ table.module_name }}',
+                model: '{{ table.model_name }}',
+                search_fields_space_delimited: search_fields_space_delimited,
+            };
+            $.get("{% url 'flying_rows.views.get_search_hints' %}", request_data, function(data, status){
+                for (i in data.search_hints) {
+                    search_hints.push(data.search_hints[i]);
+                }
+            })
+        }
+        function init_search_hints() {
+            search_hints = new Array;
+            $(function() {$("#search-field").autocomplete({
+                delay: 0,
+                source: search_hints
+            })});
+            load_search_hints();
+        }
+        init_search_hints();
+    </script>
 {% endif %}
 
 <div id="info_field" style="color: green">
@@ -166,7 +267,7 @@
 
     {% block table-body %}
     <tbody>
-        {% if table.config.meta.enable_add_new %}
+        {% if table.config.enable_add_new %}
             <tr id="add_new_row">
                 {% for column in table.columns %}
                     <td>

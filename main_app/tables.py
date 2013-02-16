@@ -21,6 +21,7 @@ RegistrationTableConfig = {
         },
         'gender': {
             'weight': 0.1,
+            'default-value': 'м',
         },
         'school': {
 #            'str': 'name_and_city',  # default representation is str(...)
@@ -31,15 +32,18 @@ RegistrationTableConfig = {
         'grade': {
             'autocomplete': False,
             'weight': 0.1,
+            'default-value': 6,
         }
     },
     'meta': {
-        'add-new': True,
+        'add_new': True,
+        'autoupdate': False,
         'model': Participant,
         'sort_by': ('-id',),
         'column_ordering': ( 'number', 'surname', 'name', 'gender', 'school', 'grade'),
         'initial_focus': 'number',
-        'after_save_focus': 'add_new',  # choices: add_new, search
+        'focus_after_change': 'add_new',  # choices: add_new, search
+        'focus_after_add': 'add_new',
         'search_by': ('number', 'surname', 'school'),
     }
 }
@@ -57,13 +61,48 @@ SchoolsTableConfig = {
         }
     },
     'meta': {
-        'add-new': True,
+        'add_new': True,
+        'autoupdate': False,
         'model': School,
         'sort_by': ('city', 'name'),
         'column_ordering': ('name', 'city', 'nominative'),
         'initial_focus': 'name',
-        'after_save_focus': 'search',
+        'focus_after_change': 'add_new',
+        'focus_after_add': 'add_new',
         'search_by': ('name', 'city', 'nominative')
+    }
+}
+
+ResultsTableConfig = {
+    'columns': {
+        'number': {
+        },
+        'points_1': {
+        },
+        'points_2': {
+        },
+        'points_3': {
+        },
+        'points_4': {
+        },
+        'points_5': {
+        },
+        'points_6a': {
+        },
+        'points_6b': {
+        },
+        'sum': {
+        }
+    },
+    'meta': {
+        'add_new': False,
+        'search': True,
+        'autoupdate': False,
+        'model': Participant,
+        'initial_focus': 'points_1',
+        'search_by': ('number', 'name', 'surname'),
+        'focus_after_change': 'search',
+        'column_ordering': ('number', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6a', 'points_6b', 'sum'),
     }
 }
 
