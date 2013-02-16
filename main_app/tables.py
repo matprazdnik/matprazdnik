@@ -17,7 +17,7 @@ RegistrationTableConfig = {
             'weight': 0.7,
         },
         'surname': {
-            'autocomplete': False,
+            'autocomplete': True,
             'weight': 1.5,
         },
         'name': {
@@ -41,7 +41,7 @@ RegistrationTableConfig = {
     },
     'meta': {
         'add_new': True,
-        'autoupdate': False,
+        'autoupdate': True,
         'model': Participant,
         'sort_by': ('-id',),
         'column_ordering': ( 'number', 'surname', 'name', 'gender', 'school', 'grade'),
@@ -66,7 +66,7 @@ SchoolsTableConfig = {
     },
     'meta': {
         'add_new': True,
-        'autoupdate': False,
+        'autoupdate': True,
         'model': School,
         'sort_by': ('city', 'name'),
         'column_ordering': ('name', 'city', 'nominative'),
@@ -105,7 +105,7 @@ ResultsTableConfig = {
     'meta': {
         'add_new': False,
         'search': True,
-        'autoupdate': False,
+        'autoupdate': True,
         'model': Participant,
         'initial_focus': 'points_1',
         'search_by': ('number', 'name', 'surname'),
