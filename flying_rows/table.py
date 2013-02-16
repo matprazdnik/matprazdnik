@@ -2,11 +2,13 @@ from django.db.models.fields.related import ForeignKey
 
 
 class Column:
-    def __init__(self, name, django_field, config):
+    def __init__(self, name, django_field, config, frontend_validation):
         self.name = name
         self.django_field = django_field
         self.config = config
         self.is_foreign_key = isinstance(self.django_field, ForeignKey)
+        if frontend_validation is not None:
+            self.frontend_validation = frontend_validation
 
     def verbose_name(self):
         return self.config.get('verbose_name', self.django_field.verbose_name)
@@ -66,7 +68,8 @@ class Table(object):
         for column_name in column_ordering:
             self.columns.append(Column(name=column_name,
                     django_field=django_fields[column_name],
-                    config=_update_column_config_with_default_values(config['columns'].get(column_name, {}))))
+                    config=_update_column_config_with_default_values(config['columns'].get(column_name, {})),
+                    frontend_validation=config['columns'].get(column_name, {}).get('frontend_validation', None)))
 
         # setting width for columns
         total_weight = sum(column.config['weight'] for column in self.columns)

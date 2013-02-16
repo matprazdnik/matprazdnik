@@ -103,6 +103,28 @@
             if (next_element.length == 1) {
                 next_element.focus();
             } else {
+                <!-- start of local validation -->
+                var id = $(this).attr('id');
+                var row = new Object;
+                {% for column in table.columns %}
+                    $('#inputcell-{{ column.name }}').css('background-color', 'white');
+                    row['{{ column.name }}'] = $('#inputcell-{{ column.name }}').val();
+                {% endfor %}
+                debugger;
+                var ok = true;
+                {% for column in table.columns %}
+                    {% if column.frontend_validation %}
+                        var validate = {{ column.frontend_validation }};
+                        if (!validate(row)) {
+                            $('#inputcell-{{ column.name }}').css('background-color', 'red');
+                            ok = false;
+                        }
+                    {% endif %}
+                {% endfor %}
+                if (!ok) {
+                    return;
+                }
+                <!-- end of local validation -->
                 var request_data = {module: '{{ table.module_name }}',
                                     model: '{{ table.model_name }}',
                                     columns_space_delimited: '{{ table.columns_space_delimited }}'

@@ -6,9 +6,13 @@ from main_app.utils import get_school_genitive, normalize_city, get_diploma_text
 RegistrationTableConfig = {
     'columns': {
         'number': {
-            'frontend_validation': '''function validate(num) {
-                                          return ((+num[0] + +num[1] + +num[2] + +num[3]) % 10 == +num[4]) && ((+num[0] + 3*num[1] + 5*num[2] + 7*num[3]) % 10 == +num[5]);
-                                      }''',
+            'frontend_validation': '''function(row) {
+                                          num = row.number;
+                                          if (num.length != 6) return false;
+                                          if ((+num[0] + +num[1] + +num[2] + +num[3]) % 10 != +num[4]) return false;
+                                          if ((+num[0] + 3*num[1] + 5*num[2] + 7*num[3]) % 10 != +num[5]) return false;
+                                          return true;
+                                      }''', # USAGE OF & IS STRICTLY PROHIBITED!
             'autocomplete': False,  # see http://jqueryui.com/autocomplete/
             'weight': 0.7,
         },
