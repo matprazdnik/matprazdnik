@@ -36,7 +36,7 @@ RegistrationTableConfig = {
         'grade': {
             'autocomplete': False,
             'weight': 0.1,
-            'default-value': 6,
+            'default_value': '6',
         }
     },
     'meta': {
@@ -59,6 +59,7 @@ SchoolsTableConfig = {
         },
         'city': {
             'weight': 0.8,
+            'default_value': 'Москва'
         },
         'nominative': {
             'weight': 3,

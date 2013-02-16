@@ -146,6 +146,14 @@
                     return;
                 }
                 <!-- end of local validation -->
+                <!-- set default values -->
+                {% for column in table.columns %}
+                    {% if column.default_value %}
+                        if ($("#inputcell-{{ column.name }}").val() == '') {
+                            $("#inputcell-{{ column.name }}").val('{{ column.default_value }}');
+                        }
+                    {% endif %}
+                {% endfor %}
                 var request_data = {module: '{{ table.module_name }}',
                                     model: '{{ table.model_name }}',
                                     columns_space_delimited: '{{ table.columns_space_delimited }}'
