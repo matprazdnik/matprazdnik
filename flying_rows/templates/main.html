@@ -83,7 +83,8 @@
         {% for column in table.columns %}
         html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %} data-row-id="%(id)s" data-field-name="{{ column.name }}">%({{ column.name }})s</span></td>', row));
         {% endfor %}
-        html_code = '<tr>' + html_code.join('\n') + '<tr>';
+        html_code = sprintf('<tr id="td_%(id)s">', row) + html_code.join('\n') + '</tr>';
+{#        $(sprintf('#%(id)s">', row)).animate({backgroundColor: '#0000FF'}, 'slow');#}
         $("#data").prepend(html_code);
         {% for column in table.columns %}
             $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).bind('keydown', edit_keydown_handler);
@@ -156,7 +157,8 @@
                 {% endfor %}
                 var request_data = {module: '{{ table.module_name }}',
                                     model: '{{ table.model_name }}',
-                                    columns_space_delimited: '{{ table.columns_space_delimited }}'
+                                    columns_space_delimited: '{{ table.columns_space_delimited }}',
+                                    unique_columns: ''
                                    };
             {% for column in table.columns %}
                 request_data["{{ column.name }}"] = $('#inputcell-{{ column.name }}').val();

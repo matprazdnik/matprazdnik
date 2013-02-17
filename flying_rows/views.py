@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.db import models
@@ -124,13 +126,19 @@ def update_field(request):
 @csrf_exempt
 def add_new_row(request):
     # ajax request
-    # params: [module, model, columns_space_delimited, new_row_values]
+    # params: [module, model, columns_space_delimited, unique_columns]
 #    return HttpResponse(json.dumps({}), content_type = 'application/json')
     if request.method == "POST":
         try:
             column_ordering = request.POST['columns_space_delimited'].split()
             model_class = get_model_class(request)
             new_obj = model_class()
+
+            unique_columns = request.POST['unique_columns'].split()
+
+            if unique_columns and len(model_class.objects.filter(**{column: request.POST[column] for column in unique_columns})) > 0:
+                raise ValueError('Объект с такими ' + ' и '.join(unique_columns) + ' уже существует')
+
             for column_name in column_ordering:
                 if is_foreign_key(column_name, model_class):
                     # TODO: resolve foreign_key problem
@@ -143,7 +151,7 @@ def add_new_row(request):
             response_data = { 'success': True }
             return HttpResponse(json.dumps(response_data), content_type = 'application/json')
         except Exception as e:
-            response_data = { 'success': False, 'error_message': str(e) }
+            response_data = { 'success': False, 'error_message': str(e)}
             return HttpResponse(json.dumps(response_data), content_type = 'application/json')
     else:
         return HttpResponseNotAllowed(["POST"])

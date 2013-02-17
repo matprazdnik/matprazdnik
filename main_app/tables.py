@@ -68,6 +68,7 @@ SchoolsTableConfig = {
     'meta': {
         'add_new': True,
         'autoupdate': True,
+        'search': True,
         'model': School,
         'sort_by': ('city', 'name'),
         'column_ordering': ('name', 'city', 'nominative'),
