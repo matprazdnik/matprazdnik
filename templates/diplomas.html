@@ -3,10 +3,27 @@
 {% block title %}Все участники{% endblock %}
 
 
-{% block content-title %}Заголовок контента{% endblock %}
+{% block content-title %}Дипломы{% endblock %}
 
 {% block content %}
-    Содержание
+    <table>
+        <thead>
+            <th></th>
+            {% for column in table.columns %}
+                <th>{{ column }}</th>
+            {% endfor %}
+        </thead>
+        <tbody>
+            {% for row in table.rows %}
+                <tr>
+                    <td>{{ row.name }}</td>
+                    {% for value in row.data %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 
 

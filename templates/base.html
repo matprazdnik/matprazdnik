@@ -94,7 +94,9 @@
                 {% if nav == 'diplomas' %}
                     <div class="download-block">
                         <h5>{% block download-link %}Скачать какой-то документ{% endblock %}</h5>
-                        <button class="radius button">Скачать csv</button>
+                        <form method="get" action="{% url 'main_app.views.diplomas_csv' %}">
+                            <button class="radius button" type="submit">Скачать csv</button>
+                        </form>
                     </div>
                 {% endif %}
                 <div class="summary">

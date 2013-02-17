@@ -1,9 +1,12 @@
 # Create your views here.
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 
 from main_app.models import Participant
 from main_app.tables import RegistrationTableConfig, SchoolsTableConfig, ResultsTableConfig
 from flying_rows.models import ParticipantUpdateTime
+import csv
+from django.http import HttpResponse
+
 
 import datetime
 
@@ -36,22 +39,36 @@ def points(request):
 
 
 def diplomas(request):
+    class Row:
+        pass
+
+    class Table:
+        pass
+
+    table = Table()
+    max_score = max([int(participant.sum) if participant.sum is not None else 0 for participant in Participant.objects.all()])
+    table.rows = [Row(), Row()]
+    table.rows[0].name = '=';
+    table.rows[1].name = '>=';
+    table.rows[0].data = [len(list(Participant.objects.filter(sum=i))) for i in range(0, max_score + 1)]
+    table.rows[1].data = [len(list(Participant.objects.filter(sum__gte=i))) for i in range(0, max_score + 1)]
+    table.columns = [i for i in range(0, max_score + 1)]
+
     return render(request, 'diplomas.html', attach_info({
         'nav': 'diplomas',
+        'table': table
         }))
+
+def diplomas_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="diplomas.csv"'
+    writer = csv.writer(response)
+    for p in Participant.objects.all():
+        writer.writerow(list(map(str, [p.name, p.surname, p.gender, p.school, p.grade, p.sum])))
+    return response
 
 def timestamp():
     return int(datetime.datetime.now().strftime("%s"))
-
-def update_participant_update_time(p):
-    try:
-        pud = ParticipantUpdateTime.objects.get(participant = p);
-        pud.last_update_time = timestamp();
-        pud.save();
-    except:
-        pud = ParticipantUpdateTime(participant = p, last_update_time = timestamp());
-        pud.save();
-    print(pud);
 
 #@csrf_exempt
 #def update_participants(request): # ajax update request
