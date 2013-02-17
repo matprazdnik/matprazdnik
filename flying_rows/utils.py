@@ -18,9 +18,22 @@ def get_foreign_key(column_name, model_class, value):
     mapped_model_class = field.related.parent_model;
     objects = list(mapped_model_class.objects.all())
     equal_objects = list(filter(lambda object: str(object) == value, objects))
+
+    def almost_like(obj):
+        #WORKAROUND!
+        try:
+            columns = ['name', 'city', 'nominative']
+            field_values = [getattr(obj, column) for column in columns]
+            return all(chunk in field_values for chunk in value.split())
+        except:
+            return []
+
+    almost_like_objects = list(filter(almost_like, objects))
     like_objects = list(filter(lambda object: all(chunk in str(object) for chunk in value.split()), objects))
     if len(equal_objects) == 1:
         return equal_objects[0]
+    if len(almost_like_objects) == 1:
+        return almost_like_objects[0]
     if len(like_objects) > 1:
         raise KeyError("Неоднозначность: Есть более двух объектов типа " + mapped_model_class._meta.verbose_name + ', соответствующих значению"' + value + '"');
     elif len(like_objects) == 0:

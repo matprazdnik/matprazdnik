@@ -179,6 +179,8 @@
                     alert(status);
                 });
             }
+        } else if (eventObj.keyCode == 36) {
+            $('#search-field').focus();
         }
     }
 
@@ -238,6 +240,8 @@
             }).fail(function(data, status){
                         alert("Не удалось обратиться к серверу!");
                     });
+        } else if (eventObj.keyCode == 36) {
+            $('#search-field').focus();
         }
         eventObj.stopImmediatePropagation();
     }
@@ -286,7 +290,8 @@
                     $("#search-field").val('');
                     $("#datacell_" + data.row_id + "_{{ table.config.initial_focus }}").focus();
                 } else {
-                    error(data.error_message)
+                    $('#inputcell-{{ table.config.initial_focus }}').focus();
+                    error(data.error_message);
                 }
             });
         }

@@ -35,6 +35,5 @@ class Participant(models.Model):
     points_3 = models.IntegerField('3', blank=True, null=True)
     points_4 = models.IntegerField('4', blank=True, null=True)
     points_5 = models.IntegerField('5', blank=True, null=True)
-    points_6a = models.IntegerField('6а', blank=True, null=True)
-    points_6b = models.IntegerField('6б', blank=True, null=True)
+    points_6 = models.IntegerField('6', blank=True, null=True)
     sum = models.IntegerField('сумма', blank=True, null=True)

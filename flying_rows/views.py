@@ -29,7 +29,7 @@ def load_new_rows(request):
         column_ordering = request.GET['columns_space_delimited'].split() + ['id']
         model_class = get_model_class(request)
 
-        objs = model_class.objects.filter(id__gt=highest_loaded_id)
+        objs = model_class.objects.filter(id__gt=highest_loaded_id).order_by('id')[:500]
         response_data = {}
         for obj in objs:
             response_data[obj.id] = {}

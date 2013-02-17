@@ -6,24 +6,33 @@ from main_app.utils import get_school_genitive, normalize_city, get_diploma_text
 RegistrationTableConfig = {
     'columns': {
         'number': {
-            'frontend_validation': '''function(row) {
-                                          num = row.number;
-                                          if (num.length != 6) return false;
-                                          if ((+num[0] + +num[1] + +num[2] + +num[3]) % 10 != +num[4]) return false;
-                                          if ((+num[0] + 3*num[1] + 5*num[2] + 7*num[3]) % 10 != +num[5]) return false;
-                                          return true;
-                                      }''', # USAGE OF & IS STRICTLY PROHIBITED!
+#            'frontend_validation': '''function(row) {
+#                                          num = row.number;
+#                                          if (num.length != 6) return false;
+#                                          if ((+num[0] + +num[1] + +num[2] + +num[3]) % 10 != +num[4]) return false;
+#                                          if ((+num[0] + 3*num[1] + 5*num[2] + 7*num[3]) % 10 != +num[5]) return false;
+#                                          return true;
+#                                      }''', # USAGE OF & IS STRICTLY PROHIBITED!
             'autocomplete': False,  # see http://jqueryui.com/autocomplete/
             'weight': 0.7,
         },
         'surname': {
             'autocomplete': True,
-            'weight': 1.5,
+            'weight': 1.3,
         },
         'name': {
             'autocomplete': True,
+            'weight': 0.9
         },
         'gender': {
+#            'frontend_validation': '''function(row) {
+#                                          gender = row.gender;
+#                                          if (gender == 'м' || gender == 'ж') {
+#                                           return true;
+#                                          } else {
+#                                           return false;
+#                                          }
+#                                      }''',
             'weight': 0.1,
             'default-value': 'м',
         },
@@ -43,12 +52,13 @@ RegistrationTableConfig = {
         'add_new': True,
         'autoupdate': True,
         'model': Participant,
+        'search': True,
         'sort_by': ('-id',),
         'column_ordering': ( 'number', 'surname', 'name', 'gender', 'school', 'grade'),
         'initial_focus': 'number',
         'focus_after_change': 'add_new',  # choices: add_new, search
         'focus_after_add': 'add_new',
-        'search_by': ('number', 'surname', 'school'),
+        'search_by': ('number', 'surname', 'name', 'school'),
     }
 }
 
@@ -93,9 +103,7 @@ ResultsTableConfig = {
         },
         'points_5': {
         },
-        'points_6a': {
-        },
-        'points_6b': {
+        'points_6': {
         },
         'sum': {
             'frontend_validation': ''' function(row) {
@@ -112,7 +120,7 @@ ResultsTableConfig = {
         'initial_focus': 'points_1',
         'search_by': ('number', 'name', 'surname'),
         'focus_after_change': 'search',
-        'column_ordering': ('number', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6a', 'points_6b', 'sum'),
+        'column_ordering': ('number', 'surname', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }
 
