@@ -81,7 +81,7 @@
     function prepend_row(row) { <!-- add new row from json data -->
         var html_code = new Array(0);
         {% for column in table.columns %}
-        html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %} data-row-id="%(id)s" data-field-name="{{ column.name }}">%({{ column.name }})s</span></td>', row));
+        html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %} data-row-id="%(id)s" data-field-name="{{ column.name }}" data-max_length="{{ column.config.max_length }}">%({{ column.name }})s</span></td>', row));
         {% endfor %}
         html_code = sprintf('<tr id="td_%(id)s">', row) + html_code.join('\n') + '</tr>';
 {#        $(sprintf('#%(id)s">', row)).animate({backgroundColor: '#0000FF'}, 'slow');#}
@@ -237,24 +237,21 @@
             request_data["field_name"] = $(this).attr('data-field-name');
             request_data["new_field_value"] = $(this).text();
             id = $(this).attr('id');
-            if ($(this).attr('quick_focus') == "true") {
-                focus_next(eventObj, id);
-            }
-            var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
-                if (data.success) {
-                    if ($("#" + id).attr('quick_focus') != "true") {
-                        focus_next(eventObj, id);
+                var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
+                    if (data.success) {
+
+                            focus_next(eventObj, id);
+
+                        // $("#" + id).text(data.value);
+                        info("Значение сохранено");
+                    } else {
+                        alert("Некорректное значение: " + data.error_message);
+                        $("#" + id).text(data.value);
+                        $("#" + id).focus();
                     }
-                    $("#" + id).text(data.value);
-                    info("Значение сохранено");
-                } else {
-                    alert("Некорректное значение: " + data.error_message);
-                    $("#" + id).text(data.value);
-                    $("#" + id).focus();
-                }
-            }).fail(function(data, status){
-                        alert("Не удалось обратиться к серверу!");
-                    });
+                }).fail(function(data, status){
+                            alert("Не удалось обратиться к серверу!");
+                        });
         } else if (eventObj.keyCode == 36) {
             $('#search-field').focus();
             $('#search-field').val('');

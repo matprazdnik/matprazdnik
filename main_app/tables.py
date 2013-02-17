@@ -83,7 +83,7 @@ SchoolsTableConfig = {
         'sort_by': ('city', 'name'),
         'column_ordering': ('name', 'city', 'nominative'),
         'initial_focus': 'name',
-        'focus_after_change': 'add_new',
+        'focus_after_change': 'none',
         'focus_after_add': 'add_new',
         'search_by': ('name', 'city', 'nominative')
     }
@@ -94,19 +94,26 @@ ResultsTableConfig = {
         'number': {
         },
         'points_1': {
+            'max_length': 1,
         },
         'points_2': {
+            'max_length': 1,
         },
         'points_3': {
+            'max_length': 1,
         },
         'points_4': {
+            'max_length': 1,
         },
         'points_5': {
+            'max_length': 1,
         },
         'points_6': {
-            'quick_focus': False
+            'quick_focus': False,
+            'max_length': 1,
         },
         'sum': {
+            'quick_focus': False,
             'frontend_validation': ''' function(row) {
                                             sum = +row.points_1 + +row.points_2 + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
                                             return row.sum == sum;

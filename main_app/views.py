@@ -52,21 +52,26 @@ def diplomas(request):
     table.rows = [Row(), Row()]
     table.rows[0].name = '='
     table.rows[1].name = '>='
-    table.rows[0].data = [len(list(Participant.objects.filter(sum=i))) for i in range(0, max_score + 1)]
-    table.rows[1].data = [len(list(Participant.objects.filter(sum__gte=i))) for i in range(0, max_score + 1)]
-    table.columns = [i for i in range(0, max_score + 1)]
+    min_score = 8
+    l = list(filter(lambda x: len(Participant.objects.filter(sum=x)) > 0, [i for i in range(min_score, max_score + 1)]))
+    table.rows[0].data = [len(list(Participant.objects.filter(sum=i))) for i in l ]
+    table.rows[1].data = [len(list(Participant.objects.filter(sum__gte=i))) for i in l ]
+    table.columns = l
 
     return render(request, 'diplomas.html', attach_info({
         'nav': 'diplomas',
         'table': table
         }))
 
+def normalize_school(s):
+    return str(s).replace(', г. Москва', '').replace(', г. Зеленоград', '')
+
 def diplomas_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="diplomas.csv"'
     writer = csv.writer(response)
     for p in Participant.objects.all():
-        writer.writerow(list(map(str, [p.name, p.surname, p.gender, p.school, p.grade, p.sum])))
+        writer.writerow(list(map(str, [p.name, p.surname, p.gender, p.points_1, p.points_2, p.points_3, p.points_4, p.points_5, p.points_6, normalize_school(p.school), p.grade, p.sum])))
     return response
 
 def timestamp():

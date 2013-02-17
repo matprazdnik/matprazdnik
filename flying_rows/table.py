@@ -22,6 +22,7 @@ def _update_column_config_with_default_values(column_config):
         'autocomplete': True,
         'editable': True,
         'weight': 1,
+        'max_length': -1,
         }
 
     default_column.update(column_config)
