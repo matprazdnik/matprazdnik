@@ -18,7 +18,7 @@ def get_foreign_key(column_name, model_class, value):
     mapped_model_class = field.related.parent_model;
     objects = list(mapped_model_class.objects.all())
     equal_objects = list(filter(lambda object: str(object) == value, objects))
-    like_objects = list(filter(lambda object: value in str(object), objects))
+    like_objects = list(filter(lambda object: all(chunk in str(object) for chunk in value.split()), objects))
     if len(equal_objects) == 1:
         return equal_objects[0]
     if len(like_objects) > 1:
