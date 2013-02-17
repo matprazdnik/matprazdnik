@@ -107,7 +107,7 @@ ResultsTableConfig = {
         },
         'sum': {
             'frontend_validation': ''' function(row) {
-                                            sum = +row.points_1 + +row.points_2 + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6a + +row.points_6b;
+                                            sum = +row.points_1 + +row.points_2 + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
                                             return row.sum == sum;
                                         }'''
         }
@@ -120,7 +120,7 @@ ResultsTableConfig = {
         'initial_focus': 'points_1',
         'search_by': ('number', 'name', 'surname'),
         'focus_after_change': 'search',
-        'column_ordering': ('number', 'surname', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
+        'column_ordering': ('number', 'surname', 'name', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }
 

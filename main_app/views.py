@@ -48,8 +48,8 @@ def diplomas(request):
     table = Table()
     max_score = max([int(participant.sum) if participant.sum is not None else 0 for participant in Participant.objects.all()])
     table.rows = [Row(), Row()]
-    table.rows[0].name = '=';
-    table.rows[1].name = '>=';
+    table.rows[0].name = '='
+    table.rows[1].name = '>='
     table.rows[0].data = [len(list(Participant.objects.filter(sum=i))) for i in range(0, max_score + 1)]
     table.rows[1].data = [len(list(Participant.objects.filter(sum__gte=i))) for i in range(0, max_score + 1)]
     table.columns = [i for i in range(0, max_score + 1)]

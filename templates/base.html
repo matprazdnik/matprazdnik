@@ -91,14 +91,14 @@
                         {% endcomment %}
                     </div>
                 {% endif %}
-                {% if nav == 'diplomas' %}
+{#                {% if nav == 'diplomas' %}#}
                     <div class="download-block">
                         <h5>{% block download-link %}Скачать какой-то документ{% endblock %}</h5>
                         <form method="get" action="{% url 'main_app.views.diplomas_csv' %}">
                             <button class="radius button" type="submit">Скачать csv</button>
                         </form>
                     </div>
-                {% endif %}
+{#                {% endif %}#}
                 <div class="summary">
                     <h5>Информация </h5>
                     Всего участников в базе: {{ num_participants }}

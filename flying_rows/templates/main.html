@@ -181,6 +181,7 @@
             }
         } else if (eventObj.keyCode == 36) {
             $('#search-field').focus();
+            $('#search-field').val('');
         }
     }
 
@@ -242,6 +243,7 @@
                     });
         } else if (eventObj.keyCode == 36) {
             $('#search-field').focus();
+            $('#search-field').val('');
         }
         eventObj.stopImmediatePropagation();
     }
@@ -268,10 +270,32 @@
         <input type="text" id="search-field" autocomplete="true">
     </div>
     <script type="text/javascript">
+        function get_local_value(id) {
+            var result = '';
+            {% for column_name in table.config.search_by %}
+                if (result != '') {
+                    result += ' ';
+                }
+                result += $("#datacell_" + id + "_{{ column_name }}").text();
+            {% endfor %}
+            return result;
+        }
+
         function search(value) {
             <!-- ajax request to server -->
             <!-- params: module model search_fields_space_delimited search_value -->
             <!-- returns: row_id -->
+            var local_matched_ids = new Array;
+            for (var id = 1; id <= highest_loaded_id; id ++) {
+                if ($.trim(get_local_value(id)) == $.trim(value)) {
+                    local_matched_ids.push(id);
+                }
+            }
+            if (local_matched_ids.length == 1) {
+                $("#search-field").val('');
+                $("#datacell_" + local_matched_ids[0] + "_{{ table.config.initial_focus }}").focus();
+                return;
+            }
             var search_fields_space_delimited = '';
             {% for column_name in table.config.search_by %}
                 if (search_fields_space_delimited != '') {
