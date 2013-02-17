@@ -107,6 +107,11 @@
                     autocomplete_choices['{{ column.name }}'].push(val);
                 }
             {% endif %}
+            {% if column.quick_focus %}
+                $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).attr('quick_focus', 'true');
+            {% else %}
+                $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).attr('quick_focus', 'false');
+            {% endif %}
         {% endfor %}
     }
 
@@ -185,6 +190,26 @@
         }
     }
 
+    function focus_next(eventObj, id) {
+        if (!eventObj.shiftKey) {
+            var next_element = $('#' + id).parent().next().children();
+            if (next_element.length == 1) {
+                next_element.focus();
+            } else {
+            {% ifequal table.config.focus_after_change 'add_new' %}
+                $("#inputcell-{{ table.config.initial_focus }}").focus();
+            {% else %}
+                $("#search-field").focus();
+            {% endifequal %}
+            }
+        } else {
+            var prev_element = $('#' + id).parent().prev().children();
+            if (prev_element.length == 1) {
+                prev_element.focus();
+            }
+        }
+    }
+
     function edit_keydown_handler(eventObj) {
         if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
             eventObj.preventDefault();
@@ -212,31 +237,20 @@
             request_data["field_name"] = $(this).attr('data-field-name');
             request_data["new_field_value"] = $(this).text();
             id = $(this).attr('id');
+            if ($(this).attr('quick_focus') == "true") {
+                focus_next(eventObj, id);
+            }
             var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
                 if (data.success) {
+                    if ($("#" + id).attr('quick_focus') != "true") {
+                        focus_next(eventObj, id);
+                    }
                     $("#" + id).text(data.value);
                     info("Значение сохранено");
-                    debugger;
-                    if (!eventObj.shiftKey) {
-                        var next_element = $('#' + id).parent().next().children();
-                        if (next_element.length == 1) {
-                            next_element.focus();
-                        } else {
-                            {% ifequal table.config.focus_after_change 'add_new' %}
-                                $("#inputcell-{{ table.config.initial_focus }}").focus();
-                            {% else %}
-                                $("#search-field").focus();
-                            {% endifequal %}
-                        }
-                    } else {
-                        var prev_element = $('#' + id).parent().prev().children();
-                        if (prev_element.length == 1) {
-                            prev_element.focus();
-                        }
-                    }
                 } else {
-                    error("Некорректное значение: " + data.error_message);
-                    $(this).text(data.value);
+                    alert("Некорректное значение: " + data.error_message);
+                    $("#" + id).text(data.value);
+                    $("#" + id).focus();
                 }
             }).fail(function(data, status){
                         alert("Не удалось обратиться к серверу!");

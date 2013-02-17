@@ -2,7 +2,7 @@ from django.db.models.fields.related import ForeignKey
 
 
 class Column:
-    def __init__(self, name, django_field, config, frontend_validation, default_value):
+    def __init__(self, name, django_field, config, frontend_validation, default_value, quick_focus):
         self.name = name
         self.django_field = django_field
         self.config = config
@@ -11,6 +11,7 @@ class Column:
             self.frontend_validation = frontend_validation
         if default_value is not None:
             self.default_value = default_value
+        self.quick_focus = quick_focus
 
     def verbose_name(self):
         return self.config.get('verbose_name', self.django_field.verbose_name)
@@ -72,7 +73,8 @@ class Table(object):
                     django_field=django_fields[column_name],
                     config=_update_column_config_with_default_values(config['columns'].get(column_name, {})),
                     frontend_validation=config['columns'].get(column_name, {}).get('frontend_validation', None),
-                    default_value=config['columns'].get(column_name, {}).get('default_value', None)
+                    default_value=config['columns'].get(column_name, {}).get('default_value', None),
+                    quick_focus = config['columns'].get(column_name, {}).get('quick_focus', True)
             ))
 
         # setting width for columns

@@ -104,6 +104,7 @@ ResultsTableConfig = {
         'points_5': {
         },
         'points_6': {
+            'quick_focus': False
         },
         'sum': {
             'frontend_validation': ''' function(row) {

@@ -14,6 +14,8 @@ import datetime
 def attach_info(dict_):
     return dict({
         'num_participants': len(Participant.objects.all()),
+        'number_not_null': len(list(filter(lambda x: x.number is not None and x.number != '',Participant.objects.all()))),
+        'participants_with_score': len(list(filter(lambda x: x.sum is not None and x.sum != '', Participant.objects.all())))
     }, **dict_)
 
 
@@ -69,6 +71,10 @@ def diplomas_csv(request):
 
 def timestamp():
     return int(datetime.datetime.now().strftime("%s"))
+
+def update_participants(request):
+    # fields: school name surname
+    return
 
 #@csrf_exempt
 #def update_participants(request): # ajax update request

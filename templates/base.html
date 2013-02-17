@@ -101,7 +101,12 @@
 {#                {% endif %}#}
                 <div class="summary">
                     <h5>Информация </h5>
-                    Всего участников в базе: {{ num_participants }}
+                    Всего участников в базе: {{ num_participants }} <br>
+
+                    Участников с непустым номером: {{ number_not_null }} <br>
+
+                    Участников с введенными баллами: {{ participants_with_score }}
+
                 </div>
             </div>
         </div>

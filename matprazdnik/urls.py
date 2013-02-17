@@ -26,8 +26,8 @@ urlpatterns = patterns('',
     url(r'^schools/$', 'main_app.views.schools'),
     url(r'^points/$', 'main_app.views.points'),
     url(r'^diplomas/$', 'main_app.views.diplomas'),
-
     url(r'^diplomas_csv/$', 'main_app.views.diplomas_csv'),
+    url(r'^update_participants/$', 'main_app.views.update_participants'),
 )
 
 if settings.DEBUG is False:   #if DEBUG is True it will be served automatically
