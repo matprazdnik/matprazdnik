@@ -1,5 +1,8 @@
 # Django settings for matprazdnik project.
 
+import os
+SCRIPT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -12,7 +15,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'db',                      # Or path to database file if using sqlite3.
+        'NAME': 'matprazdnik.db',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
@@ -59,7 +62,7 @@ MEDIA_URL = ''
 # Example: "/var/www/example.com/static/"
 
 # TODO: change this directory
-STATIC_ROOT = '/home/altimin/work/matprazdnik/matprazdnik/static/'
+STATIC_ROOT = os.path.join(SCRIPT_ROOT, 'collected_static')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -105,7 +108,7 @@ ROOT_URLCONF = 'matprazdnik.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'matprazdnik.wsgi.application'
 
-TEMPLATE_DIRS = ('/home/altimin/work/matprazdnik/templates',)
+TEMPLATE_DIRS = ()
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -118,7 +121,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-	'south',
+    'south',
     'main_app',
     'flying_rows',
 )
