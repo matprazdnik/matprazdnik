@@ -19,18 +19,17 @@ urlpatterns = patterns('',
     url(r'^flying_rows/', include('flying_rows.urls')),
 
     url(r'^$', 'main_app.views.participants'),
-#    url(r'^participants/update/$', 'main_app.views.update_participants'),
-#    url(r'^participants/add/$', 'main_app.views.add_participants'),
-#    url(r'^participants/getnew/$', 'main_app.views.get_new'),
+
     url(r'^participants/$', 'main_app.views.participants'),
     url(r'^schools/$', 'main_app.views.schools'),
     url(r'^points/$', 'main_app.views.points'),
     url(r'^diplomas/$', 'main_app.views.diplomas'),
     url(r'^diplomas_csv/$', 'main_app.views.diplomas_csv'),
-    url(r'^update_participants/$', 'main_app.views.update_participants'),
+    # url(r'^update_participants/$', 'main_app.views.update_participants'),
+    # TODO: what is it?
 )
 
-if settings.DEBUG is False:   #if DEBUG is True it will be served automatically
+if settings.DEBUG is False:   # if DEBUG is True it will be served automatically
     urlpatterns += patterns('',
         url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
     )

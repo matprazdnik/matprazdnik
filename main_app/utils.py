@@ -1,5 +1,6 @@
 # coding: utf-8
 
+
 def genitive(word):
     if word[-1] == 'о':
         return word[:-1] + 'о'
@@ -24,7 +25,7 @@ def normalize_city(city):
         city = city[2:]
     elif city.startswith('город '):
         city = city[6:]
-    return city[0].capitalize() + city[1:]
+    return city.capitalize()
 
 
 def get_diploma_text(gender, grade, genitive):

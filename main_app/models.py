@@ -2,7 +2,6 @@
 
 from django.db import models
 
-# Create your models here.
 
 class School(models.Model):
     name = models.CharField('номер/название', max_length=64)
@@ -23,7 +22,9 @@ class Participant(models.Model):
         ('ж', 'ж'),
     )
 
-    number = models.CharField('номер', max_length=32)
+    version_code = models.CharField('код версии', max_length=32)
+    participant_code = models.CharField('код версии', max_length=32)
+    test_number = models.CharField('номер работы', max_length=32)
     surname = models.CharField('фамилия', max_length=64)
     name = models.CharField('имя', max_length=64)
     gender = models.CharField('пол', max_length=1, choices=GENDER_CHOICES)

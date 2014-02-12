@@ -4,7 +4,7 @@ from django.contrib import admin
 
 
 class ParticipantAdmin(admin.ModelAdmin):
-    list_display = ('number', 'surname', 'name', 'gender', 'grade', 'school')
+    list_display = ('participant_code', 'test_number', 'surname', 'name', 'gender', 'grade', 'school')
 
 
 class SchoolAdmin(admin.ModelAdmin):
