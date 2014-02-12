@@ -13,7 +13,6 @@ def _update_table_config_with_default_values(table_config):
         'enable_search': True,
         'enable_add_new': True,
     }
-#    raise ValueError(str(table_config['meta']))
     default_meta.update(table_config['meta'])
     table_config['meta'] = default_meta
     return table_config

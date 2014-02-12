@@ -58,10 +58,10 @@ RegistrationTableConfig = {
         'search': True,
         'sort_by': ('-id',),
         'column_ordering': ('test_number', 'surname', 'name', 'gender', 'school', 'grade'),
-        'initial_focus': 'number',
+        'initial_focus': 'test_number',
         'focus_after_change': 'add_new',  # choices: add_new, search
         'focus_after_add': 'add_new',
-        'search_by': ('number', 'surname', 'name', 'school'),
+        'search_by': ('test_number', 'surname', 'name', 'school'),
     }
 }
 
@@ -94,7 +94,7 @@ SchoolsTableConfig = {
 
 ResultsTableConfig = {
     'columns': {
-        'number': {
+        'test_number': {
         },
         'points_1': {
             'max_length': 1,
@@ -129,8 +129,8 @@ ResultsTableConfig = {
         'autoupdate': True,
         'model': Participant,
         'initial_focus': 'points_1',
-        'search_by': ('number', 'name', 'surname'),
+        'search_by': ('test_number', 'name', 'surname'),
         'focus_after_change': 'search',
-        'column_ordering': ('number', 'surname', 'name', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
+        'column_ordering': ('test_number', 'surname', 'name', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }

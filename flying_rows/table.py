@@ -23,45 +23,47 @@ def _update_column_config_with_default_values(column_config):
         'editable': True,
         'weight': 1,
         'max_length': -1,
-        }
+    }
 
     default_column.update(column_config)
     return default_column
 
 
+class Config:
+    pass
+
+
 class Table(object):
     def __init__(self, config):
         self.config = config
+
         if not 'meta' in config:
             raise KeyError("No meta specified in config")
-        if not 'model' in config['meta']:
+        meta = config['meta']
+
+        if not 'model' in meta:
             raise KeyError("No model specified in config['meta']")
         if not 'columns' in config:
             raise KeyError("No columns specified in config")
 
-        self.model = config['meta']['model']
+        self.model = meta['model']
         self.module_name = self.model.__module__
         self.model_name = self.model.__name__
-        self.columns = []
 
-        class Config:
-            pass
+        self.config = Config()
+        self.config.enable_add_new = meta.get('add_new', False)
+        self.config.enable_search = meta.get('search', False)
+        self.config.initial_focus = meta['initial_focus']
+        self.config.autoupdate = meta.get('autoupdate', False)
 
-        self.config = Config();
-        self.config.enable_add_new = config['meta'].get('add_new', False)
-        self.config.enable_search = config['meta'].get('search', False)
-        self.config.initial_focus = config['meta']['initial_focus']
-        self.config.autoupdate = config['meta'].get('autoupdate', False)
-        try:
-            self.config.search_by = config['meta']['search_by']
-        except:
-            pass
+        if 'search_by' in meta:
+            self.config.search_by = meta['search_by']
 
-        if 'column_ordering' in config['meta']:
-            column_ordering = config['meta']['column_ordering']
+        if 'column_ordering' in meta:
+            column_ordering = meta['column_ordering']
             for column_name in config['columns']:
                 if column_name not in column_ordering:
-                    raise Exception("No column " + column_name + " in ordering") # TODO: update with correct exception
+                    raise ValueError("No column " + column_name + " in config['meta']['ordering']")
         else:
             column_ordering = list(config['columns'].keys())
 
@@ -69,13 +71,15 @@ class Table(object):
 
         # creating columns classes for rendering
         django_fields = {field.name: field for field in self.model._meta.fields}
+        self.columns = []
         for column_name in column_ordering:
-            self.columns.append(Column(name=column_name,
-                    django_field=django_fields[column_name],
-                    config=_update_column_config_with_default_values(config['columns'].get(column_name, {})),
-                    frontend_validation=config['columns'].get(column_name, {}).get('frontend_validation', None),
-                    default_value=config['columns'].get(column_name, {}).get('default_value', None),
-                    quick_focus = config['columns'].get(column_name, {}).get('quick_focus', True)
+            self.columns.append(Column(
+                name=column_name,
+                django_field=django_fields[column_name],
+                config=_update_column_config_with_default_values(config['columns'].get(column_name, {})),
+                frontend_validation=config['columns'].get(column_name, {}).get('frontend_validation', None),
+                default_value=config['columns'].get(column_name, {}).get('default_value', None),
+                quick_focus=config['columns'].get(column_name, {}).get('quick_focus', True)
             ))
 
         # setting width for columns
