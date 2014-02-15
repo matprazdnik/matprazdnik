@@ -52,6 +52,7 @@ RegistrationTableConfig = {
         }
     },
     'meta': {
+        'table_name': 'registration',
         'add_new': True,
         'autoupdate': True,
         'model': Participant,
@@ -79,6 +80,7 @@ SchoolsTableConfig = {
         }
     },
     'meta': {
+        'table_name': 'school',
         'add_new': True,
         'autoupdate': True,
         'search': True,
@@ -124,6 +126,7 @@ ResultsTableConfig = {
         }
     },
     'meta': {
+        'table_name': 'results',
         'add_new': False,
         'search': True,
         'autoupdate': True,

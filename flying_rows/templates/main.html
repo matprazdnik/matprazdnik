@@ -10,6 +10,7 @@
             setInterval(load_new_rows, 2000);
         {% endif %}
         setInterval(sort_rows, 2000);
+        setInterval(sendLocalChanges, 100);
 
         {% for column in table.columns %}
             {% if column.config.autocomplete %}
@@ -81,7 +82,7 @@
     function prepend_row(row) { <!-- add new row from json data -->
         var html_code = new Array(0);
         {% for column in table.columns %}
-        html_code.push(sprintf('<td><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %} data-row-id="%(id)s" data-field-name="{{ column.name }}" data-max_length="{{ column.config.max_length }}">%({{ column.name }})s</span></td>', row));
+        html_code.push(sprintf('<td id = datacell_%(id)s_{{ column.name }}_wrapper><span id="datacell_%(id)s_{{ column.name }}" {% if column.config.editable %}class="editable" contenteditable="true"{% endif %} data-row-id="%(id)s" data-field-name="{{ column.name }}" data-max_length="{{ column.config.max_length }}">%({{ column.name }})s</span></td>', row));
         {% endfor %}
         html_code = sprintf('<tr id="td_%(id)s">', row) + html_code.join('\n') + '</tr>';
 {#        $(sprintf('#%(id)s">', row)).animate({backgroundColor: '#0000FF'}, 'slow');#}
@@ -168,6 +169,9 @@
             {% for column in table.columns %}
                 request_data["{{ column.name }}"] = $('#inputcell-{{ column.name }}').val();
             {% endfor %}
+//                 localStorageId = "flying_rows.{{ table.name }}.local_changes.update_field." + generateId(20);
+//                 localStorage[localStorageId] = JSON.stringify(request_data);
+
                 $.post("{% url 'flying_rows.views.add_new_row' %}", request_data, function(data, status) {
                     if (data.success) {
                         info('Новая строка успешно сохранена');
@@ -210,6 +214,47 @@
         }
     }
 
+    function generateId(length) {
+        var result = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < length; i++ ) {
+            result += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        return result;
+    }
+
+    function sendLocalChanges() {
+        if (typeof String.prototype.startsWith != 'function') {
+            String.prototype.startsWith = function (str){
+                return this.slice(0, str.length) == str;
+             };
+        };
+
+        for (var key in localStorage) {
+            if (key.startsWith("flying_rows.{{ table.name }}.local_changes.update_field")) {
+                request_data = JSON.parse(localStorage[key]);
+
+                id = request_data["id"];
+
+                var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
+                    if (data.success) {
+                        // $("#" + id).text(data.value);
+                        $("#" + id + "_wrapper").css('background-color', 'white');
+                        localStorage.removeItem(key);
+                    } else {
+                        $("#" + id + "_wrapper").css('background-color', 'red');
+                        $("#" + id).text(data.value);
+                        $("#" + id).focus();
+                        localStorage.removeItem(key);
+                    }
+                }).fail(function(data, status){
+                });
+            }
+        };
+    }
+
     function edit_keydown_handler(eventObj) {
         if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
             eventObj.preventDefault();
@@ -236,22 +281,17 @@
             request_data["row_id"] = $(this).attr('data-row-id');
             request_data["field_name"] = $(this).attr('data-field-name');
             request_data["new_field_value"] = $(this).text();
+            request_data["id"] = $(this).attr('id');
+
+            localStorageId = "flying_rows.{{ table.name }}.local_changes.update_field." + generateId(20);
+
+            localStorage[localStorageId] = JSON.stringify(request_data);
+
             id = $(this).attr('id');
-                var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
-                    if (data.success) {
 
-                            focus_next(eventObj, id);
+            focus_next(eventObj, id);
 
-                        // $("#" + id).text(data.value);
-                        info("Значение сохранено");
-                    } else {
-                        alert("Некорректное значение: " + data.error_message);
-                        $("#" + id).text(data.value);
-                        $("#" + id).focus();
-                    }
-                }).fail(function(data, status){
-                            alert("Не удалось обратиться к серверу!");
-                        });
+            $("#" + id + "_wrapper").css('background-color', 'yellow');
         } else if (eventObj.keyCode == 36) {
             $('#search-field').focus();
             $('#search-field').val('');

@@ -43,10 +43,13 @@ class Table(object):
 
         if not 'model' in meta:
             raise KeyError("No model specified in config['meta']")
+        if not 'table_name' in meta:
+            raise KeyError("No table name specified in config['meta']")
         if not 'columns' in config:
             raise KeyError("No columns specified in config")
 
         self.model = meta['model']
+        self.name = meta['table_name']
         self.module_name = self.model.__module__
         self.model_name = self.model.__name__
 
