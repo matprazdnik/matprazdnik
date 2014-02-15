@@ -40,7 +40,8 @@ def diplomas(request):
         pass
 
     table = Table()
-    max_score = max([int(participant.sum) if participant.sum is not None else 0 for participant in Participant.objects.all()])
+    scores = [int(participant.sum) if participant.sum is not None else 0 for participant in Participant.objects.all()]
+    max_score = max(scores) if len(scores) > 0 else 0
     table.rows = [Row(), Row()]
     table.rows[0].name = '='
     table.rows[1].name = '>='
