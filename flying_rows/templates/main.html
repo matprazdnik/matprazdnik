@@ -4,8 +4,19 @@
     var highest_loaded_id = 0;
     var autocomplete_choices = {};
 
+    function init_load_rows() {
+        var prev_highest_loaded_id = highest_loaded_id;
+        function callback() {
+            if (prev_highest_loaded_id < highest_loaded_id) {
+                prev_highest_loaded_id = highest_loaded_id;
+                load_new_rows(callback);
+            }
+        }
+        load_new_rows(callback);
+    }
+
     function init_flying_rows() {
-        load_new_rows();
+        init_load_rows();
         {% if table.config.autoupdate %}
             setInterval(load_new_rows, 2000);
         {% endif %}
@@ -61,7 +72,7 @@
     }
 
 
-    function load_new_rows() {
+    function load_new_rows(callback) {
         var request_data = {highest_loaded_id: highest_loaded_id,
                             module: '{{ table.module_name }}',
                             model: '{{ table.model_name }}',
@@ -71,6 +82,9 @@
             for (var i in data) {
                 highest_loaded_id = Math.max(highest_loaded_id, i);
                 prepend_row(data[i]);
+            }
+            if (callback) {
+                callback();
             }
         })
     }
