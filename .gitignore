@@ -43,6 +43,12 @@ logs/*.log
 
 # Database
 *.db
+*.csv
+*.xls
 
 # Backups
 *.bak
+
+# Generated
+*.pickle
+*#
