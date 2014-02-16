@@ -386,6 +386,8 @@
         }
         $("#search-field").bind('keydown', function(eventObj) {
             if (eventObj.keyCode == 13) {
+                eventObj.preventDefault();
+                eventObj.stopImmediatePropagation();
                 search($("#search-field").val());
             }
         })
