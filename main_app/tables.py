@@ -89,7 +89,7 @@ SchoolsTableConfig = {
         'column_ordering': ('name', 'city', 'nominative'),
         'initial_focus': 'name',
         'focus_after_change': 'none',
-        'focus_after_add': 'add_new',
+        'focus_after_add': 'none',
         'search_by': ('name', 'city', 'nominative')
     }
 }
@@ -104,7 +104,10 @@ ResultsTableConfig = {
         'points_2': {
             'max_length': 1,
         },
-        'points_3': {
+        'points_3a': {
+            'max_length': 1,
+        },
+        'points_3b': {
             'max_length': 1,
         },
         'points_4': {
@@ -120,7 +123,7 @@ ResultsTableConfig = {
         'sum': {
             'quick_focus': False,
             'frontend_validation': ''' function(row) {
-                                            sum = +row.points_1 + +row.points_2 + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
+                                            sum = +row.points_1 + +row.points_2 + +row.points_3a + +row.points_3b + +row.points_4 + +row.points_5 + +row.points_6;
                                             return row.sum == sum;
                                         }'''
         }
@@ -134,6 +137,6 @@ ResultsTableConfig = {
         'initial_focus': 'points_1',
         'search_by': ('test_number', 'name', 'surname'),
         'focus_after_change': 'search',
-        'column_ordering': ('test_number', 'surname', 'name', 'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
+        'column_ordering': ('test_number', 'surname', 'name', 'points_1', 'points_2', 'points_3a', 'points_3b', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }

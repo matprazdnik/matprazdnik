@@ -13,10 +13,10 @@ from my_utils import read_tuples_from_csv, dialog, dialog_choices
 
 
 school_fields_name_map = {
-	'Номер школы': 'number',
-	'Статус школы': 'type',
-	'Город школы': 'city',
-	'Короткое название школы': 'nominative'
+	'school': 'school',
+	'school': 'type',
+	'school': 'city',
+	'school': 'nominative'
 }
 
 participant_fields_name_map = dict({

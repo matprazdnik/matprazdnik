@@ -33,9 +33,9 @@ def get_foreign_key(column_name, model_class, value):
 
     almost_like_objects = list(filter(almost_like, objects))
     like_objects = list(filter(lambda object: all(chunk in str(object) for chunk in value.split()), objects))
-    if len(equal_objects) == 1:
+    if len(equal_objects) >= 1:
         return equal_objects[0]
-    if len(almost_like_objects) == 1:
+    if len(almost_like_objects) >= 1:
         return almost_like_objects[0]
     if len(like_objects) > 1:
         raise KeyError("Неоднозначность: Есть более двух объектов типа " + mapped_model_class._meta.verbose_name + ', соответствующих значению"' + value + '"')

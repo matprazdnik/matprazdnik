@@ -23,7 +23,7 @@ class Participant(models.Model):
     )
 
     version_code = models.CharField('код версии', max_length=32)
-    participant_code = models.CharField('код версии', max_length=32)
+    participant_code = models.CharField('код участника', max_length=32)
     test_number = models.CharField('номер работы', max_length=32)
     surname = models.CharField('фамилия', max_length=64)
     name = models.CharField('имя', max_length=64)
@@ -34,6 +34,8 @@ class Participant(models.Model):
     points_1 = models.IntegerField('1', blank=True, null=True)
     points_2 = models.IntegerField('2', blank=True, null=True)
     points_3 = models.IntegerField('3', blank=True, null=True)
+    points_3a = models.IntegerField('3a', blank=True, null=True)
+    points_3b = models.IntegerField('3b', blank=True, null=True)
     points_4 = models.IntegerField('4', blank=True, null=True)
     points_5 = models.IntegerField('5', blank=True, null=True)
     points_6 = models.IntegerField('6', blank=True, null=True)

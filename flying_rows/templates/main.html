@@ -17,6 +17,7 @@
 
     function init_flying_rows() {
         init_load_rows();
+        localStorage.clear();
         {% if table.config.autoupdate %}
             setInterval(load_new_rows, 2000);
         {% endif %}
@@ -203,7 +204,7 @@
                     alert(status);
                 });
             }
-        } else if (eventObj.keyCode == 36 || eventObj.keyCode == 27) {
+        } else if (eventObj.keyCode == 27) {
             $('#search-field').focus();
             $('#search-field').val('');
         }
@@ -215,11 +216,13 @@
             if (next_element.length == 1) {
                 next_element.focus();
             } else {
+            {% comment %}
             {% ifequal table.config.focus_after_change 'add_new' %}
                 $("#inputcell-{{ table.config.initial_focus }}").focus();
             {% else %}
                 $("#search-field").focus();
             {% endifequal %}
+            {% endcomment %}
             }
         } else {
             var prev_element = $('#' + id).parent().prev().children();
@@ -280,7 +283,7 @@
 
             id = $(this).attr('id');
             focus_next(eventObj, id);
-        } else if (eventObj.keyCode == 36 || eventObj.keyCode == 27) {
+        } else if (eventObj.keyCode == 27) {
             $('#search-field').focus();
             $('#search-field').val('');
         }
@@ -317,13 +320,25 @@
         request_data["new_field_value"] = field.text();
         request_data["id"] = field.attr('id');
 
+        id = request_data["id"];
+
         localStorageId = "flying_rows.{{ table.name }}.local_changes.update_field." + generateId(20);
 
-        localStorage[localStorageId] = JSON.stringify(request_data);
-
-        //id = $(this).attr('id');
-        id = request_data["id"];
         $("#" + id + "_wrapper").css('background-color', 'yellow');
+
+        var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
+                    if (data.success) {
+                        // $("#" + id).text(data.value);
+                        $("#" + id + "_wrapper").css('background-color', '#eeffee');
+                    } else {
+                        $("#" + id + "_wrapper").css('background-color', 'red');
+                        $("#" + id).text(data.value);
+                        $("#" + id).focus();
+                    }
+                }).fail(function(data, status){
+                    $("#" + id + "_wrapper").css('background-color', 'red');
+                    $("#" + id).focus();
+                });
     }
 
     function debug_append(s) {

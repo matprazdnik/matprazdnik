@@ -80,11 +80,11 @@ def search(request):
     not_really_like_objects = objects
     for search_value_part in search_value.split():
         not_really_like_objects = [x for x in not_really_like_objects if search_value_part in x[0]]
-    if len(equal_objects) == 1:
+    if len(equal_objects) >= 1:
         response_data = {'success': True, 'row_id': equal_objects[0][1].id}
-    elif len(like_objects) == 1:
+    elif len(like_objects) >= 1:
         response_data = {'success': True, 'row_id': like_objects[0][1].id}
-    elif len(not_really_like_objects) == 1:
+    elif len(not_really_like_objects) >= 1:
         response_data = {'success': True, 'row_id': not_really_like_objects[0][1].id}
     elif len(not_really_like_objects) > 1:
         response_data = {'success': False,
@@ -106,6 +106,8 @@ def update_field(request):
         obj = model_class.objects.get(id=request.POST['row_id'])
         column_name = request.POST['field_name']
         value = request.POST['new_field_value'].strip()
+        if column_name.startswith('points') and not value:
+            value = 0
         if is_foreign_key(column_name, model_class):
             # TODO: resolve foreign_key problem
             value = get_foreign_key(column_name, model_class, value)
