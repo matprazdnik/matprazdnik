@@ -103,6 +103,7 @@
         $("#data").prepend(html_code);
         {% for column in table.columns %}
             $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).bind('keydown', edit_keydown_handler);
+            $(sprintf("#datacell_%(id)s_{{ column.name }}", row)).bind('blur', edit_change_handler);
         {% endfor %}
         {% for column in table.columns %}
             {% if column.frontend_validation %}
@@ -202,7 +203,7 @@
                     alert(status);
                 });
             }
-        } else if (eventObj.keyCode == 36) {
+        } else if (eventObj.keyCode == 36 || eventObj.keyCode == 27) {
             $('#search-field').focus();
             $('#search-field').val('');
         }
@@ -255,7 +256,7 @@
                 var result = $.post("{% url 'flying_rows.views.update_field' %}", request_data, function(data,  status) {
                     if (data.success) {
                         // $("#" + id).text(data.value);
-                        $("#" + id + "_wrapper").css('background-color', 'white');
+                        $("#" + id + "_wrapper").css('background-color', '#eeffee');
                         localStorage.removeItem(key);
                     } else {
                         $("#" + id + "_wrapper").css('background-color', 'red');
@@ -270,47 +271,59 @@
     }
 
     function edit_keydown_handler(eventObj) {
+        console.log(274);
         if (eventObj.keyCode == 13 || eventObj.keyCode == 9) {
             eventObj.preventDefault();
             eventObj.stopImmediatePropagation();
-            <!-- start of local validation -->
-            $(this).parent().css('background-color', 'white');
-            if ($(this).attr('frontend_validation') == 'true') {
-                var validate_function_name = 'validate_' + $(this).attr('data-field-name');
-                var row = new Object;
-                var row_id = $(this).attr('row_id');
-                {% for column in table.columns %}
-                    row['{{ column.name }}'] = $('#datacell_' + row_id + '_{{ column.name }}').text();
-                {% endfor %}
-                debugger;
-                var ok = window[validate_function_name](row);
-                if (!ok) {
-                    $(this).parent().css('background-color', 'red');
-                    return;
-                }
-            }
-            <!-- end of local validation -->
-            var request_data = {module: '{{ table.module_name }}',
-                                model: '{{ table.model_name }}'};
-            request_data["row_id"] = $(this).attr('data-row-id');
-            request_data["field_name"] = $(this).attr('data-field-name');
-            request_data["new_field_value"] = $(this).text();
-            request_data["id"] = $(this).attr('id');
 
-            localStorageId = "flying_rows.{{ table.name }}.local_changes.update_field." + generateId(20);
-
-            localStorage[localStorageId] = JSON.stringify(request_data);
+            save_field($(this));
 
             id = $(this).attr('id');
-
             focus_next(eventObj, id);
-
-            $("#" + id + "_wrapper").css('background-color', 'yellow');
-        } else if (eventObj.keyCode == 36) {
+        } else if (eventObj.keyCode == 36 || eventObj.keyCode == 27) {
             $('#search-field').focus();
             $('#search-field').val('');
         }
         eventObj.stopImmediatePropagation();
+    }
+
+    function edit_change_handler(eventObj) {
+        console.log($(this).text());
+        save_field($(this));
+    }
+
+    function save_field(field) {
+        // field.parent().css('background-color', 'white');
+        if (field.attr('frontend_validation') == 'true') {
+            var validate_function_name = 'validate_' + field.attr('data-field-name');
+            var row = new Object;
+            var row_id = field.attr('row_id');
+            console.log(row_id);
+            {% for column in table.columns %}
+                row['{{ column.name }}'] = $('#datacell_' + row_id + '_{{ column.name }}').text();
+            {% endfor %}
+            debugger;
+            var ok = window[validate_function_name](row);
+            if (!ok) {
+                field.parent().css('background-color', 'red');
+                return;
+            }
+        }
+        <!-- end of local validation -->
+        var request_data = {module: '{{ table.module_name }}',
+                            model: '{{ table.model_name }}'};
+        request_data["row_id"] = field.attr('data-row-id');
+        request_data["field_name"] = field.attr('data-field-name');
+        request_data["new_field_value"] = field.text();
+        request_data["id"] = field.attr('id');
+
+        localStorageId = "flying_rows.{{ table.name }}.local_changes.update_field." + generateId(20);
+
+        localStorage[localStorageId] = JSON.stringify(request_data);
+
+        //id = $(this).attr('id');
+        id = request_data["id"];
+        $("#" + id + "_wrapper").css('background-color', 'yellow');
     }
 
     function debug_append(s) {
@@ -421,10 +434,10 @@
     </script>
 {% endif %}
 
-<div id="info_field" style="color: green">
+<div id="info_field" style="color: green; margin-bottom: 0.5em;">
 </div>
 
-<div id="error_field" style="color: red">
+<div id="error_field" style="color: red; margin-bottom: 0.5em;">
 </div>
 
 <table width="100%" id="data_table">
