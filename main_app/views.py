@@ -57,16 +57,23 @@ def diplomas(request):
     }))
 
 
+def said_gender(gender):
+    return 'ученик' if gender == 'м' else 'ученица'
+
+
 def diplomas_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="diplomas.csv"'
     writer = csv.writer(response)
-    for p in Participant.objects.all():
-        writer.writerow(list(map(str, [
-            p.name, p.surname, p.gender, p.points_1, p.points_2, p.points_3,
-            p.points_4, p.points_5, p.points_6, normalize_school(p.school),
-            p.grade, p.sum
-        ])))
+    columns = ['name', 'surname', 'said_gender gender', 'grade', 'school', 'sum',
+               'points_1', 'points_2', 'points_3', 'points_4', 'points_5', 'points_6']
+    writer.writerow(columns)
+    for p in Participant.objects.all().order_by('sum'):
+        if not p.sum:
+            continue
+        writer.writerow([(globals()[column.split()[0]](getattr(p, column.split()[1]))
+                         if ' ' in column else getattr(p, column))
+                         for column in columns])
     return response
 
 
