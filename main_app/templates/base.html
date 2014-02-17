@@ -60,7 +60,7 @@
                         <li{% ifequal nav 'participants' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.participants' %}">все участники</a></li>
                         <li{% ifequal nav 'schools' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.schools' %}">все школы</a></li>
                         <li{% ifequal nav 'points' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.points' %}">ввод результатов</a></li>
-                        <li{% ifequal nav 'diplomas' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.diplomas' %}">границы дипломов</a></li>
+                        <li{% ifequal nav 'diplomas' %} class="active"{% endifequal %}><a href="{% url 'main_app.diplomas.views.diplomas' %}">границы дипломов</a></li>
                     </ul>
                 </div>
 
