@@ -23,17 +23,19 @@ class BoundsConfig:
         with open(CONFIG_FILENAME) as fin:
             self.raw = fin.read()
 
-        self.diploma_name_by_score = {}
+        self.diploma_degree_by_score = {}
+        self.degrees = []
         for line in self.raw.split('\n'):
             line = line.strip()
             if line:
-                name, scores = re.split('\s*:\s*', line)
+                degree, scores = re.split('\s*:\s*', line)
                 a, b = map(int, re.findall('\d+', scores))
                 for i in range(a, b + 1):
-                    self.diploma_name_by_score[i] = name
+                    self.diploma_degree_by_score[i] = degree
+                self.degrees.append((degree, a, b + 1))
 
     def __getitem__(self, key):
-       return self.diploma_name_by_score.get(key, '')
+       return self.diploma_degree_by_score.get(key, '')
 
 
 class Row:
@@ -47,6 +49,7 @@ class Table:
 def diplomas(request):
     if request.method == 'POST':
         bounds_config = BoundsConfig(request.POST['bounds_config'])
+        # TODO: return redirect to GET /diplomas (POST-REDIRECT-GET pattern)
     else:
         bounds_config = BoundsConfig()
 
@@ -64,9 +67,14 @@ def diplomas(request):
         ]
         table.rows.append(row)
 
+    degree_owners = [
+        (degree, Participant.objects.filter(sum__gt=lower_bound - 1, sum__lt=upper_bound + 1).count())
+        for degree, lower_bound, upper_bound in bounds_config.degrees
+    ]
 
     return render(request, 'diplomas.html', attach_info({
         'nav': 'diplomas',
         'table': table,
-        'bounds_config': bounds_config.raw,
+        'bounds_config_raw': bounds_config.raw,
+        'degree_owners': degree_owners,
     }))

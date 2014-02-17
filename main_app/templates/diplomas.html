@@ -8,28 +8,44 @@
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        <textarea name="bounds_config" style="width: 30em; height: 7em;">{{ bounds_config }}</textarea>
+        <textarea name="bounds_config" style="width: 30em; height: 7em;">{{ bounds_config_raw }}</textarea>
         <button class="radius button" type="submit">Сохранить</button>
     </form>
 
-    <table>
-        <thead>
-            <th></th>
-            {% for column in table.columns %}
-                <th>{{ column }}</th>
-            {% endfor %}
-        </thead>
-        <tbody>
-            {% for row in table.rows %}
-                <tr>
-                    <td>{{ row.name }}</td>
-                    {% for value in row.data %}
-                        <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div>
+    {% for degree, number in degree_owners %}
+        <div>{{ degree }}: {{ number }}</div>
+    {% endfor %}
+    </div>
+
+    <br>
+
+    <style type="text/css">
+        th:not(:last-child), td:not(:last-child) {
+            width: 3em;
+        }
+    </style>
+
+    <div>
+        <table>
+            <thead>
+                <th></th>
+                {% for column in table.columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </thead>
+            <tbody>
+                {% for row in table.rows %}
+                    <tr>
+                        <td><b>{{ row.name }}<b></td>
+                        {% for value in row.data %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 
