@@ -7,6 +7,7 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
+from flying_rows.models import Transaction
 
 from .utils import (is_foreign_key, get_field_by_name, get_field_value,
                     get_foreign_key, get_model_class_from_request, convert_to_string,
@@ -108,9 +109,43 @@ def update_field(request):
 
         obj = model_class.objects.filter(id=request.POST['row_id']).update(**{column_name: value})
 
+        t = Transaction()
+        t.author = request.POST.get('author', '')
+        t.type = 'update_cell'
+
+        t.model = request.POST['model']
+        t.module = request.POST['module']
+
+        t.rowId = request.POST['row_id']
+        t.column = column_name
+        t.originalValue = request.POST['value'].strip()
+        t.value = str(value)
+
+        t.save()
+
         response_data = {'success': True, 'value': str(value)}
     except Exception as e:
         response_data = {'success': False, 'error_message': str(e)}
+    return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+@require_GET
+def load_transactions(request):
+    # ajax request
+    # params: [module, model, last_transaction_id]
+    module = request.GET['module']
+    model = request.GET['model']
+    last_transaction_id = request.GET['last_transaction_id']
+
+    objs = Transaction.objects.\
+        filter(module=module, model=model, type="update_cell").\
+        filter(id__gt=last_transaction_id).order_by('id')
+    response_data = [{
+        "id": obj.id,
+        "column": obj.column,
+        "rowId": obj.rowId,
+        "value": obj.value
+    } for obj in objs]
     return HttpResponse(json.dumps(response_data), content_type='application/json')
 
 
@@ -118,7 +153,7 @@ def update_field(request):
 @csrf_exempt
 def add_new_row(request):
     # ajax request
-    # params: [module, model, data { column: value }, unique_columns]
+    # params: [module, model, data { column: value }]
     # return: success (True, False), error_message?
     try:
         data = json.loads(request.POST['data'])
@@ -136,7 +171,21 @@ def add_new_row(request):
                 value = get_field_value(column_name, model_class, data[column_name])
             setattr(new_obj, column_name, value)
         new_obj.save()
-        response_data = {'success': True, 'value': convert_to_string(value)}
+
+        t = Transaction()
+        t.author = request.POST.get('author', '')
+        t.type = 'add_row'
+
+        t.module = request.POST['module']
+        t.model = request.POST['model']
+
+        t.rowId = new_obj.id
+        t.value = request.POST['data']
+        t.originalValue = request.POST['data']
+
+        t.save()
+
+        response_data = {'success': True}
     except Exception as e:
         response_data = {'success': False, 'error_message': str(e)}
     return HttpResponse(json.dumps(response_data), content_type='application/json')

@@ -74,19 +74,10 @@ RegistrationTableConfig = {
 
 SchoolsTableConfig = {
     'columns': {
-        'name': {
-            'display_name': 'название',
-            'weight': 0.5,
-        },
-        'city': {
-            'display_name': 'город',
-            'weight': 0.8,
-            'default_value': 'Москва'
-        },
         'nominative': {
-            'display_name': 'именительный падеж',
+            'display_name': 'краткое имя школы',
             'weight': 3,
-        }
+        },
     },
     'meta': {
         'table_name': 'school',
@@ -95,11 +86,11 @@ SchoolsTableConfig = {
         'search': True,
         'model': School,
         'sort_by': ('city', 'name'),
-        'column_ordering': ('name', 'city', 'nominative'),
+        'column_ordering': ('nominative', ),
         'initial_focus': 'name',
         'focus_after_change': 'none',
         'focus_after_add': 'none',
-        'search_by': ('name', 'city', 'nominative')
+        'search_by': ('nominative', )
     }
 }
 
@@ -112,16 +103,16 @@ ResultsTableConfig = {
             'display_name': '1',
             'max_length': 1,
         },
-        'points_2': {
-            'display_name': '2',
+        'points_2a': {
+            'display_name': '2a',
             'max_length': 1,
         },
-        'points_3a': {
-            'display_name': '3a',
+        'points_2b': {
+            'display_name': '2b',
             'max_length': 1,
         },
-        'points_3b': {
-            'display_name': '3b',
+        'points_3': {
+            'display_name': '3',
             'max_length': 1,
         },
         'points_4': {
@@ -141,7 +132,7 @@ ResultsTableConfig = {
             'display_name': 'сумма',
             'quick_focus': False,
             'frontend_validation': ''' function(row) {
-                                            sum = +row.points_1 + +row.points_2 + +row.points_3a + +row.points_3b + +row.points_4 + +row.points_5 + +row.points_6;
+                                            sum = +row.points_1 + +row.points_2a + +row.points_2b + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
                                             return row.sum == sum;
                                         }'''
         }
@@ -155,6 +146,6 @@ ResultsTableConfig = {
         'initial_focus': 'points_1',
         'search_by': ('test_number', 'name', 'surname'),
         'focus_after_change': 'search',
-        'column_ordering': ('test_number', 'points_1', 'points_2', 'points_3a', 'points_3b', 'points_4', 'points_5', 'points_6', 'sum'),
+        'column_ordering': ('test_number', 'points_1', 'points_2a', 'points_2b', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }

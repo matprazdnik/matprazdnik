@@ -2,6 +2,7 @@ import json
 from django import template
 from django.template import Node, TemplateSyntaxError, loader, Context
 from django.utils.safestring import mark_safe
+from flying_rows.models import Transaction
 from flying_rows.table import Table
 from flying_rows.utils import get_table_data
 
@@ -37,11 +38,19 @@ class RenderTableNode(Node):
         table_config = _update_table_config_with_default_values(context[self.table_config_var_name])
         table = Table(table_config)
         t = loader.get_template('table.html')
+
+        transactions = list(Transaction.objects.all())
+        if len(transactions) == 0:
+            last_transaction_id = -1
+        else:
+            last_transaction_id = max(x.id for x in transactions)
+
         c = Context({
             'context': context,
             'table': table,
             'table_data': mark_safe(get_table_data(table_config)),
-            'table_columns_config': mark_safe(create_table_config_for_client(table_config))
+            'table_columns_config': mark_safe(create_table_config_for_client(table_config)),
+            'last_transaction_id': last_transaction_id,
         })
         return t.render(c)
 

@@ -10,10 +10,31 @@
     add_new_row_url: '{% url 'flying_rows.views.add_new_row' %}',
     load_new_rows_url: '{% url 'flying_rows.views.load_new_rows' %}',
     update_cell_url: '{% url 'flying_rows.views.update_field' %}',
+    load_new_transactions_url: '{% url 'flying_rows.views.load_transactions' %}',
     model: '{{ table.model_name }}',
     module: '{{ table.module_name }}'
   };
-  config.columns = {{ table_columns_config }}
+  config.columns = {{ table_columns_config }};
+
+  var lastTransactionId = {{ last_transaction_id }};
+
+  function loadNewTransactions() {
+    $.ajax({
+      url: config.load_new_transactions_url,
+      method: 'GET',
+      data: addDefaultParams({
+        last_transaction_id: lastTransactionId
+      }),
+      success: function(data) {
+        for (i in data) {
+          var item = data[i];
+          lastTransactionId = Math.max(lastTransactionId, item.id);
+          table.changeCellValue(item.rowId, item.column, item.value, false);
+        }
+      }
+    })
+  }
+  setInterval(loadNewTransactions, 10000);
 
   function addDefaultParams(data) {
     var newData = {};
@@ -152,7 +173,7 @@
                           prevColumn={this.prevColumn}/>
 
       return (
-        <table>
+        <table width={"100%"}>
           <colgroup>
             {columnsWidthDeclaration}
           </colgroup>
@@ -275,6 +296,8 @@
         success: function(data) {
           if (!data.success) {
             errorField.error(data.error_message)
+          } else {
+            loadNewRows();
           }
         },
         error: function() {
@@ -508,6 +531,7 @@
       for (i in this.state.changes) {
         this.submitChange(this.state.changes[i]);
       }
+      loadNewTransactions();
     },
     render: function() {
       var localChanges = this.state.changes.map(function(change){
@@ -563,6 +587,7 @@
     <ErrorField/>,
     document.getElementById("error_field"));
 
+  setInterval(localChangesManager.submitChanges, 1000);
 
-  setInterval(loadNewRows, 1000);
+  setInterval(loadNewRows, 5000);
 </script>
