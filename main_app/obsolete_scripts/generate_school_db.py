@@ -20,18 +20,20 @@ school_fields_name_map = {
 }
 
 participant_fields_name_map = dict({
-	'Код версии': 'version',
-	'Код участника': 'code',
+	'Код (не менять)': 'version',
+	'Код анкеты': 'code',
 	'Фамилия': 'surname',
 	'Имя': 'name',
 	'Класс': 'grade',
-	'Номер школы': 'number',
+    'Пол': 'gender',
+	'Номер школы (только число, если есть)': 'number',
 	'Город школы': 'city',
 	'Короткое название школы': 'nominative'
 }, **school_fields_name_map)
 
 School = namedtuple('School', school_fields_name_map.values())
 Participant = namedtuple('Participant', participant_fields_name_map.values())
+
 
 class FileDict():
 	def __init__(self, filename):
@@ -72,24 +74,24 @@ def clean_school_name(s):
 
 
 def extract_city(raw_city):
-	raw_city = raw_city.strip()
-	if not raw_city or raw_city == '0' or 'Москва' in raw_city:
-		raw_city = 'Москва'
-	regexps = ['(?:[Гг]ород |[Гг]\.(?![Оо]\.)\s?)(\w+)',
-			   '^(\w+)$',
-			   '(?:[Рр]оссия|[Уу]краина)[,\s]*(\w+)(?! обл)',
-			   '(\w+)(?! область)[,\s]*(?:[Рр]оссия|[Уу]краина)'
-			  ]
-	for regexp in regexps:
-		mo = re.search(regexp, raw_city, flags=re.UNICODE)
-		if mo:
-			city = mo.groups()[0].capitalize()
-			print('\t', raw_city, ':\t\t' + city)
-			return city
-	else:
-		if raw_city not in strange_cities:
-			strange_cities[raw_city] = dialog('Что это за город: ' + raw_city + '?')
-		return strange_cities[raw_city]
+    raw_city = raw_city.strip()
+    if not raw_city or raw_city == '0' or 'Москва' in raw_city:
+        raw_city = 'Москва'
+    regexps = ['(?:[Гг]ород |[Гг]\.(?![Оо]\.)\s?)(\w+)',
+               '^(\w+)$',
+               '(?:[Рр]оссия|[Уу]краина)[,\s]*(\w+)(?! обл)',
+               '(\w+)(?! область)[,\s]*(?:[Рр]оссия|[Уу]краина)'
+              ]
+    for regexp in regexps:
+        mo = re.search(regexp, raw_city, flags=re.UNICODE)
+        if mo:
+            city = mo.groups()[0].capitalize()
+            print('\t', raw_city, ':\t\t' + city)
+            return city
+    else:
+        if raw_city not in strange_cities:
+            strange_cities[raw_city] = dialog('Что это за город: ' + raw_city + '?')
+        return strange_cities[raw_city]
 
 
 def get_city(school):
@@ -112,7 +114,7 @@ def generate_school_db():
 	schools = read_tuples_from_csv(sys.argv[2], school_fields_name_map, School)
 	
 	for i, school in enumerate(schools):
-		schools[i] = school._replace(city = extract_city(school.city))
+		schools[i] = school._replace(city=extract_city(school.city))
 
 	added_schools = FileDict('added_schools.pickle')
 
@@ -177,8 +179,6 @@ def add_participants():
 
 		p = p._replace(surname = p.surname.capitalize(), name = p.name.capitalize())
 
-		# print(p)
-
 		for i in range(2):
 			try:
 				request = urllib.request.Request('http://' + IP_PORT + '/flying_rows/add_new_row/')
@@ -212,4 +212,3 @@ if __name__ == '__main__':
 		IP_PORT = sys.argv[1]
 		generate_school_db()
 		add_participants()
-		# strange_cities.save()

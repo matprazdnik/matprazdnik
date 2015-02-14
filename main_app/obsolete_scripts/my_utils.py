@@ -9,8 +9,8 @@ print(colorama.Style.BRIGHT)
                 
 
 def read_tuples_from_csv(csv_filename, name_map, namedtuple_class):
-    fin = open(csv_filename, 'r')
-    table = csv.reader(fin, delimiter=',')
+    fin = open(csv_filename, 'r', encoding='utf-8')
+    table = csv.reader(fin, delimiter=',', )
     head = None
     tuples = []
     for linenumber, row in enumerate(table):
@@ -26,21 +26,6 @@ def read_tuples_from_csv(csv_filename, name_map, namedtuple_class):
                         pass
             tuples.append(namedtuple_class(**d))
     return tuples
-
-
-# def save_tuples_to_csv(csv_filename, objects, fields, sort_by=[]):
-#     fout = open(csv_filename, 'w')
-#     table = csv.writer(fout)
-#     table.writerow(fields)
-#     for obj in sorted(objects, key=lambda o: [type(o.__dict__[field]) for field, type in sort_by]):
-#         row = []
-#         for field in fields:
-#             assert field in obj.__dict__, "%s is absent in %s" % (field, str(obj.__dict__))
-#             s = obj.__dict__[field]
-#             if isinstance(s, str):
-#                 s = s.replace('<<', '«').replace('>>', '»').encode('utf-8')
-#             row.append(s)
-#         table.writerow(row)
 
 
 def dialog_choices(message, varieties):

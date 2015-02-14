@@ -9,7 +9,7 @@ if [ -d 'venv' ] ; then
 
     # yes "yes" | python $CURRENT_SCRIPT_DIR/manage.py collectstatic
     python3 $CURRENT_SCRIPT_DIR/manage.py syncdb
-    python $CURRENT_SCRIPT_DIR/manage.py runserver
+    python3 $CURRENT_SCRIPT_DIR/manage.py runserver
 else 
     echo "$0: No venv found.  Check README.md for setup instructions"
 fi
