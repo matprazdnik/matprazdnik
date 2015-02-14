@@ -33,9 +33,9 @@ def get_foreign_key(column_name, model_class, value):
 
     almost_like_objects = list(filter(almost_like, objects))
     like_objects = list(filter(lambda object: all(chunk in str(object) for chunk in value.split()), objects))
-    if len(equal_objects) >= 1:
+    if len(equal_objects) == 1:
         return equal_objects[0]
-    if len(almost_like_objects) >= 1:
+    if len(almost_like_objects) == 1:
         return almost_like_objects[0]
     if len(like_objects) > 1:
         raise KeyError("Неоднозначность: Есть более двух объектов типа " + mapped_model_class._meta.verbose_name + ', соответствующих значению"' + value + '"')
@@ -63,18 +63,51 @@ def convert_value_to_field_type(s, django_field_type):
     else:
         raise NotImplementedError(str(django_field_type) + ' not supported yet')
 
-
-def get_model_class(request):
-    method = request.method
-    module_name = getattr(request, method)['module']
-    model_name = getattr(request, method)['model']
+def get_model_class(module_name, model_name):
     module = importlib.import_module(module_name)
     return getattr(module, model_name)
 
+def get_model_class_from_request(request):
+    method = request.method
+    module_name = getattr(request, method)['module']
+    model_name = getattr(request, method)['model']
+    return get_model_class(module_name, model_name)
 
-def convert_value_to_string(value):
-    return str(value) if value is not None else ''
+def convert_to_string(x):
+    if isinstance(x, list):
+        return [convert_to_string(y) for y in x]
+    if isinstance(x, dict):
+        return {convert_to_string(k): convert_to_string(v) for (k, v) in x.items()}
+    if x is None:
+        return ''
+    return str(x)
 
 
 def join_obj_fields(obj, fields):
     return ' '.join([str(getattr(obj, field)) for field in fields])
+
+
+def unique(iterable):
+    return list(set(iterable))
+
+
+def autocomplete_choices(column_name, model_class):
+    if is_foreign_key(column_name, model_class):
+        foreign_key_model_class = get_field_by_name(column_name, model_class).related.parent_model
+        return unique(str(i) for i in foreign_key_model_class.objects.all())
+    else:
+        return unique(str(getattr(i, column_name)) for i in model_class.objects.all())
+
+
+def get_table_data(table_config):
+    model_class = table_config['meta']['model']
+    objects = list(model_class.objects.all())
+
+    def get_necessary_data(object):
+        return {column: getattr(object, column) for column in table_config['columns']}
+
+    return convert_to_string({
+        'rows': list(reversed([str(object.id) for object in objects])),
+        'data': {str(object.id): get_necessary_data(object) for object in objects}
+    })
+

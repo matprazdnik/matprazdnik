@@ -1,4 +1,6 @@
-# coding: utf-8
+ # coding: utf-8
+
+from django.utils.safestring import mark_safe
 
 from main_app.models import Participant, School
 
@@ -14,39 +16,43 @@ RegistrationTableConfig = {
             #                              return true;
             #                          }''',
             'autocomplete': False,  # see http://jqueryui.com/autocomplete/
+            'display_name': 'номер работы',
             'weight': 0.7,
         },
         'surname': {
             'autocomplete': True,
+            'display_name': 'фамилия',
             'weight': 1.3,
         },
         'name': {
             'autocomplete': True,
+            'display_name': 'имя',
             'weight': 0.9
         },
         'gender': {
-            # TODO: enable
-            # 'frontend_validation': '''function(row) {
-            #                              gender = row.gender;
-            #                              if (gender == "м" || gender == "ж") {
-            #                               return true;
-            #                              } else {
-            #                               return false;
-            #                              }
-            #                          }''',
+            'frontend_validation': mark_safe('''function(row) {
+                                        gender = row.gender;
+                                        if (gender == "м" || gender == "ж") {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                      }'''),
             'weight': 0.1,
+            'display_name': 'пол',
             'default-value': 'м',
         },
         'school': {
             # TODO: can you implement it?
             # 'str': 'name_and_city',  # default representation is str(...)
             # inb4: too hard to implement
-
+            'display_name': 'школа',
             'autocomplete': True,
             'weight': 2.5,
         },
         'grade': {
             'autocomplete': False,
+            'display_name': 'класс',
             'weight': 0.1,
             'default_value': '6',
         }
@@ -69,13 +75,16 @@ RegistrationTableConfig = {
 SchoolsTableConfig = {
     'columns': {
         'name': {
+            'display_name': 'название',
             'weight': 0.5,
         },
         'city': {
+            'display_name': 'город',
             'weight': 0.8,
             'default_value': 'Москва'
         },
         'nominative': {
+            'display_name': 'именительный падеж',
             'weight': 3,
         }
     },
@@ -97,30 +106,39 @@ SchoolsTableConfig = {
 ResultsTableConfig = {
     'columns': {
         'test_number': {
+            'display_name': 'номер работы',
         },
         'points_1': {
+            'display_name': '1',
             'max_length': 1,
         },
         'points_2': {
+            'display_name': '2',
             'max_length': 1,
         },
         'points_3a': {
+            'display_name': '3a',
             'max_length': 1,
         },
         'points_3b': {
+            'display_name': '3b',
             'max_length': 1,
         },
         'points_4': {
+            'display_name': '4',
             'max_length': 1,
         },
         'points_5': {
+            'display_name': '5',
             'max_length': 1,
         },
         'points_6': {
+            'display_name': '6',
             'quick_focus': False,
             'max_length': 1,
         },
         'sum': {
+            'display_name': 'сумма',
             'quick_focus': False,
             'frontend_validation': ''' function(row) {
                                             sum = +row.points_1 + +row.points_2 + +row.points_3a + +row.points_3b + +row.points_4 + +row.points_5 + +row.points_6;
@@ -137,6 +155,6 @@ ResultsTableConfig = {
         'initial_focus': 'points_1',
         'search_by': ('test_number', 'name', 'surname'),
         'focus_after_change': 'search',
-        'column_ordering': ('test_number', 'surname', 'name', 'points_1', 'points_2', 'points_3a', 'points_3b', 'points_4', 'points_5', 'points_6', 'sum'),
+        'column_ordering': ('test_number', 'points_1', 'points_2', 'points_3a', 'points_3b', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }

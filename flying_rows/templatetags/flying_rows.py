@@ -1,6 +1,9 @@
+import json
 from django import template
 from django.template import Node, TemplateSyntaxError, loader, Context
+from django.utils.safestring import mark_safe
 from flying_rows.table import Table
+from flying_rows.utils import get_table_data
 
 
 register = template.Library()
@@ -17,6 +20,14 @@ def _update_table_config_with_default_values(table_config):
     table_config['meta'] = default_meta
     return table_config
 
+def create_table_config_for_client(table_config):
+    return json.dumps([
+        {
+            "name": column_name,
+            "display_name": table_config['columns'][column_name]['display_name'],
+            "weight": table_config['columns'][column_name].get('weight', 1)
+        } for column_name in table_config['meta']['column_ordering']
+    ])
 
 class RenderTableNode(Node):
     def __init__(self, table_config_var_name):
@@ -25,8 +36,13 @@ class RenderTableNode(Node):
     def render(self, context):
         table_config = _update_table_config_with_default_values(context[self.table_config_var_name])
         table = Table(table_config)
-        t = loader.get_template('main.html')
-        c = Context({'context': context, 'table': table})
+        t = loader.get_template('table.html')
+        c = Context({
+            'context': context,
+            'table': table,
+            'table_data': mark_safe(get_table_data(table_config)),
+            'table_columns_config': mark_safe(create_table_config_for_client(table_config))
+        })
         return t.render(c)
 
 

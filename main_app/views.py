@@ -3,6 +3,8 @@ import datetime
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils.safestring import mark_safe
+from flying_rows.utils import get_model_class, convert_to_string
 
 from main_app.models import Participant
 from main_app.tables import RegistrationTableConfig, SchoolsTableConfig, ResultsTableConfig
@@ -14,7 +16,7 @@ MIN_SCORE = 8  # lower bound for diplomas bounds view
 def participants(request):
     return render(request, 'participants.html', attach_info({
         'nav': 'participants',
-        'table': RegistrationTableConfig,
+        'table': RegistrationTableConfig
     }))
 
 

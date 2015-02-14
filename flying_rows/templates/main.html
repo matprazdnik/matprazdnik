@@ -33,8 +33,6 @@
                 })});
             {% endif %}
         {% endfor %}
-        load_autocomplete_choices();
-        setInterval(load_autocomplete_choices, 60000);
 
         {% for column in table.columns %}
             {% if column.frontend_validation %}
@@ -290,7 +288,7 @@
         eventObj.stopImmediatePropagation();
     }
 
-    function edit_change_handler(eventObj) {
+     function edit_change_handler(eventObj) {
         console.log($(this).text());
         save_field($(this));
     }

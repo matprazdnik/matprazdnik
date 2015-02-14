@@ -1,4 +1,4 @@
-keep in mind:
+ keep in mind:
     http://django-tables2.readthedocs.org/en/latest/index.html
 
 

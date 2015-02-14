@@ -1,0 +1,568 @@
+<script src="http://fb.me/react-0.12.2.js"></script>
+<script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+
+<div id="error_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
+<div id="table"></div>
+
+<script type="text/jsx">
+  var config = {
+    autocomplete_url: '{% url 'flying_rows.views.load_autocomplete_choices' %}',
+    add_new_row_url: '{% url 'flying_rows.views.add_new_row' %}',
+    load_new_rows_url: '{% url 'flying_rows.views.load_new_rows' %}',
+    update_cell_url: '{% url 'flying_rows.views.update_field' %}',
+    model: '{{ table.model_name }}',
+    module: '{{ table.module_name }}'
+  };
+  config.columns = {{ table_columns_config }}
+
+  function addDefaultParams(data) {
+    var newData = {};
+    for (key in data) {
+      newData[key] = data[key];
+    }
+    newData['model'] = config['model'];
+    newData['module'] = config['module'];
+    return newData;
+  }
+
+  function columnNames() {
+    var result = [];
+    for (i in config.columns) {
+      result.push(config.columns[i].name);
+    }
+    return result;
+  }
+
+  var Table = React.createClass({
+    getInitialState: function() {
+      return {data: this.props.initialData.data, rows: this.props.initialData.rows}
+    },
+
+    highestLoadedId: function() {
+      if (this.state.rows.length == 0) {
+        return -1;
+      }
+      return Math.max.apply(-1, this.state.rows);
+    },
+
+    addRow: function(rowId, rowData) {
+      var data = jQuery.extend({}, this.state.data);
+      data[rowId] = rowData;
+      this.setState({
+        rows: [rowId].concat(this.state.rows),
+        data: data
+      })
+    },
+
+    addRows: function(newRows) {
+      var newRowIds = [];
+      for (i in newRows) {
+        newRowIds.push(newRows[i].id);
+      }
+      var rows = newRowIds.concat(this.state.rows);
+      var data = this.state.data;
+      for (i in newRows) {
+        data[newRows[i].id] = newRows[i].data;
+      }
+      this.setState({
+        rows: rows,
+        data: data
+      })
+    },
+
+    nextColumn: function(columnName) {
+      var columns = this.props.config.columns;
+      for (i = 0; i < columns.length; ++i) {
+        if (columns[i].name == columnName) {
+          if (i + 1 == columns.length) {
+            return "_newline";
+          }
+          return columns[i + 1].name;
+        }
+      }
+      return undefined;
+    },
+
+    prevColumn: function(columnName) {
+      var columns = this.props.config.columns;
+      for (i = 1; i < columns.length; ++i) {
+        if (columns[i].name == columnName) {
+          return columns[i - 1].name;
+        }
+      }
+      return undefined;
+    },
+
+    changeCellValue: function(rowId, columnName, value, commit) {
+      var data = jQuery.extend(true, {}, this.state.data);
+      var oldValue = data[rowId][columnName];
+      if (value == oldValue) {
+        return;
+      }
+      if (commit) {
+        localChangesManager.addChange(rowId, columnName, value, oldValue);
+      }
+      data[rowId][columnName] = value;
+      this.setState({
+        rows: this.state.rows,
+        data: data
+      })
+    },
+
+    render: function () {
+      var columnNames = this.props.config.columns.map(function(column) {
+        return column['name'];
+      })
+      var changeCellValue = this.changeCellValue;
+
+      var old_this = this;
+      var rowNodes = this.state.rows.map(function(rowId) {
+        return (
+          <Row
+            key={'row_' + rowId}
+            data={old_this.state.data[rowId]}
+            rowId={rowId}
+            config={config}
+            columns={columnNames}
+            handleCellChange={changeCellValue}
+            nextColumn={old_this.nextColumn}
+            prevColumn={old_this.prevColumn}/>
+        );
+      });
+
+      var totalWeight = 0;
+      this.props.config.columns.map(function(column) {
+        totalWeight += column.weight;
+      })
+      var columnsWidthDeclaration = this.props.config.columns.map(function(column) {
+        return (
+          <col key={"colgroup_" + column.name} width={(column.weight / totalWeight * 100).toFixed(5) + "%"}/>
+        );
+      })
+
+      var tableHeader = this.props.config.columns.map(function(column) {
+        return (
+          <td key={"head_" + column.name}>{column.display_name}</td>
+        );
+      });
+
+      var inputNodes = <InputRow
+                          config={config}
+                          nextColumn={this.nextColumn}
+                          prevColumn={this.prevColumn}/>
+
+      return (
+        <table>
+          <colgroup>
+            {columnsWidthDeclaration}
+          </colgroup>
+          <thead>
+            {tableHeader}
+          </thead>
+          <tbody>
+            {inputNodes}
+            {rowNodes}
+          </tbody>
+        </table>
+      );
+    }
+  });
+
+  var Row = React.createClass({
+    shouldComponentUpdate: function(nextProps, nextState) {
+      return this.props.data != nextProps.data;
+    },
+
+    render: function() {
+      var props = this.props;
+
+      var cellNodes = this.props.config.columns.map(function(column) {
+        return (
+          <Cell
+            key={"cell_" + column.name}
+            columnName={column.name}
+            rowId={props.rowId}
+            data={props.data[column.name]}
+            handleCellChange={props.handleCellChange}
+            nextColumn={props.nextColumn}
+            prevColumn={props.prevColumn}
+            config={props.config}/>
+        );
+      })
+
+      return (
+        <tr>
+          {cellNodes}
+        </tr>
+      )
+    }
+  });
+
+  var Cell = React.createClass({
+    getId: function(columnName) {
+      return "cell_" + this.props.rowId + "_" + columnName;
+    },
+
+    getInitialState: function() {
+      return {data: []}
+    },
+
+    onKeyDownCapture: function(event) {
+      if (event.key == "Tab" || event.key == "Enter") {
+        event.stopPropagation();
+        event.preventDefault();
+        this.props.handleCellChange(
+          this.props.rowId,
+          this.props.columnName,
+          event.target.textContent.trim(),
+          true /* add to localChangesManager */
+        );
+        var nextColumnName;
+        if (!event.shiftKey) {
+          nextColumnName = this.props.nextColumn(this.props.columnName);
+        } else {
+          nextColumnName = this.props.prevColumn(this.props.columnName);
+        }
+        if (nextColumnName != undefined && nextColumnName[0] != '_') {
+          // focus on next column
+          $("#" + this.getId(nextColumnName)).focus();
+        }
+      }
+    },
+
+    render: function() {
+      var props = this.props;
+      return (
+        <td>
+          <span id={this.getId(props.columnName)} contentEditable={true} onKeyDown={this.onKeyDownCapture}>
+            {this.props.data}
+          </span>
+        </td>
+      );
+    }
+  });
+
+  var InputRow = React.createClass({
+    getInitialState: function() {
+      var data = {};
+      for (i in this.props.config.columns) {
+        data[this.props.config.columns[i].name] = '';
+      }
+      return {data: data};
+    },
+
+    handleInput: function(columnName, value) {
+      var data = jQuery.extend(true, {}, this.state.data);
+      data[columnName] = value;
+      this.setState({data: data});
+    },
+
+    getInputCellId: function(columnName) {
+      return 'input_cell_' + columnName;
+    },
+
+    submit: function() {
+      var data = this.state.data;
+
+      $.ajax({
+        url: this.props.config.add_new_row_url,
+        method: 'POST',
+        data: {
+          model: this.props.config.model,
+          module: this.props.config.module,
+          data: JSON.stringify(data)
+        },
+        success: function(data) {
+          if (!data.success) {
+            errorField.error(data.error_message)
+          }
+        },
+        error: function() {
+          errorField.error('Failed to connect to server');
+        }
+    });
+
+      for (i in this.props.config.columns) {
+        var column = this.props.config.columns[i].name;
+        data[column] = '';
+        $("#" + this.getInputCellId(column)).val("");
+        if (i == 0) {
+          $("#" + this.getInputCellId(column)).focus();
+        }
+      }
+      this.setState({data: data});
+      this.forceUpdate();
+    },
+
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    render: function() {
+      var props = this.props;
+
+      var old_this = this;
+
+      var inputCells = this.props.config.columns.map(function(column) {
+        return (
+          <InputCell
+            key={'input_cell_' + column.name}
+            nextColumn={props.nextColumn}
+            config={props.config}
+            prevColumn={props.prevColumn}
+            handleInput={old_this.handleInput}
+            columnName={column.name}
+            submit={old_this.submit}
+            getInputCellId={old_this.getInputCellId}/>
+        )
+      })
+
+      return (
+        <tr>
+          {inputCells}
+        </tr>
+      )
+    }
+  })
+
+  var InputCell = React.createClass({
+    getId: function() {
+      return this.props.getInputCellId(this.props.columnName);
+    },
+
+    componentDidMount: function() {
+      this.loadAutocompleteChoices();
+      setInterval(this.loadAutocompleteChoices, 60 * 1000)
+    },
+
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    loadAutocompleteChoices: function() {
+      var old_this = this;
+      if (this.props.config.autocomplete_url) {
+        $.get(
+          this.props.config.autocomplete_url,
+          {
+            model: this.props.config.model,
+            module: this.props.config.module,
+            column: this.props.columnName
+          },
+          function(data) {
+            $(function() {
+              ($("#" + old_this.getId())).autocomplete({
+                source: data,
+                delay: 0
+              });
+            })
+          }
+        )
+      }
+
+    },
+
+    sync: function() {
+      columnName = this.props.columnName;
+      this.props.handleInput(columnName, $("#" + this.getId())[0].value.trim());
+    },
+
+    onKeyDownCapture: function(event) {
+      if (event.key == "Enter" || event.key == "Tab") {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (!event.shiftKey) {
+          nextColumnName = this.props.nextColumn(this.props.columnName);
+        } else {
+          nextColumnName = this.props.prevColumn(this.props.columnName);
+        }
+
+        if (nextColumnName != undefined && nextColumnName[0] != "_") {
+          $("#" + this.props.getInputCellId(nextColumnName)).focus();
+        } else if (nextColumnName == "_newline") {
+          this.props.submit();
+        }
+      }
+    },
+
+    render: function() {
+      return (
+        <td>
+          <input
+            type="text"
+            id={this.getId()}
+            onKeyDown={this.onKeyDownCapture}
+            onKeyUp={this.sync}/>
+        </td>
+      );
+    }
+  });
+
+  var ErrorField = React.createClass({
+    getInitialState: function() {
+      return {error_message: ''};
+    },
+    ok: function() {
+      this.setState({error_message: ''})
+    },
+    error: function(message) {
+      this.setState({error_message: message});
+    },
+    render: function() {
+      return (
+        <span style={ {color: "red", "marginBottom": "0.5em"} }>
+          {this.state.error_message}
+        </span>
+      )
+    }
+  });
+
+  var LocalChange = React.createClass({
+    render: function() {
+      return (
+        <li>
+          {this.props.rowId}
+          {this.props.column}
+          {this.props.value}
+          {this.props.status}
+        </li>
+      )
+    }
+  });
+
+  var LocalChangesManager = React.createClass({
+    getInitialState: function() {
+      return { changes: JSON.parse(localStorage.getItem("localChanges")) || [] };
+    },
+    localStorageName: function() {
+      return "localChanges";
+    },
+    secureSetState: function(state) {
+      localStorage.setItem(this.localStorageName(), JSON.stringify(state.changes));
+      this.setState(state);
+    },
+    addChange: function(rowId, columnName, newValue, oldValue) {
+      var change = {
+        rowId: rowId,
+        column: columnName,
+        newValue: newValue,
+        oldValue: oldValue,
+        status: "new"
+      };
+
+      var changes = [change];
+      for (i in this.state.changes) {
+        var oldChange = this.state.changes[i];
+        if (oldChange.rowId != change.rowId || oldChange.column != change.column) {
+          changes.push(oldChange);
+        }
+      }
+      this.secureSetState({changes: changes});
+    },
+    setError: function(rowId, columnName) {
+      var changes = [];
+      for (i in this.state.changes) {
+        var oldChange = this.state.changes[i];
+        if (oldChange.rowId == rowId && oldChange.column != columnName) {
+          oldChange.status="error";
+        }
+        changes.push(oldChange);
+      }
+      this.secureSetState({changes: changes});
+    },
+    removeChange: function(rowId, columnName) {
+      var changes = [];
+      for (i in this.state.changes) {
+        var oldChange = this.state.changes[i];
+        if (oldChange.rowId != rowId || oldChange.column != columnName) {
+          changes.push(oldChange);
+        }
+      }
+      this.secureSetState({changes: changes});
+    },
+    submitChange: function(change) {
+      if (change.status != 'new') {
+        return;
+      }
+      var old_this = this;
+      $.ajax({
+        url: this.props.config.update_cell_url,
+        method: 'POST',
+        data: addDefaultParams({
+          row_id: change.rowId,
+          column: change.column,
+          value: change.newValue
+        }),
+        success: function(data){
+          if (data.success) {
+            table.changeCellValue(change.rowId, change.column, data.value, false);
+            old_this.removeChange(change.rowId, change.column);
+          } else {
+            old_this.setError(change.rowId, change.column);
+          }
+        }
+      })
+    },
+    submitChanges: function() {
+      for (i in this.state.changes) {
+        this.submitChange(this.state.changes[i]);
+      }
+    },
+    render: function() {
+      var localChanges = this.state.changes.map(function(change){
+        return (
+          <LocalChange
+            key={"local_change_"+change.rowId+"_"+change.column}
+            rowId={change.rowId}
+            column={change.column}
+            value={change.newValue}
+            status={change.status}
+          />
+        )
+      });
+      return (
+        <div className="menu">
+          <h5>Локальные изменения</h5>
+          <ul>
+            {localChanges}
+          </ul>
+        </div>
+      )
+    }
+  });
+
+  function loadNewRows() {
+    $.ajax({
+      url: config.load_new_rows_url,
+      method: 'GET',
+      data: addDefaultParams({
+        highest_loaded_id: table.highestLoadedId(),
+        columns: JSON.stringify(columnNames())
+      }),
+      success: function(data) {
+        table.addRows(data);
+      },
+      error: function() {
+      }
+    })
+  }
+
+  var initialTableData = {{ table_data }};
+
+  var localChangesManager = React.render(
+    <LocalChangesManager config={config}/>,
+    document.getElementById('local-changes-manager')
+  );
+
+  var table = React.render(
+    <Table tableName="table1" config={config} initialData={initialTableData}/>,
+    document.getElementById('table'));
+
+  var errorField = React.render(
+    <ErrorField/>,
+    document.getElementById("error_field"));
+
+
+  setInterval(loadNewRows, 1000);
+</script>
