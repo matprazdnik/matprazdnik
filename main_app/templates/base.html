@@ -49,7 +49,7 @@
     <body>
         <div class="row">
             <div class="ten columns offset-by-two">
-                    <h1>Матпраздник 2014, 6 класс</h1>
+                    <h1>Матпраздник 2015, 6 класс</h1>
             </div>
         </div>
 
@@ -92,6 +92,16 @@
                         </form>
                     </div>
 {#                {% endif %}#}
+                <div class="menu">
+                    <h5>Имя вбивальщика</h5>
+                    <input type="text" id="input-author" placeholder="Введите ваше имя"
+                           onchange="localStorage.setItem('author', $('#input-author').val())">
+                    <script>
+                        $(function() {
+                            $('#input-author').val(localStorage.getItem('author'));
+                        });
+                    </script>
+                </div>
                 <div class="summary menu">
                     <h5>Информация </h5>
                     Всего участников в базе: {{ num_participants }} <br>
@@ -106,7 +116,6 @@
                     Стрелочки, Tab / Shift+Tab, Enter - переходы между полями<p>
 
                     Esc, Home - возврат к строке поиска
-
                 </div>
                 <div id="local-changes-manager">
                 </div>
