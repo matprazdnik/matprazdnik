@@ -51,6 +51,7 @@ class RenderTableNode(Node):
             'table_data': mark_safe(get_table_data(table_config)),
             'table_columns_config': mark_safe(create_table_config_for_client(table_config)),
             'last_transaction_id': last_transaction_id,
+            'table_name': table_config['meta']['table_name']
         })
         return t.render(c)
 

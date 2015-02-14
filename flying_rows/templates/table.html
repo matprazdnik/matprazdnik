@@ -12,7 +12,8 @@
     update_cell_url: '{% url 'flying_rows.views.update_field' %}',
     load_new_transactions_url: '{% url 'flying_rows.views.load_transactions' %}',
     model: '{{ table.model_name }}',
-    module: '{{ table.module_name }}'
+    module: '{{ table.module_name }}',
+    table_name: '{{ table_name }}'
   };
   config.columns = {{ table_columns_config }};
 
@@ -115,7 +116,7 @@
     },
 
     changeCellValue: function(rowId, columnName, value, commit) {
-      var data = jQuery.extend(true, {}, this.state.data);
+      var data = jQuery.extend({}, this.state.data);
       var oldValue = data[rowId][columnName];
       if (value == oldValue) {
         return;
@@ -123,6 +124,7 @@
       if (commit) {
         localChangesManager.addChange(rowId, columnName, value, oldValue);
       }
+      data[rowId] = jQuery.extend({}, data[rowId]);
       data[rowId][columnName] = value;
       this.setState({
         rows: this.state.rows,
@@ -456,10 +458,10 @@
 
   var LocalChangesManager = React.createClass({
     getInitialState: function() {
-      return { changes: JSON.parse(localStorage.getItem("localChanges")) || [] };
+      return { changes: JSON.parse(localStorage.getItem(this.localStorageName())) || [] };
     },
     localStorageName: function() {
-      return "localChanges";
+      return "localChanges_" + config.table_name;
     },
     secureSetState: function(state) {
       localStorage.setItem(this.localStorageName(), JSON.stringify(state.changes));
