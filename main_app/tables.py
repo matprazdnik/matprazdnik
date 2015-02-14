@@ -38,7 +38,7 @@ RegistrationTableConfig = {
                                             return false;
                                         }
                                       }'''),
-            'weight': 0.1,
+            'weight': 0.3,
             'display_name': 'пол',
             'default-value': 'м',
         },
@@ -53,7 +53,7 @@ RegistrationTableConfig = {
         'grade': {
             'autocomplete': False,
             'display_name': 'класс',
-            'weight': 0.1,
+            'weight': 0.3,
             'default_value': '6',
         }
     },

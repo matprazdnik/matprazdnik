@@ -444,14 +444,25 @@
   });
 
   var LocalChange = React.createClass({
+    removeChange: function() {
+      this.props.localChangesManager.removeChange(this.props.change);
+    },
+
     render: function() {
       return (
-        <li>
-          {this.props.rowId}
-          {this.props.column}
-          {this.props.value}
-          {this.props.status}
-        </li>
+        <div className="local-changes-item">
+          <table>
+            <tr>
+              <td>{this.props.change.status}</td>
+              <th>{this.props.change.column}</th>
+              <td rowSpan="2"><input type="button" value="Удалить" onClick={this.removeChange.bind(this)} /></td>
+            </tr>
+            <tr>
+              <th>{this.props.change.rowId}</th>
+              <td><s>{this.props.change.oldValue}</s>{this.props.change.newValue}</td>
+            </tr>
+          </table>
+        </div>
       )
     }
   });
@@ -496,11 +507,11 @@
       }
       this.secureSetState({changes: changes});
     },
-    removeChange: function(rowId, columnName) {
+    removeChange: function(change) {
       var changes = [];
-      for (i in this.state.changes) {
+      for (var i in this.state.changes) {
         var oldChange = this.state.changes[i];
-        if (oldChange.rowId != rowId || oldChange.column != columnName) {
+        if (oldChange !== change) {
           changes.push(oldChange);
         }
       }
@@ -517,12 +528,13 @@
         data: addDefaultParams({
           row_id: change.rowId,
           column: change.column,
+          oldValue: change.oldValue,
           value: change.newValue
         }),
         success: function(data){
           if (data.success) {
             table.changeCellValue(change.rowId, change.column, data.value, false);
-            old_this.removeChange(change.rowId, change.column);
+            old_this.removeChange(change);
           } else {
             old_this.setError(change.rowId, change.column);
           }
@@ -536,23 +548,22 @@
       loadNewTransactions();
     },
     render: function() {
+      var self = this;
       var localChanges = this.state.changes.map(function(change){
         return (
           <LocalChange
             key={"local_change_"+change.rowId+"_"+change.column}
-            rowId={change.rowId}
-            column={change.column}
-            value={change.newValue}
-            status={change.status}
+            change={change}
+            localChangesManager={self}
           />
         )
       });
       return (
         <div className="menu">
           <h5>Локальные изменения</h5>
-          <ul>
+          <div className="local-changes">
             {localChanges}
-          </ul>
+          </div>
         </div>
       )
     }
