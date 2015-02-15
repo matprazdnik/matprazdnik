@@ -50,24 +50,24 @@ def load_autocomplete_choices(request):
 @require_GET
 def get_search_hints(request):
     # ajax request
-    # params: [module, model, search_fields_space_delimited]
+    # params: [module, model, search_fields]
     # return: [search_hints]
     model_class = get_model_class_from_request(request)
-    search_fields = request.GET['search_fields_space_delimited'].split()
+    search_fields = json.loads(request.GET['search_fields'])
     # TODO: should we replace str() by convert_value_to_string()?
     values = [join_obj_fields(obj, search_fields) for obj in model_class.objects.all()]
     values = list(set(values))
-    return HttpResponse(json.dumps({'search_hints': values}), content_type='application/json')
+    return HttpResponse(json.dumps(values), content_type='application/json')
 
 
 @require_GET
 def search(request):
     # ajax request
-    # params: [module, model, search_fields_space_delimited]
+    # params: [module, model, search_fields]
     # return: success (True/False), row_id
     # TODO: fill params and return
     model_class = get_model_class_from_request(request)
-    search_fields = request.GET['search_fields_space_delimited'].split()
+    search_fields = json.loads(request.GET['search_fields'])
     objects = [(join_obj_fields(obj, search_fields), obj)
                for obj in model_class.objects.all()]
     search_value = request.GET['search_value']

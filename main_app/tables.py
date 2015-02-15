@@ -66,8 +66,8 @@ RegistrationTableConfig = {
         'sort_by': ('-id',),
         'column_ordering': ('test_number', 'surname', 'name', 'gender', 'school', 'grade'),
         'initial_focus': 'test_number',
-        'focus_after_change': 'add_new',  # choices: add_new, search
-        'focus_after_add': 'add_new',
+        'focus_after_change': 'add',  # choices: add_new, search
+        'focus_after_add': 'add',
         'search_by': ('test_number', 'surname', 'name', 'school'),
     }
 }
@@ -88,8 +88,8 @@ SchoolsTableConfig = {
         'sort_by': ('city', 'name'),
         'column_ordering': ('nominative', ),
         'initial_focus': 'name',
-        'focus_after_change': 'none',
-        'focus_after_add': 'none',
+        'focus_after_change': 'search',
+        'focus_after_add': 'add',
         'search_by': ('nominative', )
     }
 }

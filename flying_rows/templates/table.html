@@ -1,6 +1,7 @@
 <script src="http://fb.me/react-0.12.2.js"></script>
 <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
 
+<div id="search"></div>
 <div id="error_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
 <div id="table"></div>
 
@@ -11,9 +12,15 @@
     load_new_rows_url: '{% url 'flying_rows.views.load_new_rows' %}',
     update_cell_url: '{% url 'flying_rows.views.update_field' %}',
     load_new_transactions_url: '{% url 'flying_rows.views.load_transactions' %}',
+    search_hints_url: '{% url 'flying_rows.views.get_search_hints' %}',
+    search_url: '{% url 'flying_rows.views.search' %}',
     model: '{{ table.model_name }}',
     module: '{{ table.module_name }}',
-    table_name: '{{ table_name }}'
+    table_name: '{{ table_name }}',
+    search_fields: {{ search_fields }},
+    focus_policy_after_add: '{{ focus_policy_after_add }}',
+    focus_policy_after_change: '{{ focus_policy_after_change }}',
+    enable_add_new: {{ enable_add_new }}
   };
   config.columns = {{ table_columns_config }};
 
@@ -44,6 +51,7 @@
     }
     newData['model'] = config['model'];
     newData['module'] = config['module'];
+    newData['author'] = localStorage.getItem('author');
     return newData;
   }
 
@@ -53,6 +61,35 @@
       result.push(config.columns[i].name);
     }
     return result;
+  }
+
+
+  function firstColumnName(){
+    return config.columns[0].name;
+  }
+
+  function getCellId(rowId, columnName) {
+    return "cell_" + rowId + "_" + columnName; // keep this in sync with Cell/Row classes
+  }
+
+  function getInputCellId(columnName) {
+    return 'input_cell_' + columnName; // keep this in sync with InputCell/InputRow classes
+  }
+
+  function focusOnCell(rowId, columnName) {
+      $("#" + getCellId(rowId, columnName)).focus();
+  }
+
+  function focusOnRow(rowId) {
+    focusOnCell(rowId, this.firstColumnName());
+  }
+
+  function focusOnInputRow() {
+      $("#" + getInputCellId(firstColumnName())).focus()
+  }
+
+  function focusOnSearch() {
+    $("#search-field").focus();
   }
 
   var Table = React.createClass({
@@ -169,10 +206,13 @@
         );
       });
 
-      var inputNodes = <InputRow
-                          config={config}
-                          nextColumn={this.nextColumn}
-                          prevColumn={this.prevColumn}/>
+      var inputNodes = [];
+      if (config.enable_add_new) {
+        inputNodes = <InputRow
+          config={config}
+          nextColumn={this.nextColumn}
+          prevColumn={this.prevColumn}/>
+      }
 
       return (
         <table width={"100%"}>
@@ -250,6 +290,14 @@
           // focus on next column
           $("#" + this.getId(nextColumnName)).focus();
         }
+        if (nextColumnName == '_newline') {
+          if (config.focus_policy_after_change == 'add') {
+            focusOnInputRow();
+          }
+          if (config.focus_policy_after_change == 'search') {
+            focusOnSearch();
+          }
+        }
       }
     },
 
@@ -305,18 +353,21 @@
         error: function() {
           errorField.error('Failed to connect to server');
         }
-    });
+      });
 
       for (i in this.props.config.columns) {
         var column = this.props.config.columns[i].name;
         data[column] = '';
         $("#" + this.getInputCellId(column)).val("");
-        if (i == 0) {
-          $("#" + this.getInputCellId(column)).focus();
-        }
       }
       this.setState({data: data});
       this.forceUpdate();
+      if (config.focus_policy_after_add == 'add') {
+        focusOnInputRow();
+      }
+      if (config.focus_policy_after_add == 'search') {
+        focusOnSearch();
+      }
     },
 
     shouldComponentUpdate: function() {
@@ -500,7 +551,7 @@
       var changes = [];
       for (i in this.state.changes) {
         var oldChange = this.state.changes[i];
-        if (oldChange.rowId == rowId && oldChange.column != columnName) {
+        if (oldChange.rowId == rowId && oldChange.column == columnName) {
           oldChange.status="error";
         }
         changes.push(oldChange);
@@ -529,8 +580,7 @@
           row_id: change.rowId,
           column: change.column,
           oldValue: change.oldValue,
-          value: change.newValue,
-          author: localStorage.getItem('author')
+          value: change.newValue
         }),
         success: function(data){
           if (data.success) {
@@ -570,6 +620,70 @@
     }
   });
 
+  var SearchField = React.createClass({
+    render: function() {
+      return (
+        <input
+          width={"100%"}
+          type={"text"}
+          id={this.getId()}
+          onKeyDown={this.onKeyDownCapture}
+        />
+      );
+    },
+    getId: function() {
+      return "search-field";
+    },
+    loadSuggest: function() {
+      var old_this = this;
+      $.ajax({
+        url: config.search_hints_url,
+        method: 'GET',
+        data: addDefaultParams({
+          search_fields: JSON.stringify(config.search_fields)
+        }),
+        success: function(data){
+           $(function() {
+              ($("#" + old_this.getId())).autocomplete({
+                source: data,
+                delay: 0
+              });
+            })
+        }
+      })
+    },
+    componentDidMount: function() {
+      this.loadSuggest();
+      setInterval(this.loadSuggest, 120000);
+    },
+
+    onKeyDownCapture: function(event) {
+      if (event.key == "Enter") {
+        event.preventDefault();
+        event.stopPropagation();
+        this.search($("#" + this.getId())[0].value);
+      }
+    },
+    search: function(value) {
+      errorField.ok();
+      $.ajax({
+        url: config.search_url,
+        method: 'GET',
+        data: addDefaultParams({
+          search_fields: JSON.stringify(config.search_fields),
+          search_value: value
+        }),
+        success: function(data) {
+          if (data.success) {
+            focusOnRow(data.row_id);
+          } else {
+            errorField.error(data.error_message);
+          }
+        }
+      });
+    }
+  });
+
   function loadNewRows() {
     $.ajax({
       url: config.load_new_rows_url,
@@ -592,6 +706,11 @@
     <LocalChangesManager config={config}/>,
     document.getElementById('local-changes-manager')
   );
+
+  var search = React.render(
+    <SearchField/>,
+    document.getElementById("search")
+  )
 
   var table = React.render(
     <Table tableName="table1" config={config} initialData={initialTableData}/>,

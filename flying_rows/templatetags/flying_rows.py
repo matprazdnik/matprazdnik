@@ -51,7 +51,11 @@ class RenderTableNode(Node):
             'table_data': mark_safe(get_table_data(table_config)),
             'table_columns_config': mark_safe(create_table_config_for_client(table_config)),
             'last_transaction_id': last_transaction_id,
-            'table_name': table_config['meta']['table_name']
+            'table_name': table_config['meta']['table_name'],
+            'search_fields': mark_safe(json.dumps(table_config['meta']['search_by'])),
+            'focus_policy_after_add': table_config['meta'].get('focus_after_add', ''),
+            'focus_policy_after_change': table_config['meta'].get('focus_after_change', ''),
+            'enable_add_new': json.dumps(table_config['meta']['add_new'])
         })
         return t.render(c)
 
