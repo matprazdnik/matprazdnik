@@ -55,7 +55,8 @@ class RenderTableNode(Node):
             'search_fields': mark_safe(json.dumps(table_config['meta']['search_by'])),
             'focus_policy_after_add': table_config['meta'].get('focus_after_add', ''),
             'focus_policy_after_change': table_config['meta'].get('focus_after_change', ''),
-            'enable_add_new': json.dumps(table_config['meta']['add_new'])
+            'enable_add_new': json.dumps(table_config['meta']['add_new']),
+            'selectable_rows': json.dumps(table_config['meta'].get('selectable_rows', False))
         })
         return t.render(c)
 

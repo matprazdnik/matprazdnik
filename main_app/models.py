@@ -5,6 +5,7 @@ from django.db import models
 
 class School(models.Model):
     nominative = models.CharField('краткое имя школы', max_length=256)
+    deleted = models.BooleanField(default=False) # this field is necessary
 
     def __str__(self):
         return self.nominative
@@ -32,3 +33,5 @@ class Participant(models.Model):
     points_5 = models.IntegerField('5', blank=True, null=True)
     points_6 = models.IntegerField('6', blank=True, null=True)
     sum = models.IntegerField('сумма', blank=True, null=True)
+
+    deleted = models.BooleanField(default=False) # this field is necessary

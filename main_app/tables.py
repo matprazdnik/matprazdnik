@@ -90,7 +90,8 @@ SchoolsTableConfig = {
         'initial_focus': 'name',
         'focus_after_change': 'search',
         'focus_after_add': 'add',
-        'search_by': ('nominative', )
+        'search_by': ('nominative', ),
+        'selectable_rows': True
     }
 }
 

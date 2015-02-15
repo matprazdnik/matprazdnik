@@ -1,5 +1,6 @@
 <script src="{{ context.STATIC_URL }}/react-0.12.2.js"></script>
 <script src="{{ context.STATIC_URL }}/JSXTransformer-0.12.2.js"></script>
+<script src="{{ context.STATIC_URL }}/jquery.hotkeys.js"></script>
 
 <div id="search"></div>
 <div id="error_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
@@ -20,8 +21,19 @@
     search_fields: {{ search_fields }},
     focus_policy_after_add: '{{ focus_policy_after_add }}',
     focus_policy_after_change: '{{ focus_policy_after_change }}',
-    enable_add_new: {{ enable_add_new }}
+    enable_add_new: {{ enable_add_new }},
+    selectable_rows: {{ selectable_rows }}
   };
+
+  if (config.table_name == "school") {
+    // TODO: move it to server-side config
+    $(document).bind('keydown', 'ctrl+shift+s', function() {
+      table.sortRows('nominative');
+    });
+    $(document).bind('keydown', 'ctrl+shift+m', function() {
+      table.mergeRows();
+    });
+  }
   config.columns = {{ table_columns_config }};
 
   var lastTransactionId = {{ last_transaction_id }};
@@ -63,7 +75,6 @@
     return result;
   }
 
-
   function firstColumnName(){
     return config.columns[0].name;
   }
@@ -94,7 +105,43 @@
 
   var Table = React.createClass({
     getInitialState: function() {
-      return {data: this.props.initialData.data, rows: this.props.initialData.rows}
+      return {
+        data: this.props.initialData.data,
+        rows: this.props.initialData.rows,
+        reactRows: [] // this is a dirty trick to get access to children
+      }
+    },
+
+    sortRows: function(columnName) {
+      var rows = jQuery.extend([], this.state.rows);
+      var old_this = this;
+      rows.sort(function(a, b) {
+        return old_this.state.data[a][columnName].localeCompare(old_this.state.data[b][columnName]);
+      });
+      this.setState({
+        rows: rows
+      });
+    },
+
+    mergeRows: function() {
+      columnName = "nominative"; // THIS IS A CRUTCH
+      var selectedIds = [];
+      var selectedNames = [];
+      var otherIds = [];
+      for (var i in this.state.reactRows) {
+        var row = this.state.reactRows[i];
+        if (row.state.selected) {
+          selectedIds.push(row.props.rowId);
+          selectedNames.push(row.props.data[columnName]);
+        } else {
+          otherIds.push(row.props.rowId);
+        }
+      }
+      if (selectedNames.length == 0) {
+        return;
+      }
+      var message = prompt('Объединить следующие значения:\n' + selectedNames.join('\n') + '? \n (пустая строка отменит операцию)', selectedNames[0]).trim();
+      console.log(message);
     },
 
     highestLoadedId: function() {
@@ -186,7 +233,9 @@
             columns={columnNames}
             handleCellChange={changeCellValue}
             nextColumn={old_this.nextColumn}
-            prevColumn={old_this.prevColumn}/>
+            prevColumn={old_this.prevColumn}
+            table={old_this}
+          />
         );
       });
 
@@ -232,8 +281,21 @@
   });
 
   var Row = React.createClass({
+    getInitialState: function() {
+      // this is a dirty trick to get access to parent,
+      // no need to call setState, cause no rerendering is needed
+      this.props.table.state.reactRows.push(this);
+
+      return {selected: false};
+    },
     shouldComponentUpdate: function(nextProps, nextState) {
-      return this.props.data != nextProps.data;
+      return this.props.data != nextProps.data || this.state != nextState;
+    },
+
+    onClickCapture: function() {
+      if (config.selectable_rows) {
+        this.setState({selected: !this.state.selected});
+      }
     },
 
     render: function() {
@@ -253,8 +315,14 @@
         );
       })
 
+      var style = {};
+
+      if (this.state.selected) {
+        style['backgroundColor'] = 'red';
+      }
+
       return (
-        <tr>
+        <tr onClick={this.onClickCapture} style={style}>
           {cellNodes}
         </tr>
       )
