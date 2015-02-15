@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Пропавшие{% endblock %}
+
+
+{% block content-title %}{{ missing_count }} людей без работы{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+            <th>Номер работы</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+        </thead>
+        <tbody>
+            {% for user in users %}
+              <tr>
+              <td>{{ user.test_number }}</td>
+              <td>{{ user.name }} </td>
+              <td>{{ user.surname}}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block upload-title %}Залить какой-то документ{% endblock %}
+{% block no-upload-hint %}{% endblock %}
+{% block upload-hint %}Подсказка{% endblock %}

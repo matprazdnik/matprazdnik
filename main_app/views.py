@@ -1,9 +1,11 @@
+from collections import defaultdict
 import csv
 import datetime
 
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
+from flying_rows.models import Transaction
 from flying_rows.utils import get_model_class, convert_to_string
 
 from main_app.models import Participant
@@ -35,6 +37,16 @@ def points(request):
 
 
 def diplomas(request):
+    if 'score' in request.GET:
+        score = int(request.GET['score'])
+        users = list(Participant.objects.filter(deleted=False, sum=score))
+        users = sorted(users, key=lambda u: u.surname)
+        return render(request, 'users_with_score.html', attach_info({
+            "nav": "diplomas",
+            "users": users,
+            "score": score
+        }))
+
     class Row:
         pass
 
@@ -48,6 +60,7 @@ def diplomas(request):
     table.rows = [Row(), Row()]
     table.rows[0].name = '='
     table.rows[1].name = '>='
+    print(table)
 
     scores_with_such_participants = [i for i in range(MIN_SCORE, max_score + 1) if len(Participant.objects.filter(sum=i)) > 0]
     table.columns = scores_with_such_participants
@@ -57,6 +70,62 @@ def diplomas(request):
     return render(request, 'diplomas.html', attach_info({
         'nav': 'diplomas',
         'table': table
+    }))
+
+def missing(request):
+    users = list(x for x in Participant.objects.filter(deleted=False, sum=None) if x.test_number != "")
+    users = sorted(users, key=lambda u: u.surname)
+    return render(request, 'missing.html', attach_info({
+        'nav': 'missing',
+        'users': users,
+        'missing_count': len(users)
+    }))
+
+
+def stats(request):
+    class User:
+        pass
+    names = [x for x in list(set(y.author for y in Transaction.objects.all())) if x is not None and x != ""]
+
+    def calc_stats_for_user(name):
+        user = User()
+        user.name = name
+        rows = set([x.rowId for x in Transaction.objects.filter(author=name) if (x.column == 'test_number' or x.type == 'add_row')])
+
+        def avg(x):
+            if len(x) == 0:
+                return 0
+            return sum(x) / float(len(x))
+
+        def median(x):
+            if len(x) == 0:
+                return 0
+            return sorted(x)[len(x)//2]
+
+        def calc_stats_by_minute(criteria):
+            group_by_minutes = defaultdict(lambda: [])
+            for transaction in Transaction.objects.filter(author=name):
+                if not criteria(transaction):
+                    continue
+                time = transaction.timestamp
+                time = (time.year, time.month, time.day, time.hour, time.minute)
+                group_by_minutes[time].append(transaction.rowId)
+
+            return avg([x for x in [len(set(v)) for v in group_by_minutes.values()] if x > 1])
+
+        user.registrations = len(rows)
+        user.registrations_per_minute = calc_stats_by_minute(lambda t: t.column == 'test_number' or t.type == 'add_row')
+        rows = set([x.rowId for x in Transaction.objects.filter(author=name) if x.column == 'sum'])
+        user.scores = len(rows)
+        user.scores_per_minute = calc_stats_by_minute(lambda t: t.column == 'sum')
+        return user
+
+    stats = [calc_stats_for_user(name) for name in names]
+    stats.sort(key=lambda x: x.registrations + x.scores, reverse=True)
+
+    return render(request, 'stats.html', attach_info({
+        'nav': 'stats',
+        'stats': stats
     }))
 
 

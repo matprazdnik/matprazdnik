@@ -25,8 +25,10 @@
     focus_policy_after_add: '{{ focus_policy_after_add }}',
     focus_policy_after_change: '{{ focus_policy_after_change }}',
     enable_add_new: {{ enable_add_new }},
-    selectable_rows: {{ selectable_rows }}
+    selectable_rows: {{ selectable_rows }},
+    initial_focus_after_search: '{{ initial_focus_after_search }}'
   };
+  config.columns = {{ table_columns_config }};
 
   $(document).bind('keydown', 'esc', focusOnSearch);
   $(document).bind('keydown', 'home', focusOnSearch);
@@ -43,7 +45,54 @@
       table.mergeRows();
     });
   }
-  config.columns = {{ table_columns_config }};
+
+
+  function getColumnConfig(columnName) {
+    for (var i in config.columns) {
+      if (config.columns[i].name == columnName) {
+        return config.columns[i];
+      }
+    }
+  }
+
+  if (config.table_name == "registration") {
+    getColumnConfig('test_number').validation = function(cell, row) {
+      if (cell.length == 0) {
+        return true;
+      }
+      if (cell.length != 6) {
+        return false;
+      }
+      if ((+cell[0] + +cell[1] + +cell[2] + +cell[3]) % 10 != (+cell[4])) {
+        return false;
+      }
+      if ((+cell[0] + 3 * (+cell[1]) + 7 * (+cell[2]) + 9 * (+ cell[3])) % 10 != (+cell[5])) {
+        return false;
+      }
+      return true;
+    }
+  }
+
+  if (config.table_name == "results") {
+    getColumnConfig('sum').validation = function(cell, row) {
+      var sum = +row.points_1 + +row.points_2a + +row.points_2b + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
+      return row.sum == sum;
+    }
+    var validateIntField = function(cell, row) {
+      if (cell == "") {
+        return true;
+      }
+      var er = /^-?[0-9]+$/;
+      return er.test(cell);
+    }
+    getColumnConfig('points_1').validation = validateIntField;
+    getColumnConfig('points_2a').validation = validateIntField;
+    getColumnConfig('points_2b').validation = validateIntField;
+    getColumnConfig('points_3').validation = validateIntField;
+    getColumnConfig('points_4').validation = validateIntField;
+    getColumnConfig('points_5').validation = validateIntField;
+    getColumnConfig('points_6').validation = validateIntField;
+  }
 
   var lastTransactionId = {{ last_transaction_id }};
 
@@ -97,7 +146,8 @@
   }
 
   function focusOnCell(rowId, columnName) {
-      $("#" + getCellId(rowId, columnName)).focus();
+    $("#" + getCellId(rowId, columnName)).focus();
+    $("#" + getCellId(rowId, columnName)).select();
   }
 
   function focusOnRow(rowId) {
@@ -110,6 +160,7 @@
 
   function focusOnSearch() {
     $("#search-field").focus();
+    $("#search-field").select();
   }
 
   var Table = React.createClass({
@@ -334,6 +385,7 @@
             handleCellChange={props.handleCellChange}
             nextColumn={props.nextColumn}
             prevColumn={props.prevColumn}
+            column={column}
             config={props.config}/>
         );
       })
@@ -358,19 +410,43 @@
     },
 
     getInitialState: function() {
-      return {data: []}
+      return {data: [], status: "ok"}
     },
 
     onKeyDownCapture: function(event) {
-      if (event.key == "Tab" || event.key == "Enter") {
+      if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
         event.stopPropagation();
         event.preventDefault();
+
+        var rowData = {};
+        for (var i in this.props.config.columns) {
+          var column = this.props.config.columns[i];
+          rowData[column.name] = $("#" + this.getId(column.name)).text().trim();
+        }
+        var thisValue = $("#" + this.getId(this.props.columnName)).text().trim();
+        console.log(event.key);
+
+        if (this.props.column.validation !== undefined) {
+          if (!this.props.column.validation(thisValue, rowData)) {
+            this.setState({status: "error"});
+            return;
+          }
+        }
+        var newValue = event.target.textContent.trim();
+        if (newValue == "") {
+          newValue = this.props.column.default_value;
+        }
+        this.setState({status: "ok"});
         this.props.handleCellChange(
           this.props.rowId,
           this.props.columnName,
-          event.target.textContent.trim(),
+          newValue,
           true /* add to localChangesManager */
         );
+        if (event.key == "Home" || event.key == "Escape") {
+          focusOnSearch();
+          return;
+        }
         var nextColumnName;
         if (!event.shiftKey) {
           nextColumnName = this.props.nextColumn(this.props.columnName);
@@ -390,15 +466,16 @@
           }
         }
       }
-      if (event.key == "Home" || event.key == "Escape") {
-        focusOnSearch();
-      }
     },
 
     render: function() {
       var props = this.props;
+      var style = {};
+      if (this.state.status != "ok") {
+        style.backgroundColor = "red";
+      }
       return (
-        <td>
+        <td style={style}>
           <span id={this.getId(props.columnName)} contentEditable={true} onKeyDown={this.onKeyDownCapture}>
             {this.props.data}
           </span>
@@ -432,11 +509,11 @@
       $.ajax({
         url: this.props.config.add_new_row_url,
         method: 'POST',
-        data: {
+        data: addDefaultParams({
           model: this.props.config.model,
           module: this.props.config.module,
           data: JSON.stringify(data)
-        },
+        }),
         success: function(data) {
           if (!data.success) {
             errorField.error(data.error_message)
@@ -502,7 +579,7 @@
 
     componentDidMount: function() {
       this.loadAutocompleteChoices();
-      setInterval(this.loadAutocompleteChoices, 60 * 1000)
+      setInterval(this.loadAutocompleteChoices, 20 * 1000)
     },
 
     shouldComponentUpdate: function() {
@@ -523,7 +600,9 @@
             $(function() {
               ($("#" + old_this.getId())).autocomplete({
                 source: data,
-                delay: 0
+                delay: 0,
+                minLength: 2,
+                autoFocus: true
               });
             })
           }
@@ -550,6 +629,7 @@
 
         if (nextColumnName != undefined && nextColumnName[0] != "_") {
           $("#" + this.props.getInputCellId(nextColumnName)).focus();
+          $("#" + this.props.getInputCellId(nextColumnName)).select();
         } else if (nextColumnName == "_newline") {
           this.props.submit();
         }
@@ -742,7 +822,9 @@
            $(function() {
               ($("#" + old_this.getId())).autocomplete({
                 source: data,
-                delay: 0
+                delay: 0,
+                minLength: 2,
+                autoFocus: true
               });
             })
         }
@@ -762,7 +844,34 @@
     },
     search: function(value) {
       errorField.ok();
-      focusOnRow(value.match(/id(\d+)/)[1]);
+      var targetRow = value.match(/id(\d+)/)[1];
+      if (!targetRow) {
+        $.ajax({
+          url: config.search_url,
+          method: 'GET',
+          data: addDefaultParams({
+            search_fields: JSON.stringify(config.search_fields),
+            search_value: value
+          }),
+          success: function(data) {
+            if (data.success) {
+              if (config.initial_focus_after_search != '') {
+                focusOnCell(data.row_id, config.initial_focus_after_search);
+              } else {
+                focusOnRow(data.row_id);
+              }
+            } else {
+              errorField.error(data.error_message);
+            }
+          }
+        });
+      } else {
+        if (config.initial_focus_after_search != '') {
+          focusOnCell(targetRow, config.initial_focus_after_search);
+        } else {
+          focusOnRow(targetRow);
+        }
+      }
     }
   });
 

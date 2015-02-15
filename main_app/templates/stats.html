@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Статистика{% endblock %}
+
+
+{% block content-title %}Границы дипломов{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+            <th>Имя</th>
+            <th>Регистраций</th>
+            <th>Регистраций в минуту</th>
+            <th>Баллов</th>
+            <th>Баллов в минуту</th>
+        </thead>
+        <tbody>
+            {% for user in stats %}
+              <tr>
+              <td>{{ user.name }}</td>
+              <td>{{ user.registrations }}</td>
+              <td>{{ user.registrations_per_minute }}</td>
+              <td>{{ user.scores }}</td>
+              <td>{{ user.scores_per_minute }}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block upload-title %}Залить какой-то документ{% endblock %}
+{% block no-upload-hint %}{% endblock %}
+{% block upload-hint %}Подсказка{% endblock %}

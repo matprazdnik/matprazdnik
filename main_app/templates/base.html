@@ -61,7 +61,11 @@
                         <li{% ifequal nav 'schools' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.schools' %}">все школы</a></li>
                         <li{% ifequal nav 'points' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.points' %}">ввод результатов</a></li>
                         <li{% ifequal nav 'diplomas' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.diplomas' %}">границы дипломов</a></li>
+                        <li{% ifequal nav 'stats' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.stats' %}">статистика</a></li>
+                        <li{% ifequal nav 'missing' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.missing' %}">недостающие</a></li>
                     </ul>
+                </div>
+                <div id="local-changes-manager">
                 </div>
 
                 {% if nav == 'participants' and false %}
@@ -117,8 +121,7 @@
 
                     Esc, Home - возврат к строке поиска
                 </div>
-                <div id="local-changes-manager">
-                </div>
+
             </div>
 
             <div class="nine columns">

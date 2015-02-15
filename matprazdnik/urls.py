@@ -25,6 +25,8 @@ urlpatterns = patterns('',
     url(r'^points/$', 'main_app.views.points'),
     url(r'^diplomas/$', 'main_app.views.diplomas'),
     url(r'^diplomas_csv/$', 'main_app.views.diplomas_csv'),
+    url(r'^stats/$', 'main_app.views.stats'),
+    url(r'^missing/$', 'main_app.views.missing'),
     # url(r'^update_participants/$', 'main_app.views.update_participants'),
     # TODO: what is it?
 )

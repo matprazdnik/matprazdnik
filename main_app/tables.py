@@ -30,9 +30,8 @@ RegistrationTableConfig = {
             'weight': 0.9
         },
         'gender': {
-            'frontend_validation': mark_safe('''function(row) {
-                                        gender = row.gender;
-                                        if (gender == "м" || gender == "ж") {
+            'frontend_validation': mark_safe('''function(cell, row) {
+                                        if (cell == "м" || cell == "ж") {
                                             return true;
                                         } else {
                                             return false;
@@ -103,35 +102,50 @@ ResultsTableConfig = {
         'points_1': {
             'display_name': '1',
             'max_length': 1,
+            'default_value': '0',
+            'one-char-field': True,
         },
         'points_2a': {
             'display_name': '2a',
             'max_length': 1,
+            'default_value': '0',
+            'one-char-field': True,
         },
         'points_2b': {
             'display_name': '2b',
             'max_length': 1,
+            'default_value': '0',
+            'one-char-field': True,
         },
         'points_3': {
             'display_name': '3',
             'max_length': 1,
+            'default_value': '0',
+            'one-char-field': True,
         },
         'points_4': {
             'display_name': '4',
             'max_length': 1,
+            'default_value': '0',
+            'one-char-field': True,
         },
         'points_5': {
             'display_name': '5',
             'max_length': 1,
+            'default_value': '0',
+            'one-char-field': True,
         },
         'points_6': {
             'display_name': '6',
             'quick_focus': False,
             'max_length': 1,
+            'default_value': '0',
+            'one_char_field': True,
         },
         'sum': {
             'display_name': 'сумма',
             'quick_focus': False,
+            'default_value': '0',
             'frontend_validation': ''' function(row) {
                                             sum = +row.points_1 + +row.points_2a + +row.points_2b + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
                                             return row.sum == sum;
@@ -145,7 +159,7 @@ ResultsTableConfig = {
         'autoupdate': True,
         'model': Participant,
         'initial_focus': 'points_1',
-        'search_by': ('test_number', 'name', 'surname'),
+        'search_by': ('test_number', 'surname', 'name'),
         'focus_after_change': 'search',
         'column_ordering': ('test_number', 'points_1', 'points_2a', 'points_2b', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
     }

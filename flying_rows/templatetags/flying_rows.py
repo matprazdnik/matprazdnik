@@ -26,7 +26,9 @@ def create_table_config_for_client(table_config):
         {
             "name": column_name,
             "display_name": table_config['columns'][column_name]['display_name'],
-            "weight": table_config['columns'][column_name].get('weight', 1)
+            "weight": table_config['columns'][column_name].get('weight', 1),
+            "default_value": table_config['columns'][column_name].get('default_value', ''),
+            "one_char_field": table_config['columns'][column_name].get('one_char_field', False),
         } for column_name in table_config['meta']['column_ordering']
     ])
 
@@ -56,7 +58,8 @@ class RenderTableNode(Node):
             'focus_policy_after_add': table_config['meta'].get('focus_after_add', ''),
             'focus_policy_after_change': table_config['meta'].get('focus_after_change', ''),
             'enable_add_new': json.dumps(table_config['meta']['add_new']),
-            'selectable_rows': json.dumps(table_config['meta'].get('selectable_rows', False))
+            'selectable_rows': json.dumps(table_config['meta'].get('selectable_rows', False)),
+            'initial_focus_after_search': table_config['meta'].get('initial_focus', '')
         })
         return t.render(c)
 
