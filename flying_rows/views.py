@@ -55,7 +55,8 @@ def get_search_hints(request):
     model_class = get_model_class_from_request(request)
     search_fields = json.loads(request.GET['search_fields'])
     # TODO: should we replace str() by convert_value_to_string()?
-    values = [join_obj_fields(obj, search_fields) for obj in model_class.objects.all()]
+    values = [join_obj_fields(obj, search_fields) + ' id' + str(obj.id)
+              for obj in model_class.objects.all()]
     values = list(set(values))
     return HttpResponse(json.dumps(values), content_type='application/json')
 

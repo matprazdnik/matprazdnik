@@ -666,21 +666,7 @@
     },
     search: function(value) {
       errorField.ok();
-      $.ajax({
-        url: config.search_url,
-        method: 'GET',
-        data: addDefaultParams({
-          search_fields: JSON.stringify(config.search_fields),
-          search_value: value
-        }),
-        success: function(data) {
-          if (data.success) {
-            focusOnRow(data.row_id);
-          } else {
-            errorField.error(data.error_message);
-          }
-        }
-      });
+      focusOnRow(value.match(/id(\d+)/)[1]);
     }
   });
 

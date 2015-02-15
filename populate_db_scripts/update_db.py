@@ -9,7 +9,6 @@ GENDERS = {'м', 'ж'}
 PARTICIPANT_FIELDS_NAME_MAP = {
     'Код версии': 'version_code',
     'Код участника': 'participant_code',
-    'Код анкеты': 'poll_code',
     'Фамилия': 'surname',
     'Имя': 'name',
     'Класс': 'grade',
@@ -49,13 +48,11 @@ def check_unique(rows, key):
 def preprocess_db(participants):
     check_unique(participants, 'version_code')
     check_unique(participants, 'participant_code')
-    check_unique(participants, 'poll_code')
 
     for participant in participants:
         try:
             assert participant['version_code']
             assert participant['participant_code']
-            assert participant['poll_code']
             assert participant['surname']
             assert participant['name']
             assert int(participant['grade'])
@@ -80,12 +77,12 @@ def update_schools(participants):
 
 def update_participants(participants):
     for participant in participants:
-        participant_tuple = participant['version_code'], participant['name'], participant['surname']
-        if not Participant.objects.filter(version_code=participant['version_code']):
+        participant_tuple = (
+            participant['participant_code'], participant['name'], participant['surname'])
+        if not Participant.objects.filter(participant_code=participant['participant_code']):
             school = School.objects.get(nominative=participant['nominative'])
             Participant(version_code=participant['version_code'],
                         participant_code=participant['participant_code'],
-                        poll_code=participant['poll_code'],
                         surname=participant['surname'],
                         name=participant['name'],
                         gender=participant['gender'],
