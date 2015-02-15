@@ -17,6 +17,7 @@
     load_new_transactions_url: '{% url 'flying_rows.views.load_transactions' %}',
     search_hints_url: '{% url 'flying_rows.views.get_search_hints' %}',
     search_url: '{% url 'flying_rows.views.search' %}',
+    merge_url: '{% url 'flying_rows.views.merge' %}',
     model: '{{ table.model_name }}',
     module: '{{ table.module_name }}',
     table_name: '{{ table_name }}',
@@ -33,6 +34,7 @@
       table.sortRows('nominative');
     });
     $(document).bind('keydown', 'ctrl+shift+m', function() {
+      console.log('Here2');
       table.mergeRows();
     });
   }
@@ -126,6 +128,7 @@
     },
 
     mergeRows: function() {
+      console.log("Here");
       columnName = "nominative"; // THIS IS A CRUTCH
       var selectedIds = [];
       var selectedNames = [];
@@ -143,7 +146,20 @@
         return;
       }
       var message = prompt('Объединить следующие значения:\n' + selectedNames.join('\n') + '? \n (пустая строка отменит операцию)', selectedNames[0]).trim();
-      console.log(message);
+      if (message == "") {
+        return;
+      }
+      $.ajax({
+        url: config.merge_url,
+        method: 'POST',
+        data: addDefaultParams({
+          merged_ids: JSON.stringify(selectedIds),
+          new_values: JSON.stringify({nominative: message})
+        })
+      });
+      this.setState({
+        rows: otherIds
+      })
     },
 
     highestLoadedId: function() {

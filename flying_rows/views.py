@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from flying_rows.models import Transaction
+from main_app.models import Participant
 
 from .utils import (is_foreign_key, get_field_by_name, get_field_value,
                     get_foreign_key, get_model_class_from_request, convert_to_string,
@@ -89,6 +90,33 @@ def search(request):
                              ', '.join(str(obj) for obj in not_really_like_objects))}
     else:
         response_data = {'success': False, 'error_message': 'Нет таких объектов'}
+    return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+@require_POST
+@csrf_exempt
+def merge(request):
+    # ajax request
+    # params: [model, module, merged_ids, new_values]
+    # only school merge is supported
+    # response: success: True/False
+    response_data = {}
+    try:
+        model_class = get_model_class_from_request(request)
+        new_object = model_class()
+        new_values = json.loads(request.POST['new_values'])
+        for (key, value) in new_values.items():
+            setattr(new_object, key, value)
+        new_object.save()
+
+        ids = json.loads(request.POST['merged_ids'])
+        for id in ids:
+            obj = model_class.objects.filter(id=id)[0]
+            obj.deleted = True
+            obj.save()
+            Participant.objects.filter(school=obj).update(school=new_object)
+    except Exception as e:
+        response_data = { 'success': False, 'error_message': str(e)}
     return HttpResponse(json.dumps(response_data), content_type='application/json')
 
 

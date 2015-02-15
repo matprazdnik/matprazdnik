@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     url(r'^autocomplete/$', 'flying_rows.views.load_autocomplete_choices'),
     url(r'^search/$', 'flying_rows.views.search'),
     url(r'^search_hints/$', 'flying_rows.views.get_search_hints'),
-    url(r'^load_transactions/$', 'flying_rows.views.load_transactions')
+    url(r'^load_transactions/$', 'flying_rows.views.load_transactions'),
+    url(r'^merge/$', 'flying_rows.views.merge'),
 )
