@@ -37,7 +37,9 @@
       table.sortRows('nominative');
     });
     $(document).bind('keydown', 'ctrl+shift+m', function() {
-      console.log('Here2');
+      table.mergeRows();
+    });
+    $(document).bind('keydown', 'ctrl+shift+u', function() {
       table.mergeRows();
     });
   }
