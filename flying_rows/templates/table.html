@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="{{ context.STATIC_URL }}/flying-rows.css">
+
 <script src="{{ context.STATIC_URL }}/react-0.12.2.js"></script>
 <script src="{{ context.STATIC_URL }}/JSXTransformer-0.12.2.js"></script>
 <script src="{{ context.STATIC_URL }}/jquery.hotkeys.js"></script>
@@ -569,12 +571,11 @@
 
     render: function() {
       return (
-        <div className="local-changes-item">
+        <div className={"local-changes-item local-changes-item-" + this.props.change.status}>
           <table>
             <tr>
-              <td>{this.props.change.status}</td>
+              <td><input type="button" value="Удалить" onClick={this.removeChange.bind(this)} /></td>
               <th>{this.props.change.column}</th>
-              <td rowSpan="2"><input type="button" value="Удалить" onClick={this.removeChange.bind(this)} /></td>
             </tr>
             <tr>
               <th>{this.props.change.rowId}</th>
@@ -620,7 +621,7 @@
       for (i in this.state.changes) {
         var oldChange = this.state.changes[i];
         if (oldChange.rowId == rowId && oldChange.column == columnName) {
-          oldChange.status="error";
+          oldChange.status = "error";
         }
         changes.push(oldChange);
       }

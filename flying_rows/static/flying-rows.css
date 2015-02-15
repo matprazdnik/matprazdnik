@@ -1,0 +1,7 @@
+.local-changes-item-new * {
+    background-color: lightgreen;
+}
+
+.local-changes-item-error * {
+    background-color: pink;
+}
