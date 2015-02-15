@@ -19,7 +19,7 @@ def is_foreign_key(column_name, model_class):
 def get_foreign_key(column_name, model_class, value):
     field = get_field_by_name(column_name, model_class)
     mapped_model_class = field.related.parent_model
-    objects = list(mapped_model_class.objects.all())
+    objects = list(mapped_model_class.objects.filter(deleted=False))
     equal_objects = list(filter(lambda object: str(object) == value, objects))
 
     def almost_like(obj):
@@ -94,14 +94,15 @@ def unique(iterable):
 def autocomplete_choices(column_name, model_class):
     if is_foreign_key(column_name, model_class):
         foreign_key_model_class = get_field_by_name(column_name, model_class).related.parent_model
-        return unique(str(i) for i in foreign_key_model_class.objects.all())
+        return unique(str(i) for i in foreign_key_model_class.objects.filter(deleted=False))
     else:
-        return unique(str(getattr(i, column_name)) for i in model_class.objects.all())
+        return unique(str(getattr(i, column_name))
+                      for i in model_class.objects.filter(deleted=False))
 
 
 def get_table_data(table_config):
     model_class = table_config['meta']['model']
-    objects = list(model_class.objects.all())
+    objects = list(model_class.objects.filter(deleted=False))
 
     def get_necessary_data(object):
         return {column: getattr(object, column) for column in table_config['columns']}

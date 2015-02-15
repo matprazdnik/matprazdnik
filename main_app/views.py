@@ -42,7 +42,8 @@ def diplomas(request):
         pass
 
     table = Table()
-    scores = [int(participant.sum) if participant.sum is not None else 0 for participant in Participant.objects.all()]
+    scores = [int(participant.sum) if participant.sum is not None else 0
+              for participant in Participant.objects.filter(deleted=False)]
     max_score = max(scores) if len(scores) > 0 else 0
     table.rows = [Row(), Row()]
     table.rows[0].name = '='
@@ -71,7 +72,7 @@ def diplomas_csv(request):
                'said_gender gender', 'gender', 'grade', 'school', 'sum',
                'points_1', 'points_2', 'points_3a', 'points_3b', 'points_4', 'points_5', 'points_6']
     writer.writerow(columns)
-    for p in Participant.objects.all().order_by('sum'):
+    for p in Participant.objects.filter(deleted=False).order_by('sum'):
         # if not p.sum:
         #     continue
         row = [(globals()[column.split()[0]](getattr(p, column.split()[1]))
@@ -90,7 +91,9 @@ def normalize_school(s):
 
 def attach_info(dict_):
     return dict({
-        'num_participants': len(Participant.objects.all()),
-        'number_not_null': len([x for x in Participant.objects.all() if x.test_number is not None and x.test_number != '']),
-        'participants_with_score': len([x for x in Participant.objects.all() if x.sum is not None and x.sum != '']),
+        'num_participants': len(Participant.objects.filter(deleted=False)),
+        'number_not_null': len([x for x in Participant.objects.filter(deleted=False)
+                                if x.test_number is not None and x.test_number != '']),
+        'participants_with_score': len([x for x in Participant.objects.filter(deleted=False)
+                                        if x.sum is not None and x.sum != '']),
     }, **dict_)

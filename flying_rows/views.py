@@ -26,7 +26,8 @@ def load_new_rows(request):
     columns = json.loads(request.GET['columns'])
     model_class = get_model_class_from_request(request)
 
-    objs = model_class.objects.filter(id__gt=highest_loaded_id).order_by('id')[:NEW_ROWS_CHUNK_SIZE]
+    objs = model_class.objects.filter(deleted=False,
+                                      id__gt=highest_loaded_id).order_by('id')[:NEW_ROWS_CHUNK_SIZE]
     response_data = []
     for obj in objs:
         response_data.append({
@@ -47,6 +48,7 @@ def load_autocomplete_choices(request):
     model_class = get_model_class_from_request(request)
     column = request.GET['column']
     return HttpResponse(json.dumps(autocomplete_choices(column, model_class)), content_type='application/json')
+
 
 @require_GET
 def get_search_hints(request):
@@ -136,7 +138,8 @@ def update_field(request):
             value = get_foreign_key(column_name, model_class, value)
             #   value = getattr(model_class, column_name).get_query_set()[0]
 
-        obj = model_class.objects.filter(id=request.POST['row_id']).update(**{column_name: value})
+        obj = model_class.objects.filter(deleted=False,
+                                         id=request.POST['row_id']).update(**{column_name: value})
 
         t = Transaction()
         t.author = request.POST.get('author', '')
