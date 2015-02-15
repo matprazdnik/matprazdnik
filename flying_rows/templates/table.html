@@ -28,6 +28,9 @@
     selectable_rows: {{ selectable_rows }}
   };
 
+  $(document).bind('keydown', 'esc', focusOnSearch);
+  $(document).bind('keydown', 'home', focusOnSearch);
+
   if (config.table_name == "school") {
     // TODO: move it to server-side config
     $(document).bind('keydown', 'ctrl+shift+s', function() {
@@ -385,6 +388,9 @@
           }
         }
       }
+      if (event.key == "Home" || event.key == "Escape") {
+        focusOnSearch();
+      }
     },
 
     render: function() {
@@ -545,6 +551,9 @@
         } else if (nextColumnName == "_newline") {
           this.props.submit();
         }
+      }
+      if (event.key == "Home" || event.key == "Escape") {
+        focusOnSearch();
       }
     },
 
