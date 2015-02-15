@@ -62,10 +62,13 @@ def diplomas(request):
     table.rows[1].name = '>='
     print(table)
 
-    scores_with_such_participants = [i for i in range(MIN_SCORE, max_score + 1) if len(Participant.objects.filter(sum=i)) > 0]
+    scores_with_such_participants = [i for i in range(MIN_SCORE, max_score + 1)
+                                     if len(Participant.objects.filter(deleted=False, sum=i)) > 0]
     table.columns = scores_with_such_participants
-    table.rows[0].data = [len(list(Participant.objects.filter(sum=i))) for i in scores_with_such_participants]
-    table.rows[1].data = [len(list(Participant.objects.filter(sum__gte=i))) for i in scores_with_such_participants]
+    table.rows[0].data = [len(list(Participant.objects.filter(deleted=False, sum=i)))
+                          for i in scores_with_such_participants]
+    table.rows[1].data = [len(list(Participant.objects.filter(deleted=False, sum__gte=i)))
+                          for i in scores_with_such_participants]
 
     return render(request, 'diplomas.html', attach_info({
         'nav': 'diplomas',
