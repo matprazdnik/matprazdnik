@@ -414,7 +414,26 @@
     },
 
     onKeyDownCapture: function(event) {
-      if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
+      if (jQuery.isNumeric(event.key) && this.props.columnName.substr(0, 6) == "points") {
+	event.stopPropagation();
+	event.preventDefault();
+	
+
+	var newValue = event.key;
+	// insert value into cell	
+	this.props.handleCellChange(
+	  this.props.rowId,
+	  this.props.columnName,
+	  newValue,
+	  true
+	);
+
+	// focus on the next column
+	var nextColumnName = this.props.nextColumn(this.props.columnName);
+	$("#" + this.getId(nextColumnName)).focus();
+      } 
+
+      else if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
         event.stopPropagation();
         event.preventDefault();
 
