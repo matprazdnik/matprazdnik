@@ -486,6 +486,19 @@
         }
       }
     },
+    
+    onFocusCapture: function(event) {
+      // need to change true in future
+      if(true/*this.props.columnName.substr(0, 6) == "points"*/) {
+        var range = document.createRange();
+	range.selectNodeContents(document.getElementById(event.target.id));
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+	console.log("selected all in " + event.target.id);
+      }
+    },
+
 
     render: function() {
       var props = this.props;
@@ -495,7 +508,7 @@
       }
       return (
         <td style={style}>
-          <span id={this.getId(props.columnName)} contentEditable={true} onKeyDown={this.onKeyDownCapture}>
+          <span id={this.getId(props.columnName)} contentEditable={true} onKeyDown={this.onKeyDownCapture} onFocus={this.onFocusCapture}>
             {this.props.data}
           </span>
         </td>
