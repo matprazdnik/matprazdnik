@@ -159,8 +159,10 @@
   }
 
   function focusOnSearch() {
-    $("#search-field").focus();
-    $("#search-field").select();
+    if (document.activeElement.id.substr(0, 11) != "input_cell_") {
+      $("#search-field").focus();
+      $("#search-field").select();
+    }
   }
 
   var Table = React.createClass({
@@ -868,7 +870,7 @@
     },
 
     onKeyDownCapture: function(event) {
-      if (event.key == "Enter") {
+      if (event.key == "Enter" || event.key == "Tab") {
         event.preventDefault();
         event.stopPropagation();
         this.search($("#" + this.getId())[0].value);
