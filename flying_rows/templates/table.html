@@ -487,6 +487,33 @@
           }
         }
       }
+      else if (event.keyCode == 106 && event.shiftKey) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        var currentColumnName = this.props.columnName;
+        while (currentColumnName[0] != '_' && currentColumnName != undefined) {
+          if (currentColumnName.substr(0, 7) == 'points_') {
+            $("#" + this.getId(currentColumnName)).text('0');
+	    this.pushZeroToCell(this.props.handleCellChange, 
+                                this.props.rowId,
+                                currentColumnName);
+          }
+          else if (currentColumnName == 'sum') {
+            $('#' + this.getId(currentColumnName)).focus();
+          }
+          currentColumnName = this.props.nextColumn(currentColumnName);
+	}
+      }
+    },
+
+    pushZeroToCell: function(handleCellChange, rowId, columnName) {
+      // pushing handle to the end of stack
+      // (doesn't work otherwise for some reason)
+      setTimeout(function() {handleCellChange(
+        rowId, columnName, '0', true);
+        console.log('pushed', rowId, columnName, 0);
+      }, 100);
     },
     
     onFocusCapture: function(event) {
