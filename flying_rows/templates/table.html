@@ -880,14 +880,24 @@
           search_fields: JSON.stringify(config.search_fields)
         }),
         success: function(data){
-           $(function() {
-              ($("#" + old_this.getId())).autocomplete({
-                source: data,
-                delay: 0,
-                minLength: 2,
-                autoFocus: true
-              });
-            })
+          $(function() {
+            ($("#" + old_this.getId())).autocomplete({
+              source: function (request, callback) {
+                var re = $.ui.autocomplete.escapeRegex(request.term); // get input
+                re = re.replace('е', '[её]');
+                var matcher = new RegExp(re, "i"); // making RegExp from input
+                var ans = [];
+                console.log(data.length);
+                $.each(data, function(i, item) {
+                  if(matcher.test(item)) ans.push(item);
+                });
+                callback( ans );
+	      },
+              delay: 0,
+              minLength: 2,
+              autoFocus: true
+            });
+          })
         }
       })
     },
