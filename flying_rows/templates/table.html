@@ -413,12 +413,17 @@
     },
 
     onKeyDownCapture: function(event) {
-      if (jQuery.isNumeric(event.key) && this.props.columnName.substr(0, 6) == "points") {
+      if (((event.keyCode > 47 && event.keyCode < 58) ||   // nubmers above letters
+           (event.keyCode > 95 && event.keyCode < 106)) && // numbers on numpad
+           !event.shiftKey &&  // not to break row of zeroes
+           this.props.columnName.substr(0, 6) == "points") {
 	event.stopPropagation();
 	event.preventDefault();
 	
+	var newValue;
+	if (event.keyCode < 58) newValue = event.keyCode - 48;
+        else                    newValue = event.keyCode - 96;
 
-	var newValue = event.key;
 	// insert value into cell	
 	this.props.handleCellChange(
 	  this.props.rowId,
@@ -484,7 +489,7 @@
           }
         }
       }
-      else if (event.keyCode == 106 && event.shiftKey) {
+      else if ((event.keyCode == 106 || event.keyCode == 56) && event.shiftKey) {
         event.stopPropagation();
         event.preventDefault();
 
