@@ -153,6 +153,30 @@ def diplomas_csv(request):
     return response
 
 
+def final_check(request):
+    unsorted_p = [x for x in Participant.objects.all().order_by('sum')]
+    sorted_p = [[]]
+    number_by_sum = [0]
+
+    for participant in unsorted_p:
+        if participant.sum == None: 
+            continue
+        while len(sorted_p) - 1 < int(participant.sum):
+            sorted_p.append([])
+            number_by_sum.append(0)
+        sorted_p[-1].append(participant)
+        number_by_sum[-1] += 1
+    
+    for i in range(len(sorted_p)):
+        sorted_p[i].sort(key=lambda x: x.surname)
+
+    return render(request, 'final_check.html', attach_info({
+        'nav': 'final_check',
+        'results': sorted_p,
+        'size_of_group': number_by_sum
+    }))
+
+
 # === Utils ===
 
 def normalize_school(s):

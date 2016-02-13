@@ -63,6 +63,7 @@
                         <li{% ifequal nav 'diplomas' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.diplomas' %}">границы дипломов</a></li>
                         <li{% ifequal nav 'stats' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.stats' %}">статистика</a></li>
                         <li{% ifequal nav 'missing' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.missing' %}">недостающие</a></li>
+                        <li{% ifequal nav 'final_check' %} class="active"{% endifequal %}><a href="{% url 'main_app.views.final_check' %}">проверка количества работ</a></li>
                     </ul>
                 </div>
                 <div id="local-changes-manager">

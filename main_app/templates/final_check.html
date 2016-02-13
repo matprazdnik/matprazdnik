@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load get_range from flying_rows %}
+{% load index from flying_rows %}
+
+{% block title %}Проверка{% endblock %}
+
+
+{% block content-title %}Нажми на балл для раскрытия списка{% endblock %}
+
+{% block content %}
+    <div>
+        {% for i in results|length|get_range %}
+           <h3 class="by_points" id="p{{ i }}">Балл: {{ i }}, работ: {{ size_of_group|index:i }}</h1>
+           <hr />
+           <div id="dropdown_p{{ i }}" style="display: none">
+           {% for participant in results|index:i %}
+              <p>{{ participant.test_number }}: {{ participant.surname }} {{ participant.name }}, {{ participant.school }}</p>
+           {% endfor %}
+           </div>
+        {% endfor %}
+    </div>
+    <script>
+        $('.by_points').click( function() {
+            var id = this.id;
+            $("#dropdown_" + id).toggle();
+        });
+    </script>
+{% endblock %}
+
+
+{% block upload-title %}Залить какой-то документ{% endblock %}
+{% block no-upload-hint %}{% endblock %}
+{% block upload-hint %}Подсказка{% endblock %}
