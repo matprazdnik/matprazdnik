@@ -8,7 +8,8 @@
 1. Поставьте пакетный менеджер Питона и менеджер виртуальных окружений Питона
 
         sudo apt-get install python3-setuptools
-        sudo pip install virtualenv
+        sudo apt-get install python3-pip
+        sudo apt-get install python3-virtualenv
 
 3. Склонируйте репозиторий проекта, перейдите в него, создайте виртуальное окружение
 
