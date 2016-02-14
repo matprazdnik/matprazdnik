@@ -102,3 +102,27 @@ def index(List, i):
     {{ List|index:x }} is equal to List[x]
     """
     return List[int(i)]
+
+@register.filter
+def smart_iter(List):
+    """
+    {{ List|smart_iter }} returns a list of tuples (i, item) for item in List
+    """
+    ans_list = []
+    for i in range(len(List)):
+        ans_list.append((i, List[i]))
+    return ans_list
+
+@register.filter
+def reversed(List):
+    """
+    {{ List|reversed }} is equal to reversed(List)
+    """
+    return List[::-1]
+
+@register.filter
+def plusplus(x):
+    """
+    Increase x by 1
+    """
+    return x + 1

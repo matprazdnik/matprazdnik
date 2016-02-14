@@ -1,30 +1,56 @@
 {% extends 'base.html' %}
 {% load get_range from flying_rows %}
 {% load index from flying_rows %}
+{% load smart_iter from flying_rows %}
+{% load reversed from flying_rows %}
+{% load plusplus from flying_rows %}
 
 {% block title %}Проверка{% endblock %}
 
 
-{% block content-title %}Нажми на балл для раскрытия списка{% endblock %}
+{% block content-title %}{% endblock %}
 
 {% block content %}
     <div>
-        {% for i in results|length|get_range %}
-           <h3 class="by_points" id="p{{ i }}">Балл: {{ i }}, работ: {{ size_of_group|index:i }}</h1>
-           <hr />
-           <div id="dropdown_p{{ i }}" style="display: none">
-           {% for participant in results|index:i %}
-              <p>{{ participant.test_number }}: {{ participant.surname }} {{ participant.name }}, {{ participant.school }}</p>
+        {% for i in results|length|get_range|reversed %}
+        <div class="by_points">
+           <div class="by_points_label" id="p{{ i }}">
+              <h3>Балл: {{ i }}, работ: {{ size_of_group|index:i }}</h3>
+           </div>
+           <div id="dropdown_p{{ i }}" style="display: none"> 
+           {% for j, p in results|index:i|smart_iter %}
+              <p><b>{{ j|plusplus }}.</b> {{ p.surname }} {{ p.name }}, {{ p.school }}</p>
            {% endfor %}
            </div>
+        </div>
         {% endfor %}
     </div>
     <script>
-        $('.by_points').click( function() {
+        $('.by_points_label').click( function() {
             var id = this.id;
             $("#dropdown_" + id).toggle();
         });
     </script>
+    <style>
+    div.by_points>div {
+      padding: 10px;
+    }
+
+    div.by_points:not(:last-of-type) {
+      border-bottom: solid #ccc 1px;
+    }
+
+    div.by_points_label:hover {
+      background: #EEE;
+    }
+
+    div.by_points_label>h3 {
+       margin:0px;
+    }
+    div.by_points p {
+       margin-bottom:5px;
+    }
+    </style>
 {% endblock %}
 
 

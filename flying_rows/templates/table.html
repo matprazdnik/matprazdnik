@@ -145,6 +145,7 @@
   function focusOnCell(rowId, columnName) {
     $("#" + getCellId(rowId, columnName)).focus();
     $("#" + getCellId(rowId, columnName)).select();
+    $("body").scrollTop($("#" + getCellId(rowId, columnName)).offset().top - 50);
   }
 
   function focusOnRow(rowId) {
