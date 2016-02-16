@@ -15,7 +15,7 @@
 
         git clone https://github.com/vpavlenko/matprazdnik.git
         cd matprazdnik
-        virtualenv-3.3 venv
+        virtualenv --python=/usr/bin/python3 venv
 
 4. Активируйте виртуальное окружение и установите зависимости проекта
 
