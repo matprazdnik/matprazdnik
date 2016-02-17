@@ -7,19 +7,19 @@ from main_app.models import School, Participant
 GENDERS = {'м', 'ж'}
 
 PARTICIPANT_FIELDS_NAME_MAP = {
-    'Код версии': 'version_code',
-    'Код участника': 'participant_code',
+    'код версии': 'version_code',
+    'Код (не менять)': 'participant_code',
     'Фамилия': 'surname',
     'Имя': 'name',
-    'Класс': 'grade',
+    'Класс, в котором Вы учитесь': 'grade',
     'Пол': 'gender',
-    'Короткое название школы': 'nominative',
+    'Краткое название школы': 'nominative',
 }
 
 
 def read_rows_from_csv(csv_filename, name_map):
     fin = open(csv_filename, 'r', encoding='utf-8')
-    table = csv.reader(fin, delimiter=',')
+    table = csv.reader(fin, delimiter='\t')
     head = None
     rows = []
     for row in table:
@@ -102,7 +102,7 @@ def main():
         participants = read_rows_from_csv(REGISTRATION_DB_FILENAME, PARTICIPANT_FIELDS_NAME_MAP)
         participants = [participant
                         for participant in participants
-                        if int(participant['grade']) < 7]
+                        if participant['grade'] in ['1', '2', '3', '4', '5', '6']]
         preprocess_db(participants)
         update_schools(participants)
         update_participants(participants)

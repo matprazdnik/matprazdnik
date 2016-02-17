@@ -560,6 +560,7 @@
     handleInput: function(columnName, value) {
       var data = jQuery.extend(true, {}, this.state.data);
       data[columnName] = value;
+      console.log(value);
       this.setState({data: data});
     },
 
@@ -684,7 +685,8 @@
       if (event.key == "Enter" || event.key == "Tab") {
         event.stopPropagation();
         event.preventDefault();
-
+        
+        this.props.handleInput(this.props.columnName, $("#" + this.getId()).val());
         if (!event.shiftKey) {
           nextColumnName = this.props.nextColumn(this.props.columnName);
         } else {
