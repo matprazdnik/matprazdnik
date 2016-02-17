@@ -515,7 +515,7 @@
       // (doesn't work otherwise for some reason)
       setTimeout(function() {handleCellChange(
         rowId, columnName, '0', true);
-        console.log('pushed', rowId, columnName, 0);
+        //console.log('pushed', rowId, columnName, 0);
       }, 100);
     },
     
@@ -527,7 +527,7 @@
         var sel = window.getSelection();
         sel.removeAllRanges();
         sel.addRange(range);
-	console.log("selected all in " + event.target.id);
+	//console.log("selected all in " + event.target.id);
       }
     },
 
@@ -560,7 +560,6 @@
     handleInput: function(columnName, value) {
       var data = jQuery.extend(true, {}, this.state.data);
       data[columnName] = value;
-      console.log(value);
       this.setState({data: data});
     },
 
@@ -892,7 +891,7 @@
                 re = re.replace('е', '[её]');
                 var matcher = new RegExp(re, "i"); // making RegExp from input
                 var ans = [];
-                console.log(data.length);
+                //console.log(data.length);
                 $.each(data, function(i, item) {
                   if(matcher.test(item)) ans.push(item);
                 });
