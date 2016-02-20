@@ -106,17 +106,17 @@ ResultsTableConfig = {
             'one-char-field': True,
         },
         'points_2a': {
-            'display_name': '2a',
+            'display_name': '2',
             'max_length': 1,
             'default_value': '0',
             'one-char-field': True,
         },
-        'points_2b': {
-            'display_name': '2b',
-            'max_length': 1,
-            'default_value': '0',
-            'one-char-field': True,
-        },
+        # 'points_2b': {
+        #     'display_name': '2b',
+        #     'max_length': 1,
+        #     'default_value': '0',
+        #     'one-char-field': True,
+        # },
         'points_3': {
             'display_name': '3',
             'max_length': 1,
@@ -147,7 +147,7 @@ ResultsTableConfig = {
             'quick_focus': False,
             'default_value': '0',
             'frontend_validation': ''' function(row) {
-                                            sum = +row.points_1 + +row.points_2a + +row.points_2b + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
+                                            sum = +row.points_1 + +row.points_2a + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
                                             return row.sum == sum;
                                         }'''
         }
@@ -161,6 +161,6 @@ ResultsTableConfig = {
         'initial_focus': 'points_1',
         'search_by': ('test_number', 'surname', 'name'),
         'focus_after_change': 'search',
-        'column_ordering': ('test_number', 'points_1', 'points_2a', 'points_2b', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
+        'column_ordering': ('test_number', 'points_1', 'points_2a', 'points_3', 'points_4', 'points_5', 'points_6', 'sum'),
     }
 }

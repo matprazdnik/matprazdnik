@@ -142,7 +142,7 @@ def diplomas_csv(request):
     writer = csv.writer(response)
     columns = ['version_code', 'participant_code', 'test_number', 'name', 'surname',
                'gender', 'grade', 'school', 'sum',
-               'points_1', 'points_2a', 'points_2b', 'points_3', 'points_4', 'points_5', 'points_6']
+               'points_1', 'points_2a', 'points_3', 'points_4', 'points_5', 'points_6']
     writer.writerow(columns)
     for p in Participant.objects.filter(deleted=False).order_by('sum'):
         row = [(globals()[column.split()[0]](getattr(p, column.split()[1]))

@@ -72,7 +72,7 @@
 
   if (config.table_name == "results") {
     getColumnConfig('sum').validation = function(cell, row) {
-      var sum = +row.points_1 + +row.points_2a + +row.points_2b + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
+      var sum = +row.points_1 + +row.points_2a + +row.points_3 + +row.points_4 + +row.points_5 + +row.points_6;
       return row.sum == sum;
     }
     var validateIntField = function(cell, row) {
@@ -84,7 +84,6 @@
     }
     getColumnConfig('points_1').validation = validateIntField;
     getColumnConfig('points_2a').validation = validateIntField;
-    getColumnConfig('points_2b').validation = validateIntField;
     getColumnConfig('points_3').validation = validateIntField;
     getColumnConfig('points_4').validation = validateIntField;
     getColumnConfig('points_5').validation = validateIntField;
@@ -176,7 +175,14 @@
       var rows = jQuery.extend([], this.state.rows);
       var old_this = this;
       rows.sort(function(a, b) {
-        return old_this.state.data[a][columnName].localeCompare(old_this.state.data[b][columnName]);
+        var a = old_this.state.data[a][columnName];
+        var b = old_this.state.data[b][columnName];
+        var re = /\d+/;
+        var re_a = re.exec(a);
+        var re_b = re.exec(b);
+        a = re_a ? re_a[0] : a;
+        b = re_b ? re_b[0] : b;
+        return a.localeCompare(b);
       });
       this.setState({
         rows: rows
@@ -276,7 +282,7 @@
     changeCellValue: function(rowId, columnName, value, commit) {
       var data = jQuery.extend({}, this.state.data);
       var oldValue = data[rowId][columnName];
-      if (value == oldValue) {
+      if (String(value) == String(oldValue)) {
         return;
       }
       if (commit) {
