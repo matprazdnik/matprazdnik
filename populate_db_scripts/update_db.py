@@ -75,20 +75,39 @@ def update_schools(participants):
             print('School already found: {0}'.format(nominative))
 
 
+def remove_existing_participants(participants):
+    result = []
+    for participant in participants:
+        participant_tuple = (
+            participant['participant_code'], participant['name'], participant['surname'])
+        if not Participant.objects.filter(participant_code=participant['participant_code']):
+            result.append(participant)
+            # print('New participant: {0} {1} {2}'.format(*participant_tuple))
+        else:
+            pass
+            # print('Participant found and removed: {0} {1} {2}'.format(*participant_tuple))
+    return result
+
+
 def update_participants(participants):
     for participant in participants:
         participant_tuple = (
             participant['participant_code'], participant['name'], participant['surname'])
         if not Participant.objects.filter(participant_code=participant['participant_code']):
-            school = School.objects.get(nominative=participant['nominative'])
-            Participant(version_code=participant['version_code'],
-                        participant_code=participant['participant_code'],
-                        surname=participant['surname'],
-                        name=participant['name'],
-                        gender=participant['gender'],
-                        grade=participant['grade'],
-                        school=school).save()
-            print('Participant created: {0} {1} {2}'.format(*participant_tuple))
+            # print('Try to find school: ', participant['nominative'])
+            schools = School.objects.filter(nominative=participant['nominative'])
+            if len(schools) > 1:
+                print(schools)
+            else:
+                school = schools[0]
+                Participant(version_code=participant['version_code'],
+                            participant_code=participant['participant_code'],
+                            surname=participant['surname'],
+                            name=participant['name'],
+                            gender=participant['gender'],
+                            grade=participant['grade'],
+                            school=school).save()
+                print('Participant created: {0} {1} {2}'.format(*participant_tuple))
         else:
             print('Participant already found: {0} {1} {2}'.format(*participant_tuple))
 
@@ -103,8 +122,10 @@ def main():
         participants = [participant
                         for participant in participants
                         if participant['grade'] in ['1', '2', '3', '4', '5', '6']]
+        participants = remove_existing_participants(participants)
         preprocess_db(participants)
-        update_schools(participants)
+        print(len(participants))
+        # update_schools(participants)
         update_participants(participants)
 
 
