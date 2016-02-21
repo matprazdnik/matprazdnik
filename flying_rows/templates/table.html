@@ -219,9 +219,11 @@
           new_values: JSON.stringify({nominative: message})
         })
       });
+      this.deselectRows();
       this.setState({
         rows: otherIds
-      })
+      });
+      table.sortRows('nominative');
     },
 
     highestLoadedId: function() {
@@ -229,6 +231,13 @@
         return -1;
       }
       return Math.max.apply(-1, this.state.rows);
+    },
+
+    deselectRows: function() {
+      for (var i in this.state.reactRows) {
+        var row = this.state.reactRows[i];
+        row.state.selected = false;
+      }
     },
 
     addRow: function(rowId, rowData) {
