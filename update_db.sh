@@ -10,9 +10,9 @@ if [ -d 'venv' ] ; then
     export DJANGO_SETTINGS_MODULE='matprazdnik.settings'
 
     if [ -z '$1' ] ; then
-        echo 'Usage: update_db.sh REGISTRATION_DB.csv'
+        echo 'Usage: update_db.sh [REGISTRATION_DB.csv|SCHOOL_LIST.csv] [-participants|-schools]'
     else
-        python3 populate_db_scripts/update_db.py $1
+        python3 populate_db_scripts/update_db.py $1 $2
     fi
 else
     echo "$0: No venv found.  Check README.md for setup instructions"

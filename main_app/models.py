@@ -5,6 +5,8 @@ from django.db import models
 
 class School(models.Model):
     nominative = models.CharField('краткое имя школы', max_length=256)
+    statgrad_code = models.CharField('код Статград', max_length=256)
+    official_name = models.CharField('полное имя школы', max_length=256)
     deleted = models.BooleanField(default=False) # this field is necessary
 
     def __str__(self):
