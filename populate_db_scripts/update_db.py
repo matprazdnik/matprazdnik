@@ -166,20 +166,19 @@ def update_participants(participants):
 def export_unhandled_participants(unhandled_participant_codes):
     O = open("unhandled_participants.csv", 'w', encoding='utf-8')
     I = open(sys.argv[1], encoding="utf-8")
-    new_string = I.readline() # Header
-    O.write(new_string)
-    O.write("\n")
-    new_string = I.readline()
+    old_file = csv.reader(I, delimiter="\t")
+    new_file = csv.writer(O, delimiter="\t")
+    head = None
     cnt1 = 0
     cnt2 = 0
-    while new_string.strip() != "":
-        part_code = new_string.split("\t")[0].strip()
+    for row in old_file:
         cnt1 += 1
-        if part_code in unhandled_participant_codes:
+        if not head:
+            head = row
+            new_file.writerow(row)
+        if row[0] in unhandled_participant_codes:
+            new_file.writerow(row)
             cnt2 += 1
-            O.write(new_string)
-            O.write("\n")
-        new_string = I.readline()
     I.close()
     O.close()
     print("Unhandled participants:", len(unhandled_participant_codes),
