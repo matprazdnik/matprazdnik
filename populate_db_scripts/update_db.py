@@ -100,24 +100,51 @@ def update_participants(participants):
     SKIPPED_PARICIPANTS = 0
     DOUBLED_PARTICIPANTS = 0
     NOT_MOSCOW_PARTICIPANTS = 0
+
+    unhandled_participant_codes = []
+
     for participant in participants:
         participant_tuple = (
             participant['participant_code'], participant['name'], participant['surname'])
         if not Participant.objects.filter(participant_code=participant['participant_code']):
-            print('Try to find school:', participant['school_code'], participant['nominative'])
+
             if participant['school_code'] == "":
-                print("Skip")
-                SKIPPED_PARICIPANTS += 1
-                continue
+                print('No school code set, trying to find:', participant['nominative'])
+                beautified_name = beautify_school_name(participant['nominative'])
+                if beautified_name[-1].strip() == "№":
+                    print("'школа №' error, skipping")
+                    SKIPPED_PARICIPANTS += 1
+                    unhandled_participant_codes += [participant['participant_code']]
+                    continue
+                schools_variants = School.objects.filter(nominative=beautified_name)
+
+                print("Beautified name:", beautified_name)
+                if len(schools_variants) == 1:
+                    print(getattr(schools_variants[0], "statgrad_code"))
+                    participant['school_code'] = getattr(schools_variants[0], "statgrad_code")
+                else:
+                    print(*schools_variants)
+                    SKIPPED_PARICIPANTS += 1
+                    unhandled_participant_codes += [participant['participant_code']]
+                    #schools_to_add += [[participant['school_code'], participant['nominative'], '']]
+                    continue
+
             schools = School.objects.filter(statgrad_code=participant['school_code'])
             if len(schools) > 1:
                 print(schools)
-            elif len(schools) == 0:
-                print("No school found -", participant['school_code'], participant['nominative'])
-                print("   ...participant skipped, add school first.")
-                SKIPPED_PARICIPANTS += 1
-                NOT_MOSCOW_PARTICIPANTS += 1
+            #elif len(schools) == 0:
+            #    print("No school found -", participant['school_code'], participant['nominative'])
+            #    print("   ...participant skipped, add school first.")
+            #    schools_to_add += [[participant['school_code'], participant['nominative'], '']]
+            #    SKIPPED_PARICIPANTS += 1
+            #    NOT_MOSCOW_PARTICIPANTS += 1
             else:
+                if len(schools) == 0:
+                    School(statgrad_code=participant['school_code'],
+                           nominative=beautify_school_name(participant['nominative']),
+                           official_name=participant['nominative']).save()
+                    schools = School.objects.filter(statgrad_code=participant['school_code'])
+
                 school = schools[0]
                 Participant(version_code=participant['version_code'],
                             participant_code=participant['participant_code'],
@@ -130,8 +157,55 @@ def update_participants(participants):
         else:
             print('Participant already found: {0} {1} {2}'.format(*participant_tuple))
             DOUBLED_PARTICIPANTS += 1
+
     print("Participants skipped:", SKIPPED_PARICIPANTS, "out of", len(participants) - DOUBLED_PARTICIPANTS)
-    print("                     ", NOT_MOSCOW_PARTICIPANTS, "are not from Moscow")
+    #print("                     ", NOT_MOSCOW_PARTICIPANTS, "are not from Moscow")
+    return unhandled_participant_codes
+
+
+def export_unhandled_participants(unhandled_participant_codes):
+    O = open("unhandled_participants.csv", 'w', encoding='utf-8')
+    I = open(sys.argv[1], encoding="utf-8")
+    new_string = I.readline() # Header
+    O.write(new_string)
+    O.write("\n")
+    new_string = I.readline()
+    cnt1 = 0
+    cnt2 = 0
+    while new_string.strip() != "":
+        part_code = new_string.split("\t")[0].strip()
+        cnt1 += 1
+        if part_code in unhandled_participant_codes:
+            cnt2 += 1
+            O.write(new_string)
+            O.write("\n")
+        new_string = I.readline()
+    I.close()
+    O.close()
+    print("Unhandled participants:", len(unhandled_participant_codes),
+          "\nEntries in new file written:", cnt2,
+          "\nEntries in old file read:", cnt1)
+    print("Checkout unhandled_participants.csv, fix schools and import again", sep="")
+
+
+def beautify_school_name(school_name):
+    informal_name = school_name
+    informal_name = informal_name.replace("ГБОУ ", "")
+    informal_name = informal_name.replace("ВСОШ ", "школа ")
+    informal_name = informal_name.replace("ОСОШ ", "школа ")
+    informal_name = informal_name.replace("СОШ ", "школа ")
+    informal_name = informal_name.replace("СКОШ ", "школа ")  # Специальная (коррекционная) общеобразовательная школа(-интернат)
+    informal_name = informal_name.replace("СКОШИ ", "школа ")
+    informal_name = informal_name.replace("ДОД ", "школа ")
+    informal_name = informal_name.replace("ЦО", "центр образования")
+    informal_name = informal_name.replace("№ ", "№")
+    informal_name = informal_name.replace("Школа", "школа")
+    informal_name = informal_name.replace("Гимназия", "гимназия")
+    informal_name = informal_name.replace("Лицей", "лицей")
+    informal_name = informal_name.replace("<<", "\"")
+    informal_name = informal_name.replace(">>", "\"")
+    return informal_name
+
 
 def main():
     if len(sys.argv) != 3:
@@ -146,7 +220,11 @@ def main():
         participants = remove_existing_participants(participants)
         preprocess_db(participants)
         print("New participants:", len(participants))
-        update_participants(participants)
+        unhandled_participant_codes = update_participants(participants)
+
+        if len(unhandled_participant_codes) > 0:
+            export_unhandled_participants(unhandled_participant_codes)
+
     elif sys.argv[2] == '-schools':
         SCHOOL_LIST_FILENAME = sys.argv[1]
         schools = read_rows_from_csv(SCHOOL_LIST_FILENAME, SCHOOL_FIELDS_NAME_MAP)
