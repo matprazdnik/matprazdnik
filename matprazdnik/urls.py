@@ -30,6 +30,9 @@ urlpatterns = patterns('',
     url(r'^final_check/$', 'main_app.views.final_check'),
     # url(r'^update_participants/$', 'main_app.views.update_participants'),
     # TODO: what is it?
+
+    url(r'^new/workcode_form$', 'main_app.views.workcode_form'),
+    url(r'^new/score_form$', 'main_app.views.score_form'),
 )
 
 if settings.DEBUG is False:   # if DEBUG is True it will be served automatically

@@ -159,14 +159,14 @@ def final_check(request):
     number_by_sum = [0]
 
     for participant in unsorted_p:
-        if participant.sum == None: 
+        if participant.sum == None:
             continue
         while len(sorted_p) - 1 < int(participant.sum):
             sorted_p.append([])
             number_by_sum.append(0)
         sorted_p[-1].append(participant)
         number_by_sum[-1] += 1
-    
+
     for i in range(len(sorted_p)):
         sorted_p[i].sort(key=lambda x: x.surname)
 
@@ -175,6 +175,16 @@ def final_check(request):
         'results': sorted_p,
         'size_of_group': number_by_sum
     }))
+
+
+# === New features ===
+
+def workcode_form(request):
+    return render(request, 'workcode_form.html')
+
+
+def score_form(request):
+    return render(request, 'score_form.html')
 
 
 # === Utils ===
