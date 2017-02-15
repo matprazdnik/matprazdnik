@@ -9,7 +9,7 @@ class ParticipantAdmin(admin.ModelAdmin):
 
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('nominative',)
+    list_display = ('nominative', 'official_name', 'statgrad_code')
 
 
 # TODO: move somewhere

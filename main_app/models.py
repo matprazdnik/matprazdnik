@@ -10,7 +10,7 @@ class School(models.Model):
     deleted = models.BooleanField(default=False) # this field is necessary
 
     def __str__(self):
-        return (self.nominative + "(" + self.official_name + ")[" + self.statgrad_code + "]")
+        return self.nominative
 
 
 class Participant(models.Model):
