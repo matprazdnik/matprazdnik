@@ -180,7 +180,10 @@ def final_check(request):
 # === New features ===
 
 def workcode_form(request):
-    return render(request, 'workcode_form.html')
+    return render(request, 'workcode_form.html', attach_info({
+        'nav': 'workcode_form',
+        'table': RegistrationTableConfig
+    }))
 
 
 def score_form(request):

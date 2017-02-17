@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from flying_rows.models import Transaction
-from main_app.models import Participant
+from main_app.models import Participant, School
 
 from .utils import (is_foreign_key, get_field_by_name, get_field_value,
                     get_foreign_key, get_model_class_from_request, convert_to_string,
@@ -72,26 +72,45 @@ def search(request):
     # TODO: fill params and return
     model_class = get_model_class_from_request(request)
     search_fields = json.loads(request.GET['search_fields'])
-    objects = [(join_obj_fields(obj, search_fields), obj)
-               for obj in model_class.objects.all()]
+    #objects = [(join_obj_fields(obj, search_fields), obj)
+    #           for obj in model_class.objects.all()]
+
     search_value = request.GET['search_value']
-    equal_objects = [x for x in objects if x[0] == search_value]
-    like_objects = [x for x in objects if search_value in x[0]]
-    not_really_like_objects = objects
-    for search_value_part in search_value.split():
-        not_really_like_objects = [x for x in not_really_like_objects if search_value_part in x[0]]
-    if len(equal_objects) >= 1:
-        response_data = {'success': True, 'row_id': equal_objects[0][1].id}
-    elif len(like_objects) >= 1:
-        response_data = {'success': True, 'row_id': like_objects[0][1].id}
-    elif len(not_really_like_objects) >= 1:
-        response_data = {'success': True, 'row_id': not_really_like_objects[0][1].id}
-    elif len(not_really_like_objects) > 1:
-        response_data = {'success': False,
-                         'error_message': 'Поиск возвратил несколько объектов: {0}'.format(
-                             ', '.join(str(obj) for obj in not_really_like_objects))}
-    else:
-        response_data = {'success': False, 'error_message': 'Нет таких объектов'}
+    found_object = model_class.objects.get(pk=int(search_value))
+    #print(found_object.__dict__)
+
+    response_data = {'success': True, 'data': {}}
+
+    for field in search_fields:
+        try:
+            response_data['data'][field] = found_object.__dict__[field]
+        except:
+            # here comes K O S T Y L I R O V A N I E
+            if field == "school":
+                school_id = found_object.__dict__["school_id"]
+                school = School.objects.get(pk=school_id)
+                response_data['data']["school"] = str(school)
+            else:
+                print(field)
+
+    #print(model_class, "\n", search_fields, "\n", search_value)
+    #equal_objects = [x for x in objects if x[0] == search_value]
+    #like_objects = [x for x in objects if search_value in x[0]]
+    #not_really_like_objects = objects
+    #for search_value_part in search_value.split():
+    #    not_really_like_objects = [x for x in not_really_like_objects if search_value_part in x[0]]
+    #if len(equal_objects) >= 1:
+    #    response_data = {'success': True, 'row_id': equal_objects[0][1].id}
+    #elif len(like_objects) >= 1:
+    #    response_data = {'success': True, 'row_id': like_objects[0][1].id}
+    #elif len(not_really_like_objects) >= 1:
+    #    response_data = {'success': True, 'row_id': not_really_like_objects[0][1].id}
+    #elif len(not_really_like_objects) > 1:
+    #    response_data = {'success': False,
+    #                     'error_message': 'Поиск возвратил несколько объектов: {0}'.format(
+    #                         ', '.join(str(obj) for obj in not_really_like_objects))}
+    #else:
+    #    response_data = {'success': False, 'error_message': 'Нет таких объектов'}
     return HttpResponse(json.dumps(response_data), content_type='application/json')
 
 

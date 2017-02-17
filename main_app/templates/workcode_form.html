@@ -1,1 +1,326 @@
-Hello, workcode_form!
+{% extends 'base.html' %}
+
+{% block title %}Ввод нового титула{% endblock %}
+
+{% block content-title %}Ввод нового титула{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/new_input_forms.css">
+
+<script src="/static/react-0.12.2.js"></script>
+<script src="/static/JSXTransformer-0.12.2.js"></script>
+<script src="/static/jquery.hotkeys.js"></script>
+
+<div id="search"></div>
+<div id="error_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
+<div id="form"></div>
+helllllloooo!
+
+<script type="text/jsx">
+var config = {
+    //autocomplete_url: '../..{% url 'flying_rows.views.load_autocomplete_choices' %}',
+    //add_new_row_url: '../..{% url 'flying_rows.views.add_new_row' %}',
+    //load_new_rows_url: '../..{% url 'flying_rows.views.load_new_rows' %}',
+    //update_cell_url: '../..{% url 'flying_rows.views.update_field' %}',
+    //load_new_transactions_url: '../..{% url 'flying_rows.views.load_transactions' %}',
+    search_hints_url: '../..{% url 'flying_rows.views.get_search_hints' %}',
+    search_url: '../..{% url 'flying_rows.views.search' %}',
+    //merge_url: '../..{% url 'flying_rows.views.merge' %}',
+    //model: '{{ table.model_name }}',
+    //module: '{{ table.module_name }}',
+    //table_name: '{{ table_name }}',
+    //search_fields: ('test_number', 'surname', 'name', 'school'),
+    //focus_policy_after_add: '{{ focus_policy_after_add }}',
+    //focus_policy_after_change: '{{ focus_policy_after_change }}',
+    //enable_add_new: '{{ enable_add_new }}',
+    //selectable_rows: '{{ selectable_rows }}',
+    //initial_focus_after_search: '{{ initial_focus_after_search }}'
+    model: 'Participant',
+    module: 'main_app.models',
+    table_name: 'registration',
+    search_fields: [/*"test_number", */"surname", "name", "school"],
+    focus_policy_after_add: 'add',
+    focus_policy_after_change: 'add',
+    enable_add_new: true,
+    selectable_rows: false,
+    initial_focus_after_search: 'test_number'
+};
+
+//  TODO: load all during render
+config.columns = [{"weight": 0.7, "default_value": "", "one_char_field": false,
+                    "name": "test_number", "display_name": "\u043d\u043e\u043c\u0435\u0440 \u0440\u0430\u0431\u043e\u0442\u044b"},
+                  {"weight": 1.3, "default_value": "", "one_char_field": false,
+                   "name": "surname", "display_name": "\u0444\u0430\u043c\u0438\u043b\u0438\u044f"},
+                  {"weight": 0.9, "default_value": "", "one_char_field": false,
+                   "name": "name", "display_name": "\u0438\u043c\u044f"},
+                  {"weight": 0.3, "default_value": "", "one_char_field": false,
+                   "name": "gender", "display_name": "\u043f\u043e\u043b"},
+                  {"weight": 2.5, "default_value": "", "one_char_field": false,
+                   "name": "school", "display_name": "\u0448\u043a\u043e\u043b\u0430"},
+                  {"weight": 0.3, "default_value": "6", "one_char_field": false,
+                   "name": "grade", "display_name": "\u043a\u043b\u0430\u0441\u0441"}];
+
+function addDefaultParams(data) {
+    var newData = {};
+    for (key in data) {
+        newData[key] = data[key];
+    }
+    newData['model'] = config['model'];
+    newData['module'] = config['module'];
+    newData['author'] = localStorage.getItem('author');
+    return newData;
+}
+
+var SearchField = React.createClass({
+    render: function() {
+        return (
+            <input
+            width={"100%"}
+            type={"text"}
+            id={this.getId()}
+            onKeyDown={this.onKeyDownCapture}
+            placeholder="Искать школьника"
+            />
+        );
+    },
+
+    getId: function() {
+        return "search-field";
+    },
+
+    loadSuggest: function() {
+        var old_this = this;
+        $.ajax({
+            url: config.search_hints_url,
+            method: 'GET',
+            data: addDefaultParams({
+                search_fields: JSON.stringify(config.search_fields)
+            }),
+            success: function(data){
+                $(function() {
+                    ($("#" + old_this.getId())).autocomplete({
+                        source: function (request, callback) {
+                            var re = $.ui.autocomplete.escapeRegex(request.term); // get input
+                            re = re.replace('е', '[её]');
+                            var matcher = new RegExp(re, "i"); // making RegExp from input
+                            var ans = [];
+                            //console.log(data.length);
+                            $.each(data, function(i, item) {
+                                if(matcher.test(item)) ans.push(item);
+                            });
+                            callback( ans );
+                        },
+                        delay: 0,
+                        minLength: 2,
+                        autoFocus: true
+                    });
+                })
+            }
+        })
+    },
+
+    componentDidMount: function() {
+        this.loadSuggest();
+        setInterval(this.loadSuggest, 120000);
+    },
+
+    onKeyDownCapture: function(event) {
+        if (event.key == "Enter" || event.key == "Tab") {
+            event.preventDefault();
+            event.stopPropagation();
+            this.search($("#" + this.getId())[0].value);
+        }
+    },
+
+    search: function(value) {
+        var search_value = value.split(" ");
+        search_value = search_value[search_value.length - 1];
+        search_value = search_value.slice(2);
+        console.log(search_value);
+        $.ajax({
+            url: config.search_url,
+            method: 'GET',
+            data: addDefaultParams({ // TODO: confugure on render
+                search_fields: JSON.stringify(['test_number', 'surname', 'name', 'school', 'gender', 'grade']),
+                search_value: search_value
+            }),
+            success: function(data) {
+                if (data.success) {
+                    console.log(data.data);
+                    for (var variable in data.data) {
+                        if (data.data.hasOwnProperty(variable)) {
+                            $("#cell_" + variable).text(data.data[variable]);
+                        }
+                    }
+                    $("#cell_test_number").focus();
+                    $("#cell_test_number").select();
+                } else {
+                    console.error("Ooops");
+                    console.error(data.error_message);
+                    errorField.error(data.error_message);
+                }
+            }
+        });
+    }
+});
+
+var Form = React.createClass({
+    /*getInitialState: function() {
+        return NULL;
+    },*/
+
+    render: function() {
+        var cells = this.props.config.columns.map(function(column){
+            return (
+                <FormCell
+                    columnName={column['name']}
+                    displayName={column['display_name']}
+                />
+            );
+        });
+
+        return (
+            <table width="100%">
+                <tr>
+                    {cells}
+                </tr>
+            </table>
+        );
+    }
+});
+
+var FormCell = React.createClass({
+    render: function () {
+        return (
+            <td>
+            //<h6>{this.props.displayName}</h6>
+            <span id={this.getId()} contentEditable={true} onClick={this.onKeyDownCapture}>
+              {this.getId()}
+            </span>
+            </td>
+        );
+    },
+
+    getInitialState: function() {
+        return {data: [], status: "ok"}
+    },
+
+    getId: function() {
+        return "cell_" + this.props.columnName;
+    },
+
+    onKeyDownCapture: function(event) {
+        if (((event.keyCode > 47 && event.keyCode < 58) ||   // nubmers above letters
+                 (event.keyCode > 95 && event.keyCode < 106)) && // numbers on numpad
+                 !event.shiftKey &&  // not to break row of zeroes
+                 this.props.columnName.substr(0, 6) == "points") {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var newValue;
+            if (event.keyCode < 58) newValue = event.keyCode - 48;
+            else                    newValue = event.keyCode - 96;
+
+            // insert value into cell
+            this.props.handleCellChange(
+                this.props.rowId,
+                this.props.columnName,
+                newValue,
+                true
+            );
+
+            // focus on the next column
+            var nextColumnName = this.props.nextColumn(this.props.columnName);
+            $("#" + this.getId(nextColumnName)).focus();
+        }
+
+        else if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var rowData = {};
+            for (var i in this.props.config.columns) {
+                var column = this.props.config.columns[i];
+                rowData[column.name] = $("#" + this.getId(column.name)).text().trim();
+            }
+            var thisValue = $("#" + this.getId(this.props.columnName)).text().trim();
+            console.log(event.key);
+
+            if (this.props.column.validation !== undefined) {
+                if (!this.props.column.validation(thisValue, rowData)) {
+                    this.setState({status: "error"});
+                    return;
+                }
+            }
+            var newValue = event.target.textContent.trim();
+            if (newValue == "") {
+                newValue = this.props.column.default_value;
+            }
+            this.setState({status: "ok"});
+            this.props.handleCellChange(
+                this.props.rowId,
+                this.props.columnName,
+                newValue,
+                true /* add to localChangesManager */
+                );
+                if (event.key == "Home" || event.key == "Escape") {
+                    focusOnSearch();
+                    return;
+                }
+                var nextColumnName;
+                if (!event.shiftKey) {
+                    nextColumnName = this.props.nextColumn(this.props.columnName);
+                } else {
+                    nextColumnName = this.props.prevColumn(this.props.columnName);
+                }
+                if (nextColumnName != undefined && nextColumnName[0] != '_') {
+                    // focus on next column
+                    $("#" + this.getId(nextColumnName)).focus();
+                }
+                if (nextColumnName == '_newline') {
+                    if (config.focus_policy_after_change == 'add') {
+                        focusOnInputRow();
+                    }
+                    if (config.focus_policy_after_change == 'search') {
+                        focusOnSearch();
+                    }
+                }
+            }
+            else if ((event.keyCode == 106 || event.keyCode == 56) && event.shiftKey) {
+                event.stopPropagation();
+                event.preventDefault();
+
+                var currentColumnName = this.props.columnName;
+                while (currentColumnName[0] != '_' && currentColumnName != undefined) {
+                    if (currentColumnName.substr(0, 7) == 'points_') {
+                        $("#" + this.getId(currentColumnName)).text('0');
+                        this.pushZeroToCell(this.props.handleCellChange,
+                        this.props.rowId,
+                        currentColumnName);
+                    }
+                    else if (currentColumnName == 'sum') {
+                        $('#' + this.getId(currentColumnName)).focus();
+                    }
+                    currentColumnName = this.props.nextColumn(currentColumnName);
+                }
+            }
+        },
+});
+
+var search = React.render(
+    <SearchField/>,
+    document.getElementById("search")
+);
+
+var form = React.render(
+    <Form config={config} />,
+    document.getElementById("form")
+);
+</script>
+
+{% endblock %}
+
+{% block upload-title %}Залить внешнюю базу регистрации школьников{% endblock %}
+{% block upload-hint %}Все школьники, номера регистрации которых уже есть в нашей базе, не будут затронуты{% endblock %}
+
+{% block download-title %}Скачать нашу базу регистрации школьников{% endblock %}
