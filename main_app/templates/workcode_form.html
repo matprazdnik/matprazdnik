@@ -14,7 +14,6 @@
 <div id="search"></div>
 <div id="error_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
 <div id="form"></div>
-helllllloooo!
 
 <script type="text/jsx">
 var config = {
@@ -48,7 +47,8 @@ var config = {
 
 //  TODO: load all during render
 config.columns = [{"weight": 0.7, "default_value": "", "one_char_field": false,
-                    "name": "test_number", "display_name": "\u043d\u043e\u043c\u0435\u0440 \u0440\u0430\u0431\u043e\u0442\u044b"},
+                    "name": "test_number", "display_name": "\u043d\u043e\u043c\u0435\u0440 \u0440\u0430\u0431\u043e\u0442\u044b",
+                    "editable": true},
                   {"weight": 1.3, "default_value": "", "one_char_field": false,
                    "name": "surname", "display_name": "\u0444\u0430\u043c\u0438\u043b\u0438\u044f"},
                   {"weight": 0.9, "default_value": "", "one_char_field": false,
@@ -58,7 +58,9 @@ config.columns = [{"weight": 0.7, "default_value": "", "one_char_field": false,
                   {"weight": 2.5, "default_value": "", "one_char_field": false,
                    "name": "school", "display_name": "\u0448\u043a\u043e\u043b\u0430"},
                   {"weight": 0.3, "default_value": "6", "one_char_field": false,
-                   "name": "grade", "display_name": "\u043a\u043b\u0430\u0441\u0441"}];
+                   "name": "grade", "display_name": "\u043a\u043b\u0430\u0441\u0441"},
+                   {"weight": 0.5, "default_value": "", "one_char_field": false,
+                    "name": "id", "display_name": "ID"}];
 
 function addDefaultParams(data) {
     var newData = {};
@@ -137,11 +139,18 @@ var SearchField = React.createClass({
         search_value = search_value[search_value.length - 1];
         search_value = search_value.slice(2);
         console.log(search_value);
+
+        var search_fields = [];
+        for (var i = 0; i < config.columns.length; i++) {
+            search_fields.push(config.columns[i]["name"]);
+        }
+        console.log(search_fields);
+
         $.ajax({
             url: config.search_url,
             method: 'GET',
             data: addDefaultParams({ // TODO: confugure on render
-                search_fields: JSON.stringify(['test_number', 'surname', 'name', 'school', 'gender', 'grade']),
+                search_fields: JSON.stringify(search_fields),
                 search_value: search_value
             }),
             success: function(data) {
@@ -165,22 +174,38 @@ var SearchField = React.createClass({
 });
 
 var Form = React.createClass({
-    /*getInitialState: function() {
-        return NULL;
-    },*/
+    submitData: function () {
+        var data = $("cell_test_number").text().trim();
+        //alert(data);
+        $("#search-field").focus();
+        $("#search-field").select();
+    },
 
     render: function() {
+        var old_this = this;
         var cells = this.props.config.columns.map(function(column){
             return (
                 <FormCell
                     columnName={column['name']}
                     displayName={column['display_name']}
+                    submitData={old_this.submitData}
                 />
+            );
+        });
+
+        var header = this.props.config.columns.map(function(column){
+            return (
+                <td>
+                    <h3>{column["display_name"]}</h3>
+                </td>
             );
         });
 
         return (
             <table width="100%">
+                <tr>
+                    {header}
+                </tr>
                 <tr>
                     {cells}
                 </tr>
@@ -191,12 +216,17 @@ var Form = React.createClass({
 
 var FormCell = React.createClass({
     render: function () {
+        var contentEditable = false;
+        for (var i = 0; i < config.columns.length; i++) {
+            if (config.columns[i]["name"] == this.props.columnName) {
+                contentEditable = config.columns[i]['editable'];
+                break;
+            }
+        }
         return (
             <td>
-            //<h6>{this.props.displayName}</h6>
-            <span id={this.getId()} contentEditable={true} onClick={this.onKeyDownCapture}>
-              {this.getId()}
-            </span>
+                <span id={this.getId()} contentEditable={contentEditable} onKeyDown={this.onKeyDownCapture}>
+                </span>
             </td>
         );
     },
@@ -210,101 +240,39 @@ var FormCell = React.createClass({
     },
 
     onKeyDownCapture: function(event) {
-        if (((event.keyCode > 47 && event.keyCode < 58) ||   // nubmers above letters
-                 (event.keyCode > 95 && event.keyCode < 106)) && // numbers on numpad
-                 !event.shiftKey &&  // not to break row of zeroes
-                 this.props.columnName.substr(0, 6) == "points") {
+        if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
             event.stopPropagation();
             event.preventDefault();
 
-            var newValue;
-            if (event.keyCode < 58) newValue = event.keyCode - 48;
-            else                    newValue = event.keyCode - 96;
+            if (this.validate()) {
+                this.props.submitData();
+            }
+        }
+    },
 
-            // insert value into cell
-            this.props.handleCellChange(
-                this.props.rowId,
-                this.props.columnName,
-                newValue,
-                true
-            );
+    validate: function () {
+        if (this.props.columnName == "test_number") {
+            var code = $("#" + this.getId()).text().trim();
 
-            // focus on the next column
-            var nextColumnName = this.props.nextColumn(this.props.columnName);
-            $("#" + this.getId(nextColumnName)).focus();
+            if (code.length !== 6) {
+                return false;
+            }
+
+            var base_code = parseInt(code);
+            if (base_code === NaN) {
+                return false;
+            }
+
+            base_code = base_code / 100 >> 0;
+            var ctrl1 = base_code%10 + (base_code/10>>0)%10 + (base_code/100>>0)%10 + (base_code/1000>>0)%10;
+            var ctrl2 = 9 * (base_code%10>>0) + 7 * (base_code/10>>0)%10 + 3 * (base_code/100>>0)%10 + (base_code/1000>>0)%10;
+            var new_code = base_code * 100 + (ctrl1%10) * 10 + ctrl2%10;
+            console.log(code, new_code, new_code === parseInt(code));
+            return (new_code === parseInt(code));
         }
 
-        else if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
-            event.stopPropagation();
-            event.preventDefault();
-
-            var rowData = {};
-            for (var i in this.props.config.columns) {
-                var column = this.props.config.columns[i];
-                rowData[column.name] = $("#" + this.getId(column.name)).text().trim();
-            }
-            var thisValue = $("#" + this.getId(this.props.columnName)).text().trim();
-            console.log(event.key);
-
-            if (this.props.column.validation !== undefined) {
-                if (!this.props.column.validation(thisValue, rowData)) {
-                    this.setState({status: "error"});
-                    return;
-                }
-            }
-            var newValue = event.target.textContent.trim();
-            if (newValue == "") {
-                newValue = this.props.column.default_value;
-            }
-            this.setState({status: "ok"});
-            this.props.handleCellChange(
-                this.props.rowId,
-                this.props.columnName,
-                newValue,
-                true /* add to localChangesManager */
-                );
-                if (event.key == "Home" || event.key == "Escape") {
-                    focusOnSearch();
-                    return;
-                }
-                var nextColumnName;
-                if (!event.shiftKey) {
-                    nextColumnName = this.props.nextColumn(this.props.columnName);
-                } else {
-                    nextColumnName = this.props.prevColumn(this.props.columnName);
-                }
-                if (nextColumnName != undefined && nextColumnName[0] != '_') {
-                    // focus on next column
-                    $("#" + this.getId(nextColumnName)).focus();
-                }
-                if (nextColumnName == '_newline') {
-                    if (config.focus_policy_after_change == 'add') {
-                        focusOnInputRow();
-                    }
-                    if (config.focus_policy_after_change == 'search') {
-                        focusOnSearch();
-                    }
-                }
-            }
-            else if ((event.keyCode == 106 || event.keyCode == 56) && event.shiftKey) {
-                event.stopPropagation();
-                event.preventDefault();
-
-                var currentColumnName = this.props.columnName;
-                while (currentColumnName[0] != '_' && currentColumnName != undefined) {
-                    if (currentColumnName.substr(0, 7) == 'points_') {
-                        $("#" + this.getId(currentColumnName)).text('0');
-                        this.pushZeroToCell(this.props.handleCellChange,
-                        this.props.rowId,
-                        currentColumnName);
-                    }
-                    else if (currentColumnName == 'sum') {
-                        $('#' + this.getId(currentColumnName)).focus();
-                    }
-                    currentColumnName = this.props.nextColumn(currentColumnName);
-                }
-            }
-        },
+        return true;
+    },
 });
 
 var search = React.render(
