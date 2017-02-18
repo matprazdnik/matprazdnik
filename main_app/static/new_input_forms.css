@@ -2,3 +2,20 @@
     font-weight: bold;
     color: red;
 }
+
+.message-field {
+
+}
+
+.message-field__error {
+    background-color: red;
+}
+
+
+.message-field__success {
+    background-color: green;
+}
+
+.-is-faded-out {
+    opacity: 0.6;
+}

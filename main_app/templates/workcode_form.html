@@ -12,15 +12,15 @@
 <script src="/static/jquery.hotkeys.js"></script>
 
 <div id="search"></div>
-<div id="error_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
 <div id="form"></div>
+<div id="msg_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
 
 <script type="text/jsx">
 var config = {
     //autocomplete_url: '../..{% url 'flying_rows.views.load_autocomplete_choices' %}',
     //add_new_row_url: '../..{% url 'flying_rows.views.add_new_row' %}',
     //load_new_rows_url: '../..{% url 'flying_rows.views.load_new_rows' %}',
-    //update_cell_url: '../..{% url 'flying_rows.views.update_field' %}',
+    update_cell_url: '../..{% url 'flying_rows.views.update_field' %}',
     //load_new_transactions_url: '../..{% url 'flying_rows.views.load_transactions' %}',
     search_hints_url: '../..{% url 'flying_rows.views.get_search_hints' %}',
     search_url: '../..{% url 'flying_rows.views.search' %}',
@@ -161,12 +161,13 @@ var SearchField = React.createClass({
                             $("#cell_" + variable).text(data.data[variable]);
                         }
                     }
+                    message_field.clearMessage();
                     $("#cell_test_number").focus();
                     $("#cell_test_number").select();
                 } else {
                     console.error("Ooops");
                     console.error(data.error_message);
-                    errorField.error(data.error_message);
+                    message_field.displayErrMessage("Ошибка поиска!", data.error_message);
                 }
             }
         });
@@ -175,10 +176,33 @@ var SearchField = React.createClass({
 
 var Form = React.createClass({
     submitData: function () {
-        var data = $("cell_test_number").text().trim();
-        //alert(data);
-        $("#search-field").focus();
-        $("#search-field").select();
+        var data = $("#cell_test_number").text().trim();
+        console.log("data", data);
+        var id = $("#cell_id").text().trim();
+        console.log("id", id);
+        // working under flying_rows API, TODO - fix
+        $.ajax({
+            url: config.update_cell_url,
+            method: 'POST',
+            data: addDefaultParams({
+                row_id: id,
+                column: 'test_number',
+                oldValue: '0', // FIXME
+                value: data
+            }),
+            success: function(data){
+                console.log(data);
+                if (data.success) {
+                    //table.changeCellValue(change.rowId, change.column, data.value, false);
+                    //old_this.removeChange(change);
+                    message_field.displaySuccessMessage("Успех", "Данные сохранены");
+                    $("#search-field").focus();
+                    $("#search-field").select();
+                } else {
+                    message_field.displayErrMessage("Ошибка!", data.error_message);
+                }
+            }
+        })
     },
 
     render: function() {
@@ -188,6 +212,7 @@ var Form = React.createClass({
                 <FormCell
                     columnName={column['name']}
                     displayName={column['display_name']}
+                    isEditable={column['editable']}
                     submitData={old_this.submitData}
                 />
             );
@@ -196,7 +221,7 @@ var Form = React.createClass({
         var header = this.props.config.columns.map(function(column){
             return (
                 <td>
-                    <h3>{column["display_name"]}</h3>
+                    <h4>{column["display_name"]}</h4>
                 </td>
             );
         });
@@ -216,16 +241,22 @@ var Form = React.createClass({
 
 var FormCell = React.createClass({
     render: function () {
-        var contentEditable = false;
-        for (var i = 0; i < config.columns.length; i++) {
+        var contentEditable = this.props.isEditable;
+        var css_class = "";
+        if (!contentEditable) css_class = "-is-faded-out";
+        /*for (var i = 0; i < config.columns.length; i++) {
             if (config.columns[i]["name"] == this.props.columnName) {
                 contentEditable = config.columns[i]['editable'];
                 break;
             }
-        }
+        }*/
         return (
             <td>
-                <span id={this.getId()} contentEditable={contentEditable} onKeyDown={this.onKeyDownCapture}>
+                <span
+                    id={this.getId()}
+                    contentEditable={contentEditable}
+                    onKeyDown={this.onKeyDownCapture}
+                    className={css_class}>
                 </span>
             </td>
         );
@@ -295,6 +326,40 @@ var FormCell = React.createClass({
     },
 });
 
+var MessageField = React.createClass({
+    getInitialState: function() {
+        return {
+            header: "Нет сообщений",
+            desc: "",
+            type: ""
+        };
+    },
+
+    displayErrMessage: function(new_header, new_desc) {
+        this.setState({header: new_header, desc: new_desc, type: "error"});
+    },
+
+    displaySuccessMessage: function(new_header, new_desc) {
+        this.setState({header: new_header, desc: new_desc, type: "success"});
+    },
+
+    clearMessage: function() {
+        this.setState({header: "Нет сообщений", desc: "", type: ""});
+    },
+
+    render: function() {
+        var msg_class = "message-field";
+        if (this.state.type == "error") msg_class = "message-field__error";
+        else if (this.state.type == "success") msg_class = "message-field__success";
+        return (
+            <div className={msg_class}>
+                <h3>{this.state.header}</h3>
+                <p>{this.state.desc}</p>
+            </div>
+        );
+    }
+});
+
 var search = React.render(
     <SearchField/>,
     document.getElementById("search")
@@ -303,6 +368,11 @@ var search = React.render(
 var form = React.render(
     <Form config={config} />,
     document.getElementById("form")
+);
+
+var message_field = React.render(
+    <MessageField />,
+    document.getElementById("msg_field")
 );
 </script>
 
