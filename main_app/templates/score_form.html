@@ -229,33 +229,40 @@ var SearchField = React.createClass({
 
 var Form = React.createClass({
     submitData: function () {
-        var data = $("#cell_test_number").text().trim();
-        console.log("data", data);
         var id = $("#cell_id").text().trim();
-        console.log("id", id);
-        // working under flying_rows API, TODO - fix
-        $.ajax({
-            url: config.update_cell_url,
-            method: 'POST',
-            data: addDefaultParams({
-                row_id: id,
-                column: 'test_number',
-                oldValue: '0', // FIXME
-                value: data
-            }),
-            success: function(data){
-                console.log(data);
-                if (data.success) {
-                    //table.changeCellValue(change.rowId, change.column, data.value, false);
-                    //old_this.removeChange(change);
-                    message_field.displaySuccessMessage("Успех", "Данные сохранены");
-                    $("#search-field").focus();
-                    $("#search-field").select();
-                } else {
-                    message_field.displayErrMessage("Ошибка!", data.error_message);
+        var err = false;
+        message_field.clearMessage();
+
+        for (var i = 2; i < config.columns.length && !err; i++) {
+            var column = config.columns[i];
+            var columnName = column['name'];
+            var data = $("#cell_" + columnName).text().trim();
+
+            if (data == "") continue;
+
+            $.ajax({
+                url: config.update_cell_url,
+                method: 'POST',
+                data: addDefaultParams({
+                    row_id: id,
+                    column: columnName,
+                    oldValue: '0', // FIXME
+                    value: data
+                }),
+                success: function(data){
+                    if (!data.success) {
+                        console.log(data);
+                        err = true;
+                        message_field.displayErrMessage("Ошибка!", data.error_message);
+                    }
                 }
-            }
-        })
+            });
+        }
+        if (message_field.state['type'] == "") {
+            message_field.displaySuccessMessage("Успех!", "Результаты сохранены");
+            $("#search-field").focus();
+            $("#search-field").select();
+        }
     },
 
     render: function() {

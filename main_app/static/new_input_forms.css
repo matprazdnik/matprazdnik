@@ -9,11 +9,13 @@
 
 .message-field__error {
     background-color: red;
+    color: white;
 }
 
 
 .message-field__success {
     background-color: green;
+    color: white;
 }
 
 .-is-faded-out {
