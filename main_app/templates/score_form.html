@@ -72,37 +72,32 @@ validation = {
     'cell_points_1': function(value) {
         if (value === "") return true;
         if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
-    },
-    'cell_points_1': function(value) {
-        if (value === "") return true;
-        if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
+        return parseInt(value) <= 4;
     },
     'cell_points_2a': function(value) {
         if (value === "") return true;
         if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
+        return parseInt(value) <= 4;
     },
     'cell_points_3': function(value) {
         if (value === "") return true;
         if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
+        return parseInt(value) <= 5;
     },
     'cell_points_4': function(value) {
         if (value === "") return true;
         if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
+        return parseInt(value) <= 6;
     },
     'cell_points_5': function(value) {
         if (value === "") return true;
         if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
+        return parseInt(value) <= 7;
     },
     'cell_points_6': function(value) {
         if (value === "") return true;
         if (parseInt(value) === NaN) return false;
-        return parseInt(value) <= 3;
+        return parseInt(value) <= 8;
     },
     'cell_sum': function(value) {
         if (value === "") return true;
@@ -340,7 +335,26 @@ var FormCell = React.createClass({
     },
 
     onKeyDownCapture: function(event) {
-        if (event.key == "Tab" && this.props.nextColumnID == "cell___" ||
+        if (this.getId().slice(0, 12) === "cell_points_" &&
+            ((event.keyCode > 47 && event.keyCode < 58) ||   // nubmers above letters
+             (event.keyCode > 95 && event.keyCode < 106)) && // numbers on numpad
+            !event.shiftKey) {
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            var new_value = 0;
+            if (event.keyCode < 59) new_value = event.keyCode - 48;
+            else                    new_value = event.keyCode - 96;
+
+            $("#" + this.getId()).text(new_value);
+
+            if (this.validate()) {
+                $("#" + this.props.nextColumnID).focus();
+                $("#" + this.props.nextColumnID).select();
+            }
+        }
+        else if (event.key == "Tab" && this.props.nextColumnID == "cell___" ||
             event.key == "Enter" && this.props.nextColumnID == "cell___" ||
             event.key == "Enter" && event.ctrlKey) {
             event.stopPropagation();
