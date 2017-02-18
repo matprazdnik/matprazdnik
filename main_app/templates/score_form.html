@@ -1,1 +1,456 @@
-Hello, score_form!
+{% extends 'base.html' %}
+
+{% block title %}Ввод нового результата{% endblock %}
+
+{% block content-title %}Ввод нового результата{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/new_input_forms.css">
+
+<script src="/static/react-0.12.2.js"></script>
+<script src="/static/JSXTransformer-0.12.2.js"></script>
+<script src="/static/jquery.hotkeys.js"></script>
+
+<div id="search"></div>
+<div id="form"></div>
+<div id="msg_field"></div> <!-- do not use single tag here, React has a problem rendering it -->
+
+<script type="text/jsx">
+var config = {
+    //autocomplete_url: '../..{% url 'flying_rows.views.load_autocomplete_choices' %}',
+    //add_new_row_url: '../..{% url 'flying_rows.views.add_new_row' %}',
+    //load_new_rows_url: '../..{% url 'flying_rows.views.load_new_rows' %}',
+    update_cell_url: '../..{% url 'flying_rows.views.update_field' %}',
+    //load_new_transactions_url: '../..{% url 'flying_rows.views.load_transactions' %}',
+    search_hints_url: '../..{% url 'flying_rows.views.get_search_hints' %}',
+    search_url: '../..{% url 'flying_rows.views.search' %}',
+    //merge_url: '../..{% url 'flying_rows.views.merge' %}',
+    //model: '{{ table.model_name }}',
+    //module: '{{ table.module_name }}',
+    //table_name: '{{ table_name }}',
+    //search_fields: ('test_number', 'surname', 'name', 'school'),
+    //focus_policy_after_add: '{{ focus_policy_after_add }}',
+    //focus_policy_after_change: '{{ focus_policy_after_change }}',
+    //enable_add_new: '{{ enable_add_new }}',
+    //selectable_rows: '{{ selectable_rows }}',
+    //initial_focus_after_search: '{{ initial_focus_after_search }}'
+    model: 'Participant',
+    module: 'main_app.models',
+    table_name: 'results',
+    search_fields: ["test_number", "surname", "name"],
+    focus_policy_after_add: '',
+    focus_policy_after_change: '',
+    enable_add_new: false,
+    selectable_rows: false,
+    initial_focus_after_search: 'points_1'
+};
+
+//  TODO: load all during render
+config.columns = [{"one_char_field": false, "default_value": "", "name": "id",
+                    "display_name": "ID", "weight": 1},
+                   {"one_char_field": false, "default_value": "", "name": "test_number",
+                    "display_name": "\u043d\u043e\u043c\u0435\u0440 \u0440\u0430\u0431\u043e\u0442\u044b", "weight": 1},
+                  {"one_char_field": false, "default_value": "0", "name": "points_1", "display_name": "1", "weight": 1,
+                    "editable": true},
+                  {"one_char_field": false, "default_value": "0", "name": "points_2a", "display_name": "2", "weight": 1,
+                    "editable": true},
+                  {"one_char_field": false, "default_value": "0", "name": "points_3", "display_name": "3", "weight": 1,
+                    "editable": true},
+                  {"one_char_field": false, "default_value": "0", "name": "points_4", "display_name": "4", "weight": 1,
+                    "editable": true},
+                  {"one_char_field": false, "default_value": "0", "name": "points_5", "display_name": "5", "weight": 1,
+                    "editable": true},
+                  {"one_char_field": true, "default_value": "0", "name": "points_6", "display_name": "6", "weight": 1,
+                    "editable": true},
+                  {"one_char_field": false, "default_value": "0", "name": "sum",
+                   "display_name": "\u0441\u0443\u043c\u043c\u0430", "weight": 1,
+                     "editable": true}];
+
+validation = {
+    'cell_id': function(value) {return true;},
+    'cell_test_number': function(value) {return true;},
+    'cell_points_1': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_points_1': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_points_2a': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_points_3': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_points_4': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_points_5': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_points_6': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        return parseInt(value) <= 3;
+    },
+    'cell_sum': function(value) {
+        if (value === "") return true;
+        if (parseInt(value) === NaN) return false;
+        var smm = 0;
+        smm += parseInt($("#cell_points_1").text().trim());
+        smm += parseInt($("#cell_points_2a").text().trim());
+        smm += parseInt($("#cell_points_3").text().trim());
+        smm += parseInt($("#cell_points_4").text().trim());
+        smm += parseInt($("#cell_points_5").text().trim());
+        smm += parseInt($("#cell_points_6").text().trim());
+        return smm === parseInt(value);
+    }
+};
+
+function addDefaultParams(data) {
+    var newData = {};
+    for (key in data) {
+        newData[key] = data[key];
+    }
+    newData['model'] = config['model'];
+    newData['module'] = config['module'];
+    newData['author'] = localStorage.getItem('author');
+    return newData;
+}
+
+var SearchField = React.createClass({
+    render: function() {
+        return (
+            <input
+            width={"100%"}
+            type={"text"}
+            id={this.getId()}
+            onKeyDown={this.onKeyDownCapture}
+            placeholder="Искать школьника"
+            />
+        );
+    },
+
+    getId: function() {
+        return "search-field";
+    },
+
+    loadSuggest: function() {
+        var old_this = this;
+        $.ajax({
+            url: config.search_hints_url,
+            method: 'GET',
+            data: addDefaultParams({
+                search_fields: JSON.stringify(config.search_fields)
+            }),
+            success: function(data){
+                $(function() {
+                    ($("#" + old_this.getId())).autocomplete({
+                        source: function (request, callback) {
+                            var re = $.ui.autocomplete.escapeRegex(request.term); // get input
+                            re = re.replace('е', '[её]');
+                            var matcher = new RegExp(re, "i"); // making RegExp from input
+                            var ans = [];
+                            //console.log(data.length);
+                            $.each(data, function(i, item) {
+                                if(matcher.test(item)) ans.push(item);
+                            });
+                            callback( ans );
+                        },
+                        delay: 0,
+                        minLength: 2,
+                        autoFocus: true
+                    });
+                })
+            }
+        })
+    },
+
+    componentDidMount: function() {
+        this.loadSuggest();
+        setInterval(this.loadSuggest, 120000);
+    },
+
+    onKeyDownCapture: function(event) {
+        if (event.key == "Enter" || event.key == "Tab") {
+            event.preventDefault();
+            event.stopPropagation();
+            this.search($("#" + this.getId())[0].value);
+        }
+    },
+
+    search: function(value) {
+        var search_value = value.split(" ");
+        search_value = search_value[search_value.length - 1];
+        search_value = search_value.slice(2);
+        console.log(search_value);
+
+        var search_fields = [];
+        for (var i = 0; i < config.columns.length; i++) {
+            search_fields.push(config.columns[i]["name"]);
+        }
+        console.log(search_fields);
+
+        $.ajax({
+            url: config.search_url,
+            method: 'GET',
+            data: addDefaultParams({ // TODO: confugure on render
+                search_fields: JSON.stringify(search_fields),
+                search_value: search_value
+            }),
+            success: function(data) {
+                if (data.success) {
+                    console.log(data.data);
+                    for (var variable in data.data) {
+                        if (data.data.hasOwnProperty(variable)) {
+                            $("#cell_" + variable).text(
+                                data.data[variable] === null ? "" : data.data[variable]
+                            );
+                        }
+                    }
+                    message_field.clearMessage();
+                    $("#cell_" + config.initial_focus_after_search).focus();
+                    $("#cell_" + config.initial_focus_after_search).select();
+                } else {
+                    console.error("Ooops");
+                    console.error(data.error_message);
+                    message_field.displayErrMessage("Ошибка поиска!", data.error_message);
+                }
+            }
+        });
+    }
+});
+
+var Form = React.createClass({
+    submitData: function () {
+        var data = $("#cell_test_number").text().trim();
+        console.log("data", data);
+        var id = $("#cell_id").text().trim();
+        console.log("id", id);
+        // working under flying_rows API, TODO - fix
+        $.ajax({
+            url: config.update_cell_url,
+            method: 'POST',
+            data: addDefaultParams({
+                row_id: id,
+                column: 'test_number',
+                oldValue: '0', // FIXME
+                value: data
+            }),
+            success: function(data){
+                console.log(data);
+                if (data.success) {
+                    //table.changeCellValue(change.rowId, change.column, data.value, false);
+                    //old_this.removeChange(change);
+                    message_field.displaySuccessMessage("Успех", "Данные сохранены");
+                    $("#search-field").focus();
+                    $("#search-field").select();
+                } else {
+                    message_field.displayErrMessage("Ошибка!", data.error_message);
+                }
+            }
+        })
+    },
+
+    render: function() {
+        var old_this = this;
+        var columns = this.props.config.columns;
+        columns.push({"name": "__"});
+        var cells = [];
+        for (var i = 0; i < columns.length - 1; i++) {
+            var prevColumnName = "__";
+            if (i > 0) prevColumnName = columns[i-1]['name'];
+            cells.push((
+                <FormCell
+                    columnName={columns[i]['name']}
+                    displayName={columns[i]['display_name']}
+                    isEditable={columns[i]['editable']}
+                    nextColumnID={"cell_" + columns[i+1]['name']}
+                    prevColumnID={"cell_" + prevColumnName}
+                    submitData={old_this.submitData}
+                />
+            ));
+        }
+
+        var header = this.props.config.columns.map(function(column){
+            return (
+                <td>
+                    <h4>{column["display_name"]}</h4>
+                </td>
+            );
+        });
+
+        return (
+            <table width="100%">
+                <tr>
+                    {header}
+                </tr>
+                <tr>
+                    {cells}
+                </tr>
+            </table>
+        );
+    }
+});
+
+var FormCell = React.createClass({
+    render: function () {
+        var contentEditable = this.props.isEditable;
+        var css_class = "";
+        if (!contentEditable) css_class = "-is-faded-out";
+
+        return (
+            <td>
+                <span
+                    id={this.getId()}
+                    contentEditable={contentEditable}
+                    onKeyDown={this.onKeyDownCapture}
+                    onFocus={this.onFocusCapture}
+                    className={css_class}>
+                </span>
+            </td>
+        );
+    },
+
+    onFocusCapture: function (event) {
+        var range = document.createRange();
+        range.selectNodeContents(document.getElementById(event.target.id));
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    },
+
+    getInitialState: function() {
+        return {data: [], status: "ok"}
+    },
+
+    getId: function() {
+        return "cell_" + this.props.columnName;
+    },
+
+    onKeyDownCapture: function(event) {
+        if (event.key == "Tab" && this.props.nextColumnID == "cell___" ||
+            event.key == "Enter" && this.props.nextColumnID == "cell___" ||
+            event.key == "Enter" && event.ctrlKey) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (this.validate()) {
+                this.props.submitData();
+            }
+        }
+        else if (event.key == "Tab" && event.shiftKey ||
+                 event.key == "Enter" && event.shiftKey)
+        {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (this.props.prevColumnID != "cell___" && this.validate()) {
+                $("#" + this.props.prevColumnID).focus();
+                $("#" + this.props.prevColumnID).select();
+            }
+        }
+        else if (event.key == "Tab" || event.key == "Enter") {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (this.validate()) {
+                $("#" + this.props.nextColumnID).focus();
+                $("#" + this.props.nextColumnID).select();
+            }
+        }
+        else if (event.key == "Home" || event.key == "Esc") {
+            event.stopPropagation();
+            event.preventDefault();
+
+            $("#search-field").focus();
+            $("#search-field").select();
+        }
+    },
+
+    toggleValidated: function (isValidated) {
+        if (isValidated && $("#" + this.getId()).hasClass("-contains-wrong-value") ||
+            !isValidated && !$("#" + this.getId()).hasClass("-contains-wrong-value")) {
+            $("#" + this.getId()).toggleClass("-contains-wrong-value");
+        }
+    },
+
+    validate: function () {
+        var validFunc = validation[this.getId()];
+        if (!validFunc( $("#" + this.getId()).text().trim() )) {
+            this.toggleValidated(false);
+            return false;
+        }
+
+        this.toggleValidated(true);
+        return true;
+    },
+});
+
+var MessageField = React.createClass({
+    getInitialState: function() {
+        return {
+            header: "Нет сообщений",
+            desc: "",
+            type: ""
+        };
+    },
+
+    displayErrMessage: function(new_header, new_desc) {
+        this.setState({header: new_header, desc: new_desc, type: "error"});
+    },
+
+    displaySuccessMessage: function(new_header, new_desc) {
+        this.setState({header: new_header, desc: new_desc, type: "success"});
+    },
+
+    clearMessage: function() {
+        this.setState({header: "Нет сообщений", desc: "", type: ""});
+    },
+
+    render: function() {
+        var msg_class = "message-field";
+        if (this.state.type == "error") msg_class = "message-field__error";
+        else if (this.state.type == "success") msg_class = "message-field__success";
+        return (
+            <div className={msg_class}>
+                <h3>{this.state.header}</h3>
+                <p>{this.state.desc}</p>
+            </div>
+        );
+    }
+});
+
+var search = React.render(
+    <SearchField/>,
+    document.getElementById("search")
+);
+
+var form = React.render(
+    <Form config={config} />,
+    document.getElementById("form")
+);
+
+var message_field = React.render(
+    <MessageField />,
+    document.getElementById("msg_field")
+);
+</script>
+
+{% endblock %}
+
+{% block upload-title %}Залить внешнюю базу регистрации школьников{% endblock %}
+{% block upload-hint %}Все школьники, номера регистрации которых уже есть в нашей базе, не будут затронуты{% endblock %}
+
+{% block download-title %}Скачать нашу базу регистрации школьников{% endblock %}
