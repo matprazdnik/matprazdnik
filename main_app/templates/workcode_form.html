@@ -250,16 +250,30 @@ var FormCell = React.createClass({
         }
     },
 
+    toggleValidated: function (isValidated) {
+        if (isValidated && $("#" + this.getId()).hasClass("-contains-wrong-value") ||
+            !isValidated && !$("#" + this.getId()).hasClass("-contains-wrong-value")) {
+            $("#" + this.getId()).toggleClass("-contains-wrong-value");
+        }
+    },
+
     validate: function () {
         if (this.props.columnName == "test_number") {
             var code = $("#" + this.getId()).text().trim();
 
+            if (code.length === 0) {
+                this.toggleValidated(true);
+                return true;
+            }
+
             if (code.length !== 6) {
+                this.toggleValidated(false);
                 return false;
             }
 
             var base_code = parseInt(code);
             if (base_code === NaN) {
+                this.toggleValidated(false);
                 return false;
             }
 
@@ -268,7 +282,13 @@ var FormCell = React.createClass({
             var ctrl2 = 9 * (base_code%10>>0) + 7 * (base_code/10>>0)%10 + 3 * (base_code/100>>0)%10 + (base_code/1000>>0)%10;
             var new_code = base_code * 100 + (ctrl1%10) * 10 + ctrl2%10;
             console.log(code, new_code, new_code === parseInt(code));
-            return (new_code === parseInt(code));
+
+            if (new_code === parseInt(code)) {
+                this.toggleValidated(true);
+                return true;
+            }
+            this.toggleValidated(false);
+            return false;
         }
 
         return true;
