@@ -108,7 +108,7 @@
       }
     })
   }
-  setInterval(loadNewTransactions, 10000);
+  setInterval(loadNewTransactions, 100000);
 
   function addDefaultParams(data) {
     var newData = {};
@@ -435,12 +435,12 @@
            this.props.columnName.substr(0, 6) == "points") {
 	event.stopPropagation();
 	event.preventDefault();
-	
+
 	var newValue;
 	if (event.keyCode < 58) newValue = event.keyCode - 48;
         else                    newValue = event.keyCode - 96;
 
-	// insert value into cell	
+	// insert value into cell
 	this.props.handleCellChange(
 	  this.props.rowId,
 	  this.props.columnName,
@@ -451,7 +451,7 @@
 	// focus on the next column
 	var nextColumnName = this.props.nextColumn(this.props.columnName);
 	$("#" + this.getId(nextColumnName)).focus();
-      } 
+      }
 
       else if (event.key == "Tab" || event.key == "Enter" || event.key == "Home" || event.key == "Escape") {
         event.stopPropagation();
@@ -513,7 +513,7 @@
         while (currentColumnName[0] != '_' && currentColumnName != undefined) {
           if (currentColumnName.substr(0, 7) == 'points_') {
             $("#" + this.getId(currentColumnName)).text('0');
-	    this.pushZeroToCell(this.props.handleCellChange, 
+	    this.pushZeroToCell(this.props.handleCellChange,
                                 this.props.rowId,
                                 currentColumnName);
           }
@@ -533,7 +533,7 @@
         //console.log('pushed', rowId, columnName, 0);
       }, 100);
     },
-    
+
     onFocusCapture: function(event) {
       // need to change true in future
       if(true/*this.props.columnName.substr(0, 6) == "points"*/) {
@@ -699,7 +699,7 @@
       if (event.key == "Enter" || event.key == "Tab") {
         event.stopPropagation();
         event.preventDefault();
-        
+
         this.props.handleInput(this.props.columnName, $("#" + this.getId()).val());
         if (!event.shiftKey) {
           nextColumnName = this.props.nextColumn(this.props.columnName);
